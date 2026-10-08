@@ -1,0 +1,52 @@
+{
+  "name": "learncroc-monorepo",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Learn anything by playing its map. Open source, local-first, AI optional.",
+  "license": "MIT",
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "engines": {
+    "bun": ">=1.2.0"
+  },
+  "scripts": {
+    "dev": "bun --filter @learncroc/server --filter @learncroc/web dev",
+    "start": "bun --cwd apps/server start",
+    "build": "bun --filter @learncroc/web build",
+    "build:static": "bun scripts/build-static.ts",
+    "check": "bun run typecheck && bun run lint && bun run test",
+    "typecheck": "bun scripts/workspaces.ts typecheck",
+    "lint": "biome check .",
+    "format": "biome check --write .",
+    "test": "bun scripts/workspaces.ts test",
+    "e2e": "playwright test -c e2e/playwright.config.ts",
+    "shots": "LM_SHOTS=1 playwright test -c e2e/playwright.config.ts shots.spec.ts",
+    "validate:pack": "bun scripts/validate-pack.ts",
+    "schemas": "bun scripts/schemas.ts",
+    "lint:packs": "bun packages/cli/src/index.ts lint --all packs",
+    "packs:build": "bun scripts/todo.ts packs:build",
+    "packs:audio": "bun scripts/todo.ts packs:audio",
+    "registry:build": "bun packages/cli/src/index.ts registry build",
+    "tokens:check": "bun scripts/todo.ts tokens:check",
+    "new:widget": "bun scripts/todo.ts new:widget",
+    "eval:local": "bun scripts/todo.ts eval:local",
+    "release": "bun scripts/todo.ts release"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@biomejs/biome": "^2.5.15",
+    "@changesets/cli": "^3.0.3",
+    "@learncroc/core": "workspace:*",
+    "@learncroc/widgets": "workspace:*",
+    "@playwright/test": "1.62.1",
+    "@types/bun": "^1.4.3",
+    "ajv": "^8.20.0",
+    "playwright": "1.62.1",
+    "typescript": "^7.0.2",
+    "yaml": "^2.9.1",
+    "zod": "^4.6.7"
+  }
+}

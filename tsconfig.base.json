@@ -1,0 +1,41 @@
+{
+  "compilerOptions": {
+    "target": "ES2023",
+    "lib": ["ES2023"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "moduleDetection": "force",
+    "resolveJsonModule": true,
+    "allowJs": false,
+    "noEmit": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "useUnknownInCatchVariables": true,
+    "types": [],
+    "paths": {
+      "@learncroc/core": ["./packages/core/src/index.ts"],
+      "@learncroc/core/schema": ["./packages/core/src/schema/index.ts"],
+      "@learncroc/core/fixtures/*": ["./packages/core/fixtures/*"],
+      "@learncroc/core/*": ["./packages/core/src/*"],
+      "@learncroc/ui": ["./packages/ui/src/index.ts"],
+      "@learncroc/ui/*": ["./packages/ui/src/*"],
+      "@learncroc/widgets": ["./packages/widgets/src/index.ts"],
+      "@learncroc/widgets/spec": ["./packages/widgets/src/spec.ts"],
+      "@learncroc/widgets/*": ["./packages/widgets/src/*"],
+      "@learncroc/maps": ["./packages/maps/src/index.ts"],
+      "@learncroc/maps/*": ["./packages/maps/src/*"],
+      "@learncroc/ai": ["./packages/ai/src/index.ts"],
+      "@learncroc/ai/*": ["./packages/ai/src/*"],
+      "@learncroc/cli": ["./packages/cli/src/index.ts"],
+      "@learncroc/server": ["./apps/server/src/index.ts"],
+      "@learncroc/server/*": ["./apps/server/src/*"]
+    }
+  }
+}

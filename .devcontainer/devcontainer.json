@@ -1,0 +1,19 @@
+{
+  "name": "learncroc",
+  "image": "mcr.microsoft.com/playwright:v1.62.1-noble",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": { "version": "22" }
+  },
+  "postCreateCommand": "curl -fsSL https://bun.sh/install | bash -s bun-v1.3.11 && ~/.bun/bin/bun install",
+  "remoteEnv": { "PATH": "${containerEnv:PATH}:/root/.bun/bin:/home/pwuser/.bun/bin" },
+  "forwardPorts": [5173, 4747],
+  "portsAttributes": {
+    "5173": { "label": "web (Vite)" },
+    "4747": { "label": "server" }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": ["biomejs.biome", "redhat.vscode-yaml", "bradlc.vscode-tailwindcss"]
+    }
+  }
+}

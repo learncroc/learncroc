@@ -1,0 +1,18 @@
+node_modules/
+dist/
+*.tsbuildinfo
+.DS_Store
+.env
+.env.*
+!.env.example
+coverage/
+# generated
+registry/dist/
+e2e/shots/
+e2e/test-results/
+e2e/playwright-report/
+test-results/
+playwright-report/
+.learncroc-dev/
+*.lmpack
+# keep the generated JSON Schemas and reference docs committed (published to Pages)

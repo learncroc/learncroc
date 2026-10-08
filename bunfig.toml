@@ -1,0 +1,11 @@
+# Root bunfig. Each workspace has its own bunfig.toml for `bun test` (DOM packages preload happy-dom).
+# Run tests through `bun run test` (all workspaces) or `bun test` inside one package directory.
+
+[install]
+exact = false
+# One node_modules tree at the root: a single React instance, and root scripts resolve every workspace dependency.
+linker = "hoisted"
+
+[test]
+# Running `bun test` from the repo root only picks up root-level tests (scripts/). Use `bun run test`.
+root = "./scripts"
