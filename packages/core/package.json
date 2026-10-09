@@ -1,0 +1,31 @@
+{
+  "name": "@learncroc/core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Pack schemas, learner model and app services. Pure TypeScript: runs in the browser, the server and the CLI.",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema": "./src/schema/index.ts",
+    "./fixtures/*": "./fixtures/*",
+    "./*": "./src/*.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p .",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "elkjs": "^0.12.0",
+    "semver": "^7.8.5",
+    "ts-fsrs": "^5.4.2",
+    "yaml": "^2.9.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.4.3",
+    "@types/semver": "^7.8.0",
+    "dompurify": "^3.4.17",
+    "fast-check": "^4.10.2",
+    "happy-dom": "^21.0.3"
+  }
+}
