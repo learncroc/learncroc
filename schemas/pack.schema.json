@@ -1,0 +1,636 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://learncroc.github.io/schema/v1/pack.schema.json",
+  "title": "learncroc pack manifest",
+  "description": "pack.yaml: identity, theme and entry point of a pack.",
+  "type": "object",
+  "properties": {
+    "schema": {
+      "$ref": "#/$defs/__schema0",
+      "description": "Pack format version; `learncroc migrate` upgrades older files."
+    },
+    "id": {
+      "$ref": "#/$defs/PackId"
+    },
+    "version": {
+      "$ref": "#/$defs/SemVer"
+    },
+    "title": {
+      "$ref": "#/$defs/__schema1",
+      "description": "\"How LLMs work\""
+    },
+    "subtitle": {
+      "$ref": "#/$defs/__schema2",
+      "description": "One line."
+    },
+    "tagline": {
+      "$ref": "#/$defs/__schema3",
+      "description": "Marketplace promise, ≤ 15 words."
+    },
+    "publisher": {
+      "$ref": "#/$defs/__schema4",
+      "description": "\"learncroc\" for first-party."
+    },
+    "authors": {
+      "$ref": "#/$defs/__schema5"
+    },
+    "reviewers": {
+      "$ref": "#/$defs/__schema8",
+      "description": "Credited on the map legend; must match pack.lock.yaml reviews."
+    },
+    "license": {
+      "$ref": "#/$defs/__schema9"
+    },
+    "lang": {
+      "$ref": "#/$defs/__schema10",
+      "description": "BCP-47 of the learner-facing UI text, e.g. \"en\"."
+    },
+    "targetLang": {
+      "$ref": "#/$defs/__schema11",
+      "description": "Language packs: \"es-ES\"."
+    },
+    "level": {
+      "$ref": "#/$defs/__schema12"
+    },
+    "estMinutes": {
+      "$ref": "#/$defs/__schema13",
+      "description": "Whole pack, playable part."
+    },
+    "tags": {
+      "$ref": "#/$defs/__schema14"
+    },
+    "category": {
+      "$ref": "#/$defs/PackCategory"
+    },
+    "engine": {
+      "$ref": "#/$defs/__schema15",
+      "description": "Semver range of the app, e.g. \">=0.1.0 <1.0.0\"."
+    },
+    "widgets": {
+      "$ref": "#/$defs/__schema16",
+      "description": "Widget id → major version used."
+    },
+    "profile": {
+      "$ref": "#/$defs/LintProfile",
+      "description": "Default \"community\"; publisher \"learncroc\" must be \"curated\" or \"sampler\"."
+    },
+    "theme": {
+      "$ref": "#/$defs/PackTheme"
+    },
+    "entry": {
+      "$ref": "#/$defs/__schema17"
+    },
+    "outcomes": {
+      "$ref": "#/$defs/__schema18",
+      "description": "3 \"You'll be able to…\" statements (marketplace)."
+    },
+    "ai": {
+      "$ref": "#/$defs/__schema19"
+    },
+    "private": {
+      "$ref": "#/$defs/__schema20",
+      "description": "True for pocket maps; publish refuses."
+    },
+    "origin": {
+      "$ref": "#/$defs/__schema21",
+      "description": "Set for generated packs."
+    },
+    "status": {
+      "$ref": "#/$defs/__schema22",
+      "description": "\"reviewed\" requires pack.lock.yaml reviews covering pack.yaml (L017)."
+    },
+    "disclaimer": {
+      "$ref": "#/$defs/__schema23",
+      "description": "Renders a footer on every screen."
+    }
+  },
+  "required": [
+    "schema",
+    "id",
+    "version",
+    "title",
+    "publisher",
+    "authors",
+    "license",
+    "lang",
+    "level",
+    "estMinutes",
+    "tags",
+    "category",
+    "engine",
+    "widgets",
+    "profile",
+    "theme",
+    "entry",
+    "outcomes",
+    "status"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "__schema0": {
+      "type": "number",
+      "const": 2
+    },
+    "PackId": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{1,63}$",
+      "description": "\"how-llms-work\". Pocket maps use generated ids \"pm-<base32>\"."
+    },
+    "SemVer": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "\"1.2.0\""
+    },
+    "__schema1": {
+      "type": "string",
+      "minLength": 1
+    },
+    "__schema2": {
+      "type": "string"
+    },
+    "__schema3": {
+      "type": "string"
+    },
+    "__schema4": {
+      "type": "string",
+      "minLength": 1
+    },
+    "__schema5": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "$ref": "#/$defs/__schema6"
+          },
+          "url": {
+            "$ref": "#/$defs/__schema7"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "__schema6": {
+      "type": "string",
+      "minLength": 1
+    },
+    "__schema7": {
+      "type": "string"
+    },
+    "__schema8": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "$ref": "#/$defs/__schema6"
+          },
+          "url": {
+            "$ref": "#/$defs/__schema7"
+          },
+          "role": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "role"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "__schema9": {
+      "type": "string",
+      "enum": [
+        "CC-BY-SA-4.0",
+        "CC-BY-4.0",
+        "CC0-1.0"
+      ]
+    },
+    "__schema10": {
+      "type": "string",
+      "minLength": 2
+    },
+    "__schema11": {
+      "type": "string"
+    },
+    "__schema12": {
+      "type": "string",
+      "enum": [
+        "beginner",
+        "intermediate",
+        "advanced"
+      ]
+    },
+    "__schema13": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "__schema14": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "PackCategory": {
+      "type": "string",
+      "enum": [
+        "languages",
+        "science",
+        "tech-ai",
+        "thinking",
+        "arts",
+        "practical"
+      ]
+    },
+    "__schema15": {
+      "type": "string",
+      "minLength": 1
+    },
+    "__schema16": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "#/$defs/WidgetId"
+      },
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 9007199254740991
+      }
+    },
+    "WidgetId": {
+      "type": "string",
+      "enum": [
+        "probability-bars",
+        "token-splitter",
+        "attention-weights",
+        "embedding-plane",
+        "plot",
+        "sorter",
+        "hotspot",
+        "ab-compare",
+        "light-clock",
+        "train-scene",
+        "spacetime-diagram",
+        "tile-builder",
+        "dialogue",
+        "listen",
+        "code-stepper"
+      ]
+    },
+    "LintProfile": {
+      "type": "string",
+      "enum": [
+        "curated",
+        "sampler",
+        "community",
+        "pocket"
+      ]
+    },
+    "PackTheme": {
+      "type": "object",
+      "properties": {
+        "renderer": {
+          "$ref": "#/$defs/RendererId"
+        },
+        "world": {
+          "type": "string",
+          "minLength": 1,
+          "description": "\"The Machine\""
+        },
+        "mode": {
+          "type": "string",
+          "enum": [
+            "dark",
+            "light"
+          ],
+          "description": "The world's ground is always this, regardless of the app theme."
+        },
+        "direction": {
+          "type": "string",
+          "enum": [
+            "lr",
+            "bt"
+          ],
+          "description": "Default \"lr\"."
+        },
+        "ground": {
+          "$ref": "#/$defs/Hex",
+          "description": "Map background (L* < 25 for dark, > 88 for light)."
+        },
+        "ink": {
+          "$ref": "#/$defs/Hex",
+          "description": "Text on ground; default computed (≥ 7:1)."
+        },
+        "texture": {
+          "$ref": "#/$defs/TextureId"
+        },
+        "lines": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "$ref": "#/$defs/Hex",
+              "description": "Map background (L* < 25 for dark, > 88 for light)."
+            },
+            {
+              "$ref": "#/$defs/Hex",
+              "description": "Map background (L* < 25 for dark, > 88 for light)."
+            },
+            {
+              "$ref": "#/$defs/Hex",
+              "description": "Map background (L* < 25 for dark, > 88 for light)."
+            },
+            {
+              "$ref": "#/$defs/Hex",
+              "description": "Map background (L* < 25 for dark, > 88 for light)."
+            },
+            {
+              "$ref": "#/$defs/Hex",
+              "description": "Map background (L* < 25 for dark, > 88 for light)."
+            }
+          ],
+          "items": false,
+          "minItems": 5,
+          "maxItems": 5,
+          "description": "--w-1..--w-5; lint: ≥ 3:1 vs ground, ΔE ≥ 15 from Lumen/Ember/Sea."
+        },
+        "token": {
+          "$ref": "#/$defs/TokenGlyph"
+        },
+        "landmarks": {
+          "type": "object",
+          "propertyNames": {
+            "$ref": "#/$defs/NodeId"
+          },
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "glyph": {
+                "$ref": "#/$defs/LandmarkGlyph"
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "additionalProperties": false
+          },
+          "description": "≤ 3 words per name. May key checkpoint ids."
+        },
+        "gateName": {
+          "type": "string",
+          "description": "Default checkpoint title stem, e.g. \"Power check\" → \"Power check 2\"."
+        },
+        "backdrop": {
+          "$ref": "#/$defs/BackdropId",
+          "description": "Code-drawn backdrop behind the map (poster-safe). Default: the renderer's own."
+        },
+        "fieldNoteStyle": {
+          "type": "string",
+          "enum": [
+            "spec-sheet",
+            "ticket",
+            "postcard",
+            "card"
+          ],
+          "description": "Default \"card\"."
+        },
+        "art": {
+          "type": "object",
+          "properties": {
+            "background": {
+              "$ref": "#/$defs/AssetPath"
+            }
+          },
+          "additionalProperties": false,
+          "description": "Optional decorative SVG, aria-hidden, rendered via <img>."
+        }
+      },
+      "required": [
+        "renderer",
+        "world",
+        "mode",
+        "direction",
+        "ground",
+        "texture",
+        "lines",
+        "token"
+      ],
+      "additionalProperties": false
+    },
+    "RendererId": {
+      "type": "string",
+      "enum": [
+        "metro",
+        "circuit",
+        "atlas",
+        "sketchbook"
+      ]
+    },
+    "Hex": {
+      "type": "string",
+      "pattern": "^#[0-9A-Fa-f]{6}$",
+      "description": "\"#RRGGBB\""
+    },
+    "TextureId": {
+      "type": "string",
+      "enum": [
+        "none",
+        "grid-fine",
+        "spacetime",
+        "world",
+        "ice",
+        "pcb",
+        "blueprint",
+        "topo",
+        "marble",
+        "snow",
+        "night-fair",
+        "paper",
+        "corkboard",
+        "watercolour"
+      ]
+    },
+    "TokenGlyph": {
+      "type": "string",
+      "enum": [
+        "train",
+        "comet",
+        "packet",
+        "note",
+        "electron",
+        "scooter",
+        "scroll",
+        "hiker",
+        "lantern",
+        "paper-plane",
+        "pin"
+      ]
+    },
+    "NodeId": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+      "description": "Unique within a pack."
+    },
+    "LandmarkGlyph": {
+      "type": "string",
+      "enum": [
+        "chip",
+        "core",
+        "furnace",
+        "station",
+        "clock",
+        "tunnel",
+        "town",
+        "plaza",
+        "temple",
+        "theatre",
+        "lodge",
+        "venue",
+        "tower",
+        "lighthouse",
+        "star",
+        "box",
+        "tent"
+      ]
+    },
+    "BackdropId": {
+      "type": "string",
+      "enum": [
+        "circuit-board",
+        "factory-floor",
+        "light-cones",
+        "ice-core",
+        "cable-globe",
+        "staff-town",
+        "iberia-road",
+        "agora",
+        "mountain",
+        "fairground",
+        "case-board",
+        "prism",
+        "sketchbook",
+        "transit-grid",
+        "terrain",
+        "none"
+      ],
+      "description": "Code-drawn map backdrops (theme.backdrop). `transit-grid` and `terrain` are renderer defaults."
+    },
+    "AssetPath": {
+      "type": "string",
+      "pattern": "^assets\\/([a-z0-9._-]+\\/)*[a-z0-9_-][a-z0-9._-]*\\.(svg|png|webp|mp3|ogg|html)$",
+      "description": "Pack-relative asset path. No \"..\" segment; .html only under assets/interactive/. The resolved real path must stay under the pack root (checked by the loader, not here)."
+    },
+    "__schema17": {
+      "type": "object",
+      "properties": {
+        "suggestedStart": {
+          "$ref": "#/$defs/NodeId",
+          "description": "Default: first root in topo order."
+        }
+      },
+      "additionalProperties": false
+    },
+    "__schema18": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "__schema19": {
+      "type": "object",
+      "properties": {
+        "tutorNotes": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "__schema20": {
+      "type": "boolean"
+    },
+    "__schema21": {
+      "$ref": "#/$defs/PackOrigin"
+    },
+    "PackOrigin": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "url"
+            },
+            "url": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "site": {
+              "type": "string"
+            },
+            "fetchedAt": {
+              "$ref": "#/$defs/IsoDate"
+            },
+            "license": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "kind",
+            "url",
+            "fetchedAt"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "text"
+            },
+            "title": {
+              "type": "string"
+            },
+            "createdAt": {
+              "$ref": "#/$defs/IsoDate"
+            }
+          },
+          "required": [
+            "kind",
+            "title",
+            "createdAt"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "IsoDate": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}(T\\d{2}:\\d{2}(:\\d{2}(\\.\\d+)?)?(Z|[+-]\\d{2}:\\d{2}))?$",
+      "description": "\"2026-10-20T08:00:00Z\" (a plain date \"2026-10-20\" is also accepted in files)."
+    },
+    "__schema22": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "reviewed"
+      ]
+    },
+    "__schema23": {
+      "type": "string",
+      "enum": [
+        "finance",
+        "health",
+        "legal"
+      ]
+    }
+  }
+}

@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://learncroc.github.io/schema/v1/lock.schema.json",
+  "title": "learncroc pack lock",
+  "description": "pack.lock.yaml: AI provenance and human review sign-offs.",
+  "type": "object",
+  "properties": {
+    "provenance": {
+      "$ref": "#/$defs/__schema0",
+      "description": "Pack-relative file path → how it was generated."
+    },
+    "reviews": {
+      "$ref": "#/$defs/__schema1"
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "__schema0": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/Provenance"
+      }
+    },
+    "Provenance": {
+      "type": "object",
+      "properties": {
+        "feature": {
+          "type": "string",
+          "enum": [
+            "create",
+            "build",
+            "quiz",
+            "cards",
+            "figure",
+            "toy",
+            "precompute"
+          ]
+        },
+        "prompt": {
+          "type": "string",
+          "description": "\"create-node@1\" | \"scripts/precompute@1\""
+        },
+        "provider": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProviderId"
+            },
+            {
+              "type": "string",
+              "const": "script"
+            }
+          ]
+        },
+        "model": {
+          "type": "string",
+          "description": "\"claude-sonnet-5-5\" | \"gpt2\""
+        },
+        "at": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "cacheKey": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "feature",
+        "prompt",
+        "provider",
+        "model",
+        "at"
+      ],
+      "additionalProperties": false,
+      "description": "How an AI- or script-generated file or value was made."
+    },
+    "ProviderId": {
+      "type": "string",
+      "enum": [
+        "none",
+        "anthropic",
+        "openai-compatible",
+        "ollama"
+      ]
+    },
+    "IsoDate": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}(T\\d{2}:\\d{2}(:\\d{2}(\\.\\d+)?)?(Z|[+-]\\d{2}:\\d{2}))?$",
+      "description": "\"2026-10-20T08:00:00Z\" (a plain date \"2026-10-20\" is also accepted in files)."
+    },
+    "__schema1": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "A named human."
+          },
+          "url": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "description": "\"subject expert\", \"native speaker\", \"editor\"."
+          },
+          "date": {
+            "$ref": "#/$defs/IsoDate"
+          },
+          "files": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Pack-relative paths this sign-off covers; \"*\" = whole pack."
+          },
+          "note": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "role",
+          "date",
+          "files"
+        ],
+        "additionalProperties": false
+      }
+    }
+  }
+}

@@ -1,0 +1,5919 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://learncroc.github.io/schema/v1/node.schema.json",
+  "title": "learncroc card",
+  "description": "nodes/<id>.yaml: one card (hook, 2–3 beats, close) and its item bank.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "$ref": "#/$defs/NodeId"
+    },
+    "title": {
+      "$ref": "#/$defs/__schema0",
+      "description": "≤ 6 words; must not give the close away (L005)."
+    },
+    "tagline": {
+      "$ref": "#/$defs/__schema1",
+      "description": "One line on the card's peek."
+    },
+    "estMinutes": {
+      "$ref": "#/$defs/__schema2",
+      "description": "2–4."
+    },
+    "bigIdea": {
+      "$ref": "#/$defs/__schema3",
+      "description": "For authors, the croc and lint; never shown as a reading block."
+    },
+    "objectives": {
+      "$ref": "#/$defs/__schema4",
+      "description": "1–3, observable verbs."
+    },
+    "concepts": {
+      "$ref": "#/$defs/__schema6",
+      "description": "Shared concept ids for cross-pack bridges, e.g. \"llm.attention\"."
+    },
+    "renamedFrom": {
+      "$ref": "#/$defs/__schema7"
+    },
+    "visual": {
+      "$ref": "#/$defs/__schema8",
+      "description": "Anchor visual for beats without their own."
+    },
+    "misconceptions": {
+      "$ref": "#/$defs/__schema9",
+      "description": "Key = misconception id."
+    },
+    "hook": {
+      "$ref": "#/$defs/Hook"
+    },
+    "screens": {
+      "$ref": "#/$defs/__schema39",
+      "description": "2–3 beats (L006); the schema allows 1–3 so that drafts parse."
+    },
+    "close": {
+      "$ref": "#/$defs/Close"
+    },
+    "cards": {
+      "$ref": "#/$defs/__schema54",
+      "description": "Typed cards. When present they are THE stop (played in order); hook/screens/close are derived (legacyFromCards)."
+    },
+    "items": {
+      "$ref": "#/$defs/__schema56",
+      "description": "≥ 6 with ≥ 3 level \"transfer\" (curated/sampler/pocket); community ≥ 4 / ≥ 2 (L011)."
+    },
+    "flashcards": {
+      "$ref": "#/$defs/__schema64",
+      "description": "3–6; generated from recall items when omitted."
+    },
+    "toy": {
+      "$ref": "#/$defs/__schema65",
+      "description": "Parked. Explore mode, goal omitted; prompt ≤ 20 words."
+    },
+    "underTheHood": {
+      "$ref": "#/$defs/__schema66",
+      "description": "≤ 200 words; the croc's offline \"go deeper\"."
+    },
+    "faq": {
+      "$ref": "#/$defs/__schema67",
+      "description": "≤ 3; the croc's offline answers; a ≤ 60 words."
+    },
+    "sources": {
+      "$ref": "#/$defs/__schema68",
+      "description": "≥ 1 unless every claim is confidence \"model\"."
+    },
+    "status": {
+      "$ref": "#/$defs/__schema69",
+      "description": "\"reviewed\" requires a pack.lock.yaml review covering this file (L017)."
+    },
+    "provenance": {
+      "$ref": "#/$defs/__schema70",
+      "description": "AI-generated nodes."
+    },
+    "grounding": {
+      "$ref": "#/$defs/__schema71"
+    }
+  },
+  "required": [
+    "id",
+    "title",
+    "estMinutes",
+    "bigIdea",
+    "objectives",
+    "misconceptions",
+    "hook",
+    "screens",
+    "close",
+    "items",
+    "sources",
+    "status"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "NodeId": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+      "description": "Unique within a pack."
+    },
+    "__schema0": {
+      "type": "string",
+      "minLength": 1
+    },
+    "__schema1": {
+      "type": "string"
+    },
+    "__schema2": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "__schema3": {
+      "type": "string",
+      "minLength": 1
+    },
+    "__schema4": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/__schema5"
+      }
+    },
+    "__schema5": {
+      "type": "string"
+    },
+    "__schema6": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "__schema7": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/NodeId"
+      }
+    },
+    "__schema8": {
+      "$ref": "#/$defs/Visual"
+    },
+    "Visual": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/WidgetVisual"
+        },
+        {
+          "$ref": "#/$defs/FigureVisual"
+        },
+        {
+          "$ref": "#/$defs/HtmlVisual"
+        },
+        {
+          "$ref": "#/$defs/GeneratedHtmlVisual"
+        }
+      ]
+    },
+    "WidgetVisual": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "const": "widget"
+        },
+        "widget": {
+          "$ref": "#/$defs/WidgetRef"
+        },
+        "alt": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "widget",
+        "alt"
+      ],
+      "additionalProperties": false,
+      "description": "Rendered in mode \"explore\"."
+    },
+    "WidgetRef": {
+      "description": "A configured built-in widget. Pick an id to get autocomplete for its props and goal.",
+      "anyOf": [
+        {
+          "title": "Probability bars",
+          "description": "A next-token probability chart. The learner drags bars to predict the distribution, ranks the candidates, turns a temperature dial and samples from it, picks a token, or runs the score→pick→append loop by hand. Use when: Next-token prediction, temperature or sampling is the idea: what the model thinks comes next, how sure it is, and how one token at a time builds a sentence.",
+          "type": "object",
+          "properties": {
+            "id": {
+              "const": "probability-bars"
+            },
+            "v": {
+              "const": 1,
+              "description": "Widget major version."
+            },
+            "props": {
+              "type": "object",
+              "properties": {
+                "context": {
+                  "type": "string",
+                  "description": "\"I poured milk into my\""
+                },
+                "tokens": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "text": {
+                        "type": "string"
+                      },
+                      "p": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                      }
+                    },
+                    "required": [
+                      "text",
+                      "p"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "description": "3–8; p sums to ≤ 1 (remainder = \"other\")."
+                },
+                "otherLabel": {
+                  "type": "string",
+                  "description": "Default \"everything else\"."
+                },
+                "task": {
+                  "type": "string",
+                  "enum": [
+                    "predict",
+                    "rank",
+                    "temperature",
+                    "pick",
+                    "loop",
+                    "view"
+                  ]
+                },
+                "temperature": {
+                  "type": "number",
+                  "description": "Default 1.0, range 0.1–2.0."
+                },
+                "samples": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "temperature": {
+                        "type": "number"
+                      },
+                      "outputs": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "required": [
+                      "temperature",
+                      "outputs"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "description": "Pre-sampled continuations (shown when sampling)."
+                },
+                "loop": {
+                  "type": "object",
+                  "properties": {
+                    "steps": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "context": {
+                            "type": "string"
+                          },
+                          "tokens": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "text": {
+                                  "type": "string"
+                                },
+                                "p": {
+                                  "type": "number",
+                                  "minimum": 0,
+                                  "maximum": 1
+                                }
+                              },
+                              "required": [
+                                "text",
+                                "p"
+                              ],
+                              "additionalProperties": false
+                            }
+                          }
+                        },
+                        "required": [
+                          "context",
+                          "tokens"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "steps"
+                  ],
+                  "additionalProperties": false,
+                  "description": "task \"loop\": successive distributions."
+                },
+                "hideTruth": {
+                  "type": "boolean",
+                  "description": "Hide the real bars until answered."
+                },
+                "source": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "const": "illustrative"
+                    },
+                    {
+                      "type": "string",
+                      "pattern": "^precomputed:[\\s\\S]{0,}$"
+                    }
+                  ],
+                  "description": "\"precomputed:gpt2\" renders \"computed with GPT-2\"; \"illustrative\" renders a tag."
+                }
+              },
+              "required": [
+                "context",
+                "tokens",
+                "task",
+                "source"
+              ],
+              "additionalProperties": false
+            },
+            "goal": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "predict"
+                    },
+                    "maxL1": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "maxL1"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "rank"
+                    },
+                    "topK": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "minOverlap": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "topK",
+                    "minOverlap"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "temperature"
+                    },
+                    "range": {
+                      "type": "array",
+                      "prefixItems": [
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "number"
+                        }
+                      ],
+                      "items": false,
+                      "minItems": 2,
+                      "maxItems": 2
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "range"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "pick"
+                    },
+                    "token": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "token"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "loop"
+                    },
+                    "runs": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "runs"
+                  ],
+                  "additionalProperties": false
+                }
+              ],
+              "description": "Required when used as an interaction or item; omitted for visuals."
+            }
+          },
+          "required": [
+            "id",
+            "v",
+            "props"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "title": "Token splitter",
+          "description": "Text shatters into the tokens a model actually reads (cl100k_base, the GPT-4 tokenizer), with ids. The learner types, predicts token counts, crafts strings that meet token rules, or taps a token. Use when: Tokenisation is the idea: words aren't tokens, a leading space changes the token, rare words split into pieces, counts surprise.",
+          "type": "object",
+          "properties": {
+            "id": {
+              "const": "token-splitter"
+            },
+            "v": {
+              "const": 1,
+              "description": "Widget major version."
+            },
+            "props": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "type": "string",
+                  "description": "Initial text."
+                },
+                "editable": {
+                  "type": "boolean"
+                },
+                "showIds": {
+                  "type": "boolean"
+                },
+                "encoding": {
+                  "type": "string",
+                  "const": "cl100k_base"
+                },
+                "highlight": {
+                  "type": "string",
+                  "description": "Substring to emphasise."
+                }
+              },
+              "required": [
+                "text",
+                "editable",
+                "showIds",
+                "encoding"
+              ],
+              "additionalProperties": false
+            },
+            "goal": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "count"
+                    },
+                    "text": {
+                      "type": "string"
+                    },
+                    "tolerance": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "text",
+                    "tolerance"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "craft"
+                    },
+                    "minTokens": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "maxTokens": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "maxWords": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "mustInclude": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "kind"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "pick-token"
+                    },
+                    "text": {
+                      "type": "string"
+                    },
+                    "index": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "text",
+                    "index"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "split"
+                    },
+                    "text": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "text"
+                  ],
+                  "additionalProperties": false
+                }
+              ],
+              "description": "Required when used as an interaction or item; omitted for visuals."
+            }
+          },
+          "required": [
+            "id",
+            "v",
+            "props"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "title": "Attention weights",
+          "description": "Arcs from one token to every token it can see, thick where attention is high. The learner shares a budget of 100% across the words, taps the words that matter, or swaps a word and watches the arcs redraw. Optional causal mask. Use when: Which earlier words a token looks at, and why: pronoun resolution (“it” → “trophy”), agreement, the causal mask, attention as a weighted average that always sums to 1.",
+          "type": "object",
+          "properties": {
+            "id": {
+              "const": "attention-weights"
+            },
+            "v": {
+              "const": 1,
+              "description": "Widget major version."
+            },
+            "props": {
+              "type": "object",
+              "properties": {
+                "tokens": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "≤ 16."
+                },
+                "focus": {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991,
+                  "description": "Index of the token doing the looking."
+                },
+                "weights": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "description": "Reference weights (sum 1), length = tokens.length."
+                },
+                "mode": {
+                  "type": "string",
+                  "enum": [
+                    "view",
+                    "edit",
+                    "tap"
+                  ]
+                },
+                "hideWeights": {
+                  "type": "boolean",
+                  "description": "Hide the reference until answered."
+                },
+                "causal": {
+                  "type": "boolean",
+                  "description": "Dim tokens after focus (cannot be attended)."
+                },
+                "swap": {
+                  "type": "object",
+                  "properties": {
+                    "index": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "options": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "weightsByOption": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                          "type": "number"
+                        }
+                      }
+                    }
+                  },
+                  "required": [
+                    "index",
+                    "options",
+                    "weightsByOption"
+                  ],
+                  "additionalProperties": false,
+                  "description": "Drag to swap a word."
+                },
+                "source": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "const": "illustrative"
+                    },
+                    {
+                      "type": "string",
+                      "pattern": "^precomputed:[\\s\\S]{0,}$"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "tokens",
+                "focus",
+                "mode",
+                "source"
+              ],
+              "additionalProperties": false
+            },
+            "goal": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "weight"
+                    },
+                    "target": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "minWeight": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "target",
+                    "minWeight"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "tap"
+                    },
+                    "correct": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991
+                      }
+                    },
+                    "match": {
+                      "type": "string",
+                      "enum": [
+                        "any",
+                        "all",
+                        "exact"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "correct",
+                    "match"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "swap"
+                    },
+                    "option": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "option"
+                  ],
+                  "additionalProperties": false
+                }
+              ],
+              "description": "Required when used as an interaction or item; omitted for visuals."
+            }
+          },
+          "required": [
+            "id",
+            "v",
+            "props"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "title": "Embedding plane",
+          "description": "A 2D meaning map: words that mean similar things sit close together. The learner drags words to where they feel they belong (then the real projected positions slide in), finds a word's nearest neighbour, or completes an analogy arrow like king − man + woman. Use when: Meaning as position: similar words cluster, directions carry relationships (analogies), and nearest neighbours show what a model treats as related.",
+          "type": "object",
+          "properties": {
+            "id": {
+              "const": "embedding-plane"
+            },
+            "v": {
+              "const": 1,
+              "description": "Widget major version."
+            },
+            "props": {
+              "type": "object",
+              "properties": {
+                "points": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "label": {
+                        "type": "string"
+                      },
+                      "xy": {
+                        "type": "array",
+                        "prefixItems": [
+                          {
+                            "type": "number"
+                          },
+                          {
+                            "type": "number"
+                          }
+                        ],
+                        "items": false,
+                        "minItems": 2,
+                        "maxItems": 2
+                      },
+                      "cluster": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "label",
+                      "xy"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "description": "xy in 0..1."
+                },
+                "clusters": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "label": {
+                        "type": "string"
+                      },
+                      "color": {
+                        "type": "number",
+                        "enum": [
+                          1,
+                          2,
+                          3,
+                          4,
+                          5
+                        ]
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "label",
+                      "color"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "placeable": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Point ids the learner places (start in a tray; true xy revealed after)."
+                },
+                "analogy": {
+                  "type": "object",
+                  "properties": {
+                    "a": {
+                      "type": "string"
+                    },
+                    "b": {
+                      "type": "string"
+                    },
+                    "c": {
+                      "type": "string"
+                    },
+                    "answer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "a",
+                    "b",
+                    "c",
+                    "answer"
+                  ],
+                  "additionalProperties": false,
+                  "description": "a − b + c ≈ answer (ids)."
+                },
+                "showNeighbors": {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991,
+                  "description": "Show k nearest for a selected point."
+                },
+                "source": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "const": "illustrative"
+                    },
+                    {
+                      "type": "string",
+                      "pattern": "^precomputed:[\\s\\S]{0,}$"
+                    }
+                  ],
+                  "description": "precomputed = a 2D projection of real embeddings; the projection is named in the caption."
+                }
+              },
+              "required": [
+                "points",
+                "source"
+              ],
+              "additionalProperties": false
+            },
+            "goal": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "place"
+                    },
+                    "ids": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "maxDist": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "ids",
+                    "maxDist"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "nearest"
+                    },
+                    "of": {
+                      "type": "string"
+                    },
+                    "answer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "of",
+                    "answer"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "analogy"
+                    }
+                  },
+                  "required": [
+                    "kind"
+                  ],
+                  "additionalProperties": false
+                }
+              ],
+              "description": "Required when used as an interaction or item; omitted for visuals."
+            }
+          },
+          "required": [
+            "id",
+            "v",
+            "props"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "title": "Plot",
+          "description": "A function, data or bar chart with parameter sliders, live readouts, a draggable marker and an optional draw-your-prediction mode. Use when: A relationship between two quantities matters: tuning a parameter to hit a target, reading a value, or predicting a curve's shape.",
+          "type": "object",
+          "properties": {
+            "id": {
+              "const": "plot"
+            },
+            "v": {
+              "const": 1,
+              "description": "Widget major version."
+            },
+            "props": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "function",
+                    "data",
+                    "bar"
+                  ]
+                },
+                "x": {
+                  "type": "object",
+                  "properties": {
+                    "label": {
+                      "type": "string"
+                    },
+                    "scale": {
+                      "type": "string",
+                      "enum": [
+                        "linear",
+                        "log"
+                      ]
+                    },
+                    "unit": {
+                      "type": "string"
+                    },
+                    "min": {
+                      "type": "number"
+                    },
+                    "max": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "label",
+                    "min",
+                    "max"
+                  ],
+                  "additionalProperties": false
+                },
+                "y": {
+                  "type": "object",
+                  "properties": {
+                    "label": {
+                      "type": "string"
+                    },
+                    "scale": {
+                      "type": "string",
+                      "enum": [
+                        "linear",
+                        "log"
+                      ]
+                    },
+                    "unit": {
+                      "type": "string"
+                    },
+                    "min": {
+                      "type": "number"
+                    },
+                    "max": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "label"
+                  ],
+                  "additionalProperties": false
+                },
+                "series": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "label": {
+                        "type": "string"
+                      },
+                      "expr": {
+                        "type": "string"
+                      },
+                      "points": {
+                        "type": "array",
+                        "items": {
+                          "type": "array",
+                          "prefixItems": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "number"
+                            }
+                          ],
+                          "items": false,
+                          "minItems": 2,
+                          "maxItems": 2
+                        }
+                      },
+                      "bars": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "label": {
+                              "type": "string"
+                            },
+                            "value": {
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "label",
+                            "value"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "color": {
+                        "type": "number",
+                        "enum": [
+                          1,
+                          2,
+                          3,
+                          4,
+                          5
+                        ]
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "label"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "params": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "label": {
+                        "type": "string"
+                      },
+                      "min": {
+                        "type": "number"
+                      },
+                      "max": {
+                        "type": "number"
+                      },
+                      "step": {
+                        "type": "number"
+                      },
+                      "value": {
+                        "type": "number"
+                      },
+                      "unit": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "label",
+                      "min",
+                      "max",
+                      "step",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "readouts": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "label": {
+                        "type": "string"
+                      },
+                      "expr": {
+                        "type": "string"
+                      },
+                      "unit": {
+                        "type": "string"
+                      },
+                      "digits": {
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991
+                      }
+                    },
+                    "required": [
+                      "label",
+                      "expr"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "marker": {
+                  "type": "string",
+                  "enum": [
+                    "x",
+                    "point"
+                  ],
+                  "description": "Draggable marker for answering."
+                },
+                "markerAt": {
+                  "type": "number",
+                  "description": "x position of a static marker (e.g. set by a reveal)."
+                },
+                "drawPrediction": {
+                  "type": "boolean",
+                  "description": "\"You draw it\" before the truth appears."
+                },
+                "dataSource": {
+                  "type": "string",
+                  "enum": [
+                    "formula",
+                    "sources",
+                    "illustrative"
+                  ]
+                }
+              },
+              "required": [
+                "kind",
+                "x",
+                "y",
+                "series",
+                "dataSource"
+              ],
+              "additionalProperties": false
+            },
+            "goal": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "param"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "target": {
+                      "type": "number"
+                    },
+                    "tolerance": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "name",
+                    "target",
+                    "tolerance"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "point"
+                    },
+                    "x": {
+                      "type": "number"
+                    },
+                    "y": {
+                      "type": "number"
+                    },
+                    "tolerance": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "tolerance"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "draw"
+                    },
+                    "series": {
+                      "type": "string"
+                    },
+                    "maxError": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "series",
+                    "maxError"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "readout"
+                    },
+                    "label": {
+                      "type": "string"
+                    },
+                    "target": {
+                      "type": "number"
+                    },
+                    "tolerance": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "label",
+                    "target",
+                    "tolerance"
+                  ],
+                  "additionalProperties": false
+                }
+              ],
+              "description": "Required when used as an interaction or item; omitted for visuals."
+            }
+          },
+          "required": [
+            "id",
+            "v",
+            "props"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "title": "Sorter",
+          "description": "Drag cards into labelled buckets, or rank them in a single column. Use when: The learner should classify 3–8 examples into 2–4 categories, or put steps or quantities in order.",
+          "type": "object",
+          "properties": {
+            "id": {
+              "const": "sorter"
+            },
+            "v": {
+              "const": 1,
+              "description": "Widget major version."
+            },
+            "props": {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "type": "string",
+                  "enum": [
+                    "buckets",
+                    "rank"
+                  ]
+                },
+                "buckets": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "label": {
+                        "type": "string"
+                      },
+                      "hint": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "label"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "description": "2–4 (buckets mode)."
+                },
+                "cards": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "text": {
+                        "type": "string"
+                      },
+                      "asset": {
+                        "type": "string",
+                        "pattern": "^assets\\/([a-z0-9._-]+\\/)*[a-z0-9_-][a-z0-9._-]*\\.(svg|png|webp|mp3|ogg|html)$"
+                      },
+                      "why": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "text"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "description": "3–8."
+                },
+                "rankLabels": {
+                  "type": "array",
+                  "prefixItems": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ],
+                  "items": false,
+                  "minItems": 2,
+                  "maxItems": 2,
+                  "description": "Ends of the rank column, e.g. [\"first\", \"last\"]."
+                }
+              },
+              "required": [
+                "mode",
+                "cards"
+              ],
+              "additionalProperties": false
+            },
+            "goal": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "buckets"
+                    },
+                    "assignment": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    },
+                    "minCorrect": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "assignment"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "rank"
+                    },
+                    "order": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "minKendall": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "order"
+                  ],
+                  "additionalProperties": false
+                }
+              ],
+              "description": "Required when used as an interaction or item; omitted for visuals."
+            }
+          },
+          "required": [
+            "id",
+            "v",
+            "props"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "title": "Hotspot",
+          "description": "A picture with marked parts. The learner taps the right parts, or drags labels onto them. Use when: Parts of a diagram matter: a circuit, an eye, a code listing, a map, a chart's features.",
+          "type": "object",
+          "properties": {
+            "id": {
+              "const": "hotspot"
+            },
+            "v": {
+              "const": 1,
+              "description": "Widget major version."
+            },
+            "props": {
+              "type": "object",
+              "properties": {
+                "image": {
+                  "type": "string",
+                  "pattern": "^assets\\/([a-z0-9._-]+\\/)*[a-z0-9_-][a-z0-9._-]*\\.(svg|png|webp|mp3|ogg|html)$",
+                  "description": "svg or png."
+                },
+                "viewBox": {
+                  "type": "array",
+                  "prefixItems": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    }
+                  ],
+                  "items": false,
+                  "minItems": 2,
+                  "maxItems": 2,
+                  "description": "Width, height of the image coordinate space."
+                },
+                "spots": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "x": {
+                        "type": "number"
+                      },
+                      "y": {
+                        "type": "number"
+                      },
+                      "r": {
+                        "type": "number"
+                      },
+                      "w": {
+                        "type": "number"
+                      },
+                      "h": {
+                        "type": "number"
+                      },
+                      "label": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "x",
+                      "y",
+                      "label"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "mode": {
+                  "type": "string",
+                  "enum": [
+                    "tap",
+                    "label"
+                  ]
+                },
+                "labels": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "label mode: draggable labels (may include distractors)."
+                },
+                "showLabels": {
+                  "type": "boolean",
+                  "description": "Explore mode."
+                }
+              },
+              "required": [
+                "image",
+                "viewBox",
+                "spots",
+                "mode"
+              ],
+              "additionalProperties": false
+            },
+            "goal": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "tap"
+                    },
+                    "correct": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "match": {
+                      "type": "string",
+                      "enum": [
+                        "any",
+                        "all"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "correct",
+                    "match"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "label"
+                    },
+                    "mapping": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "mapping"
+                  ],
+                  "additionalProperties": false
+                }
+              ],
+              "description": "Required when used as an interaction or item; omitted for visuals."
+            }
+          },
+          "required": [
+            "id",
+            "v",
+            "props"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "title": "A/B compare",
+          "description": "Two versions of the same thing: side by side, flipped like a card, or wiped across like a before/after photo. The learner picks A, B or (if allowed) the same. Use when: Contrasting cases: two versions that differ in one important way (two headlines, two charts, two sentences, two designs), so the difference itself is the lesson.",
+          "type": "object",
+          "properties": {
+            "id": {
+              "const": "ab-compare"
+            },
+            "v": {
+              "const": 1,
+              "description": "Widget major version."
+            },
+            "props": {
+              "type": "object",
+              "properties": {
+                "a": {
+                  "type": "object",
+                  "properties": {
+                    "label": {
+                      "type": "string"
+                    },
+                    "text": {
+                      "type": "string"
+                    },
+                    "asset": {
+                      "type": "string",
+                      "pattern": "^assets\\/([a-z0-9._-]+\\/)*[a-z0-9_-][a-z0-9._-]*\\.(svg|png|webp|mp3|ogg|html)$"
+                    },
+                    "caption": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "label"
+                  ],
+                  "additionalProperties": false
+                },
+                "b": {
+                  "type": "object",
+                  "properties": {
+                    "label": {
+                      "type": "string"
+                    },
+                    "text": {
+                      "type": "string"
+                    },
+                    "asset": {
+                      "type": "string",
+                      "pattern": "^assets\\/([a-z0-9._-]+\\/)*[a-z0-9_-][a-z0-9._-]*\\.(svg|png|webp|mp3|ogg|html)$"
+                    },
+                    "caption": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "label"
+                  ],
+                  "additionalProperties": false
+                },
+                "layout": {
+                  "type": "string",
+                  "enum": [
+                    "side-by-side",
+                    "toggle",
+                    "wipe"
+                  ]
+                },
+                "allowSame": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "a",
+                "b",
+                "layout"
+              ],
+              "additionalProperties": false
+            },
+            "goal": {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "const": "pick"
+                },
+                "answer": {
+                  "type": "string",
+                  "enum": [
+                    "a",
+                    "b",
+                    "same"
+                  ]
+                }
+              },
+              "required": [
+                "kind",
+                "answer"
+              ],
+              "additionalProperties": false,
+              "description": "Required when used as an interaction or item; omitted for visuals."
+            }
+          },
+          "required": [
+            "id",
+            "v",
+            "props"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "title": "Light clock",
+          "description": "A light clock between two mirrors 4 units apart, seen from the platform or the train; trace, speed and γ tasks, tick counters and the 3-4-5 triangle. Use when: Time dilation and the γ factor: why a moving clock ticks slower (longer diagonal at the same c), mutual dilation via the frame switch, or hitting a γ target with the speed slider.",
+          "type": "object",
+          "properties": {
+            "id": {
+              "const": "light-clock"
+            },
+            "v": {
+              "const": 1,
+              "description": "Widget major version."
+            },
+            "props": {
+              "type": "object",
+              "properties": {
+                "v": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 0.99,
+                  "description": "Initial speed (0..0.99)."
+                },
+                "vRange": {
+                  "type": "array",
+                  "prefixItems": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    }
+                  ],
+                  "items": false,
+                  "minItems": 2,
+                  "maxItems": 2,
+                  "description": "Slider range; equal values = fixed."
+                },
+                "frame": {
+                  "type": "string",
+                  "enum": [
+                    "platform",
+                    "train"
+                  ]
+                },
+                "allowFrameSwitch": {
+                  "type": "boolean"
+                },
+                "task": {
+                  "type": "string",
+                  "enum": [
+                    "view",
+                    "trace",
+                    "speed",
+                    "tick"
+                  ]
+                },
+                "showTriangle": {
+                  "type": "boolean"
+                },
+                "showTicks": {
+                  "type": "boolean",
+                  "description": "Tick counters for both clocks."
+                },
+                "highlight": {
+                  "type": "string",
+                  "enum": [
+                    "train",
+                    "platform"
+                  ],
+                  "description": "Emphasise one clock (used by choice visualState)."
+                }
+              },
+              "required": [
+                "v",
+                "vRange",
+                "frame",
+                "allowFrameSwitch",
+                "task"
+              ],
+              "additionalProperties": false
+            },
+            "goal": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "trace"
+                    },
+                    "path": {
+                      "type": "string",
+                      "const": "diagonal"
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "path"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "gamma"
+                    },
+                    "target": {
+                      "type": "number"
+                    },
+                    "tolerance": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "target",
+                    "tolerance"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "speed"
+                    },
+                    "target": {
+                      "type": "number"
+                    },
+                    "tolerance": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "target",
+                    "tolerance"
+                  ],
+                  "additionalProperties": false
+                }
+              ],
+              "description": "Required when used as an interaction or item; omitted for visuals."
+            }
+          },
+          "required": [
+            "id",
+            "v",
+            "props"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "title": "Train scene",
+          "description": "Einstein's train: a lamp in mid-car, lightning at both ends, or a headlight, seen from the train or the platform, with slow motion, a time scrubber and a 'subtract light-travel time' stopwatch. Use when: Relativity of simultaneity (lamp: platform sees the rear wall lit first; lightning: the passenger concludes the front strike came first) or the constancy of light speed (headlight: c in every frame).",
+          "type": "object",
+          "properties": {
+            "id": {
+              "const": "train-scene"
+            },
+            "v": {
+              "const": 1,
+              "description": "Widget major version."
+            },
+            "props": {
+              "type": "object",
+              "properties": {
+                "scenario": {
+                  "type": "string",
+                  "enum": [
+                    "lamp",
+                    "lightning",
+                    "headlight"
+                  ]
+                },
+                "v": {
+                  "type": "number",
+                  "description": "Train speed (fraction of c)."
+                },
+                "frame": {
+                  "type": "string",
+                  "enum": [
+                    "train",
+                    "platform"
+                  ]
+                },
+                "allowFrameSwitch": {
+                  "type": "boolean"
+                },
+                "showDelayCorrection": {
+                  "type": "boolean",
+                  "description": "\"Subtract light-travel time\" button."
+                },
+                "slowMo": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "scenario",
+                "v",
+                "frame",
+                "allowFrameSwitch"
+              ],
+              "additionalProperties": false
+            },
+            "goal": {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "const": "pick"
+                },
+                "answer": {
+                  "type": "string",
+                  "enum": [
+                    "front",
+                    "rear",
+                    "same",
+                    "c",
+                    "faster",
+                    "slower"
+                  ]
+                }
+              },
+              "required": [
+                "kind",
+                "answer"
+              ],
+              "additionalProperties": false,
+              "description": "Required when used as an interaction or item; omitted for visuals."
+            }
+          },
+          "required": [
+            "id",
+            "v",
+            "props"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "title": "Spacetime diagram",
+          "description": "A Minkowski diagram (c = 1, light at 45°) with draggable events, bendable worldlines, light cones, a boost slider that tilts the axes, simultaneity lines and proper-time, interval and order readouts. Use when: Event order and simultaneity across frames, causality (light cones), proper time along worldlines and the twin paradox.",
+          "type": "object",
+          "properties": {
+            "id": {
+              "const": "spacetime-diagram"
+            },
+            "v": {
+              "const": 1,
+              "description": "Widget major version."
+            },
+            "props": {
+              "type": "object",
+              "properties": {
+                "range": {
+                  "type": "object",
+                  "properties": {
+                    "x": {
+                      "type": "array",
+                      "prefixItems": [
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "number"
+                        }
+                      ],
+                      "items": false,
+                      "minItems": 2,
+                      "maxItems": 2
+                    },
+                    "t": {
+                      "type": "array",
+                      "prefixItems": [
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "number"
+                        }
+                      ],
+                      "items": false,
+                      "minItems": 2,
+                      "maxItems": 2
+                    }
+                  },
+                  "required": [
+                    "x",
+                    "t"
+                  ],
+                  "additionalProperties": false
+                },
+                "units": {
+                  "type": "object",
+                  "properties": {
+                    "x": {
+                      "type": "string"
+                    },
+                    "t": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "x",
+                    "t"
+                  ],
+                  "additionalProperties": false,
+                  "description": "e.g. { x: \"ly\", t: \"yr\" }"
+                },
+                "events": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "x": {
+                        "type": "number"
+                      },
+                      "t": {
+                        "type": "number"
+                      },
+                      "label": {
+                        "type": "string"
+                      },
+                      "draggable": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "x",
+                      "t",
+                      "label"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "worldlines": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "label": {
+                        "type": "string"
+                      },
+                      "points": {
+                        "type": "array",
+                        "items": {
+                          "type": "array",
+                          "prefixItems": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "number"
+                            }
+                          ],
+                          "items": false,
+                          "minItems": 2,
+                          "maxItems": 2
+                        }
+                      },
+                      "editable": {
+                        "type": "boolean"
+                      },
+                      "color": {
+                        "type": "number",
+                        "enum": [
+                          1,
+                          2,
+                          3,
+                          4,
+                          5
+                        ]
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "label",
+                      "points"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "description": "points are [x, t]."
+                },
+                "boost": {
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "type": "number"
+                    },
+                    "min": {
+                      "type": "number"
+                    },
+                    "max": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "value",
+                    "min",
+                    "max"
+                  ],
+                  "additionalProperties": false,
+                  "description": "Observer velocity; omit to hide the slider."
+                },
+                "lightCones": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Event ids."
+                },
+                "showSimultaneity": {
+                  "type": "boolean",
+                  "description": "\"Now\" line of the boosted frame."
+                },
+                "readouts": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "proper-time",
+                      "interval",
+                      "order"
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "range",
+                "units",
+                "events",
+                "worldlines"
+              ],
+              "additionalProperties": false
+            },
+            "goal": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "order"
+                    },
+                    "first": {
+                      "type": "string"
+                    },
+                    "frameV": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "first"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "proper-time"
+                    },
+                    "worldline": {
+                      "type": "string"
+                    },
+                    "target": {
+                      "type": "number"
+                    },
+                    "tolerance": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "worldline",
+                    "target",
+                    "tolerance"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "place"
+                    },
+                    "event": {
+                      "type": "string"
+                    },
+                    "region": {
+                      "type": "string",
+                      "enum": [
+                        "future",
+                        "past",
+                        "elsewhere"
+                      ]
+                    },
+                    "relativeTo": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "event",
+                    "region",
+                    "relativeTo"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "boost"
+                    },
+                    "target": {
+                      "type": "number"
+                    },
+                    "tolerance": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "target",
+                    "tolerance"
+                  ],
+                  "additionalProperties": false
+                }
+              ],
+              "description": "Required when used as an interaction or item; omitted for visuals."
+            }
+          },
+          "required": [
+            "id",
+            "v",
+            "props"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "title": "Tile builder",
+          "description": "Build a sentence (or a program, Parsons-style, with indentation) from tiles; gender and number agreement show as shape and colour; the finished sentence can be read aloud. Use when: Producing a sentence or a few lines of code from given pieces: word order, agreement (tags m/f/sg/pl), Parsons problems, and the 'I'm stuck' scaffold for explain answers.",
+          "type": "object",
+          "properties": {
+            "id": {
+              "const": "tile-builder"
+            },
+            "v": {
+              "const": 1,
+              "description": "Widget major version."
+            },
+            "props": {
+              "type": "object",
+              "properties": {
+                "mode": {
+                  "type": "string",
+                  "enum": [
+                    "sentence",
+                    "lines"
+                  ],
+                  "description": "lines = Parsons problem."
+                },
+                "meaning": {
+                  "type": "string",
+                  "description": "Prompt in the learner's language, e.g. \"The red houses\"."
+                },
+                "tiles": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "text": {
+                        "type": "string"
+                      },
+                      "tags": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "enum": [
+                            "m",
+                            "f",
+                            "sg",
+                            "pl",
+                            "verb",
+                            "noun",
+                            "adj"
+                          ]
+                        }
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "text"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "showAgreement": {
+                  "type": "boolean",
+                  "description": "Gender by shape AND colour."
+                },
+                "lang": {
+                  "type": "string",
+                  "description": "For audio."
+                },
+                "speak": {
+                  "type": "boolean",
+                  "description": "Play the built sentence on commit (pack audio, else TTS)."
+                }
+              },
+              "required": [
+                "mode",
+                "tiles"
+              ],
+              "additionalProperties": false
+            },
+            "goal": {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "const": "sequence"
+                },
+                "accept": {
+                  "type": "array",
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "indents": {
+                  "type": "array",
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  }
+                }
+              },
+              "required": [
+                "kind",
+                "accept"
+              ],
+              "additionalProperties": false,
+              "description": "Required when used as an interaction or item; omitted for visuals."
+            }
+          },
+          "required": [
+            "id",
+            "v",
+            "props"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "title": "Dialogue",
+          "description": "A branching conversation with a character: lines with audio and a translation toggle, reply choices that can change state (Lola's speed dial), and typed replies checked accent-tolerantly. Use when: A realistic exchange (ordering, asking for help, persuading) where the learner chooses or produces replies; boss set pieces like dinner in Sevilla.",
+          "type": "object",
+          "properties": {
+            "id": {
+              "const": "dialogue"
+            },
+            "v": {
+              "const": 1,
+              "description": "Widget major version."
+            },
+            "props": {
+              "type": "object",
+              "properties": {
+                "setting": {
+                  "type": "string",
+                  "description": "\"A bar in Córdoba, 9 pm\""
+                },
+                "character": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "glyph": {
+                      "type": "string",
+                      "enum": [
+                        "tok",
+                        "mira",
+                        "lola",
+                        "bit",
+                        "iso",
+                        "prior",
+                        "yuki",
+                        "duke",
+                        "ping",
+                        "mags",
+                        "ochre",
+                        "heuristica",
+                        "generic"
+                      ]
+                    },
+                    "avatar": {
+                      "type": "string",
+                      "pattern": "^assets\\/([a-z0-9._-]+\\/)*[a-z0-9_-][a-z0-9._-]*\\.(svg|png|webp|mp3|ogg|html)$"
+                    },
+                    "lang": {
+                      "type": "string"
+                    },
+                    "speak": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "name"
+                  ],
+                  "additionalProperties": false
+                },
+                "start": {
+                  "type": "string",
+                  "description": "Node id."
+                },
+                "nodes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "line": {
+                        "type": "string",
+                        "description": "What the character says (target language allowed)."
+                      },
+                      "audio": {
+                        "type": "string",
+                        "pattern": "^assets\\/([a-z0-9._-]+\\/)*[a-z0-9_-][a-z0-9._-]*\\.(svg|png|webp|mp3|ogg|html)$",
+                        "description": "Filled by the compiler from packs:audio."
+                      },
+                      "translation": {
+                        "type": "string"
+                      },
+                      "choices": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "text": {
+                              "type": "string"
+                            },
+                            "next": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "note": {
+                              "type": "string"
+                            },
+                            "good": {
+                              "type": "boolean"
+                            },
+                            "set": {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "additionalProperties": {
+                                "type": [
+                                  "string",
+                                  "number"
+                                ]
+                              }
+                            }
+                          },
+                          "required": [
+                            "text",
+                            "next"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "description": "next null = ending."
+                      },
+                      "reply": {
+                        "type": "object",
+                        "properties": {
+                          "accept": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "normalize": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "enum": [
+                                "case",
+                                "accents",
+                                "punct",
+                                "space",
+                                "articles"
+                              ]
+                            }
+                          },
+                          "next": {
+                            "type": "string"
+                          },
+                          "else": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "accept",
+                          "next",
+                          "else"
+                        ],
+                        "additionalProperties": false,
+                        "description": "Typed production turn (accent-tolerant)."
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "line"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "state": {
+                  "type": "object",
+                  "propertyNames": {
+                    "type": "string"
+                  },
+                  "additionalProperties": {
+                    "type": [
+                      "string",
+                      "number"
+                    ]
+                  },
+                  "description": "e.g. { speed: 1.0 } — Lola's speed dial."
+                },
+                "goals": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Shown as a checklist."
+                },
+                "ai": {
+                  "type": "object",
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean"
+                    },
+                    "persona": {
+                      "type": "string"
+                    },
+                    "vocabulary": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "maxWords": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "enabled",
+                    "persona"
+                  ],
+                  "additionalProperties": false,
+                  "description": "AI free-reply upgrade (key only)."
+                }
+              },
+              "required": [
+                "setting",
+                "character",
+                "start",
+                "nodes"
+              ],
+              "additionalProperties": false
+            },
+            "goal": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "reach"
+                    },
+                    "endings": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "endings"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "good-choices"
+                    },
+                    "min": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "min"
+                  ],
+                  "additionalProperties": false
+                }
+              ],
+              "description": "Required when used as an interaction or item; omitted for visuals."
+            }
+          },
+          "required": [
+            "id",
+            "v",
+            "props"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "title": "Listen",
+          "description": "Play a phrase at natural or slow speed (pack audio, else the browser's voice), then pick or type what was said; or shadow it: record yourself in memory, play it next to the model line, and rate yourself. The transcript is always available after answering, or whenever audio can't play. Use when: Listening comprehension or pronunciation practice in a language pack.",
+          "type": "object",
+          "properties": {
+            "id": {
+              "const": "listen"
+            },
+            "v": {
+              "const": 1,
+              "description": "Widget major version."
+            },
+            "props": {
+              "type": "object",
+              "properties": {
+                "src": {
+                  "type": "string",
+                  "pattern": "^assets\\/([a-z0-9._-]+\\/)*[a-z0-9_-][a-z0-9._-]*\\.(svg|png|webp|mp3|ogg|html)$",
+                  "description": "Pre-rendered audio (required in curated language packs and in bosses/placement, L021)."
+                },
+                "tts": {
+                  "type": "object",
+                  "properties": {
+                    "text": {
+                      "type": "string"
+                    },
+                    "lang": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "text",
+                    "lang"
+                  ],
+                  "additionalProperties": false,
+                  "description": "Web Speech fallback; one of src/tts required."
+                },
+                "speeds": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "description": "e.g. [0.7, 1]"
+                },
+                "transcript": {
+                  "type": "string"
+                },
+                "translation": {
+                  "type": "string"
+                },
+                "showTranscript": {
+                  "type": "string",
+                  "enum": [
+                    "after",
+                    "toggle"
+                  ]
+                },
+                "task": {
+                  "type": "string",
+                  "enum": [
+                    "identify",
+                    "shadow"
+                  ],
+                  "description": "Default \"identify\"; shadow = record yourself, compare, self-rate."
+                },
+                "answerKind": {
+                  "type": "string",
+                  "enum": [
+                    "choice",
+                    "type"
+                  ],
+                  "description": "identify only."
+                },
+                "options": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Choice mode."
+                }
+              },
+              "required": [
+                "speeds",
+                "transcript",
+                "showTranscript"
+              ],
+              "additionalProperties": false
+            },
+            "goal": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "choice"
+                    },
+                    "answer": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "answer"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "type"
+                    },
+                    "accept": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "normalize": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "case",
+                          "accents",
+                          "punct",
+                          "space",
+                          "articles"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "accept"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "const": "shadow"
+                    }
+                  },
+                  "required": [
+                    "kind"
+                  ],
+                  "additionalProperties": false
+                }
+              ],
+              "description": "Required when used as an interaction or item; omitted for visuals."
+            }
+          },
+          "required": [
+            "id",
+            "v",
+            "props"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "title": "Code stepper",
+          "description": "Step through a short program (≤ 20 lines) with a precomputed trace; at marked steps the learner predicts a variable, the output or the next line before it is revealed. Variables show as name tags or boxes. Use when: How a program runs line by line: assignment, loops, conditionals, output.",
+          "type": "object",
+          "properties": {
+            "id": {
+              "const": "code-stepper"
+            },
+            "v": {
+              "const": 1,
+              "description": "Widget major version."
+            },
+            "props": {
+              "type": "object",
+              "properties": {
+                "lang": {
+                  "type": "string",
+                  "enum": [
+                    "python",
+                    "javascript"
+                  ]
+                },
+                "code": {
+                  "type": "string",
+                  "description": "≤ 20 lines."
+                },
+                "trace": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "line": {
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991
+                      },
+                      "vars": {
+                        "type": "object",
+                        "propertyNames": {
+                          "type": "string"
+                        },
+                        "additionalProperties": {
+                          "type": [
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ]
+                        }
+                      },
+                      "output": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "line",
+                      "vars"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "predictAt": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "step": {
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991
+                      },
+                      "ask": {
+                        "type": "string",
+                        "enum": [
+                          "var",
+                          "output",
+                          "line"
+                        ]
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "step",
+                      "ask"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "view": {
+                  "type": "string",
+                  "enum": [
+                    "name-tags",
+                    "boxes"
+                  ]
+                }
+              },
+              "required": [
+                "lang",
+                "code",
+                "trace",
+                "predictAt",
+                "view"
+              ],
+              "additionalProperties": false
+            },
+            "goal": {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "const": "predictions"
+                },
+                "answers": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "minCorrect": {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
+                }
+              },
+              "required": [
+                "kind",
+                "answers",
+                "minCorrect"
+              ],
+              "additionalProperties": false,
+              "description": "Required when used as an interaction or item; omitted for visuals."
+            }
+          },
+          "required": [
+            "id",
+            "v",
+            "props"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "WidgetId": {
+      "type": "string",
+      "enum": [
+        "probability-bars",
+        "token-splitter",
+        "attention-weights",
+        "embedding-plane",
+        "plot",
+        "sorter",
+        "hotspot",
+        "ab-compare",
+        "light-clock",
+        "train-scene",
+        "spacetime-diagram",
+        "tile-builder",
+        "dialogue",
+        "listen",
+        "code-stepper"
+      ]
+    },
+    "FigureVisual": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "const": "figure"
+        },
+        "asset": {
+          "$ref": "#/$defs/AssetPath"
+        },
+        "alt": {
+          "type": "string"
+        },
+        "caption": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "asset",
+        "alt"
+      ],
+      "additionalProperties": false,
+      "description": "SVG must be DOMPurify-stable."
+    },
+    "AssetPath": {
+      "type": "string",
+      "pattern": "^assets\\/([a-z0-9._-]+\\/)*[a-z0-9_-][a-z0-9._-]*\\.(svg|png|webp|mp3|ogg|html)$",
+      "description": "Pack-relative asset path. No \"..\" segment; .html only under assets/interactive/. The resolved real path must stay under the pack root (checked by the loader, not here)."
+    },
+    "HtmlVisual": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "const": "html"
+        },
+        "asset": {
+          "$ref": "#/$defs/AssetPath"
+        },
+        "height": {
+          "type": "number"
+        },
+        "alt": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "asset",
+        "height",
+        "alt"
+      ],
+      "additionalProperties": false,
+      "description": "assets/interactive/*.html, sandbox origin, ≤ 64 KB."
+    },
+    "GeneratedHtmlVisual": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "const": "generated-html"
+        },
+        "html": {
+          "type": "string"
+        },
+        "height": {
+          "type": "number"
+        },
+        "alt": {
+          "type": "string"
+        },
+        "provenance": {
+          "$ref": "#/$defs/Provenance"
+        }
+      },
+      "required": [
+        "kind",
+        "html",
+        "height",
+        "alt",
+        "provenance"
+      ],
+      "additionalProperties": false,
+      "description": "Pocket maps only, local only, sandbox origin, ≤ 64 KB, validated before use."
+    },
+    "Provenance": {
+      "type": "object",
+      "properties": {
+        "feature": {
+          "type": "string",
+          "enum": [
+            "create",
+            "build",
+            "quiz",
+            "cards",
+            "figure",
+            "toy",
+            "precompute"
+          ]
+        },
+        "prompt": {
+          "type": "string",
+          "description": "\"create-node@1\" | \"scripts/precompute@1\""
+        },
+        "provider": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProviderId"
+            },
+            {
+              "type": "string",
+              "const": "script"
+            }
+          ]
+        },
+        "model": {
+          "type": "string",
+          "description": "\"claude-sonnet-5-5\" | \"gpt2\""
+        },
+        "at": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "cacheKey": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "feature",
+        "prompt",
+        "provider",
+        "model",
+        "at"
+      ],
+      "additionalProperties": false,
+      "description": "How an AI- or script-generated file or value was made."
+    },
+    "ProviderId": {
+      "type": "string",
+      "enum": [
+        "none",
+        "anthropic",
+        "openai-compatible",
+        "ollama"
+      ]
+    },
+    "IsoDate": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}(T\\d{2}:\\d{2}(:\\d{2}(\\.\\d+)?)?(Z|[+-]\\d{2}:\\d{2}))?$",
+      "description": "\"2026-10-20T08:00:00Z\" (a plain date \"2026-10-20\" is also accepted in files)."
+    },
+    "__schema9": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/Misconception"
+      }
+    },
+    "Misconception": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The wrong belief, stated as a belief."
+        },
+        "upstream": {
+          "$ref": "#/$defs/NodeId",
+          "description": "Optional ancestor node id: the card a checkpoint miss points back to when it isn't the item's own card."
+        },
+        "hint": {
+          "$ref": "#/$defs/Markdown",
+          "description": "≤ 20 words; cloze uses {{answer}} once."
+        }
+      },
+      "required": [
+        "label",
+        "hint"
+      ],
+      "additionalProperties": false
+    },
+    "Markdown": {
+      "type": "string",
+      "description": "Inline Markdown: bold, italic, code, http(s) links or stop:<nodeId>. No raw HTML, no links into assets/. `$…$` maths allowed."
+    },
+    "Hook": {
+      "type": "object",
+      "properties": {
+        "blocks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Block"
+          },
+          "description": "Hook total ≤ 30 words: blocks + prompt + options longer than 6 words (L001)."
+        },
+        "visual": {
+          "$ref": "#/$defs/Visual"
+        },
+        "interaction": {
+          "$ref": "#/$defs/HookInteraction",
+          "description": "Always excluded from tuning and grading credit; may set confidence: true."
+        },
+        "lotsGuess": {
+          "type": "string",
+          "description": "Option id commonly guessed → \"Lots of people guess …\"."
+        },
+        "style": {
+          "type": "string",
+          "enum": [
+            "puzzle",
+            "surprise",
+            "what-would-you-do"
+          ],
+          "description": "For the AI judge and analytics; not shown."
+        }
+      },
+      "required": [
+        "interaction"
+      ],
+      "additionalProperties": false
+    },
+    "Block": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/SayBlock"
+        },
+        {
+          "$ref": "#/$defs/StoryBlock"
+        },
+        {
+          "$ref": "#/$defs/MathBlock"
+        },
+        {
+          "$ref": "#/$defs/CodeBlock"
+        },
+        {
+          "$ref": "#/$defs/AudioBlock"
+        },
+        {
+          "$ref": "#/$defs/QuoteBlock"
+        },
+        {
+          "$ref": "#/$defs/CalloutBlock"
+        }
+      ]
+    },
+    "SayBlock": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "say"
+        },
+        "text": {
+          "$ref": "#/$defs/Markdown",
+          "description": "≤ 20 words; cloze uses {{answer}} once."
+        },
+        "mood": {
+          "type": "string",
+          "enum": [
+            "idle",
+            "curious",
+            "happy"
+          ]
+        },
+        "outside": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "type",
+        "text"
+      ],
+      "additionalProperties": false,
+      "description": "One line from Moss, the guide (≤ 35 words, lint). `outside`: the line goes beyond the source article."
+    },
+    "StoryBlock": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "story"
+        },
+        "text": {
+          "$ref": "#/$defs/Markdown",
+          "description": "≤ 20 words; cloze uses {{answer}} once."
+        },
+        "speaker": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "text"
+      ],
+      "additionalProperties": false,
+      "description": "Counts toward the word cap."
+    },
+    "MathBlock": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "math"
+        },
+        "tex": {
+          "type": "string"
+        },
+        "caption": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "tex"
+      ],
+      "additionalProperties": false,
+      "description": "KaTeX display math; doesn't count toward the word cap."
+    },
+    "CodeBlock": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "code"
+        },
+        "lang": {
+          "type": "string",
+          "enum": [
+            "python",
+            "javascript",
+            "text"
+          ]
+        },
+        "source": {
+          "type": "string"
+        },
+        "highlight": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          }
+        }
+      },
+      "required": [
+        "type",
+        "lang",
+        "source"
+      ],
+      "additionalProperties": false,
+      "description": "Display only; doesn't count toward the word cap."
+    },
+    "AudioBlock": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "audio"
+        },
+        "tts": {
+          "type": "object",
+          "properties": {
+            "text": {
+              "type": "string"
+            },
+            "lang": {
+              "type": "string"
+            },
+            "rate": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "text",
+            "lang"
+          ],
+          "additionalProperties": false
+        },
+        "src": {
+          "$ref": "#/$defs/AssetPath"
+        },
+        "transcript": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "transcript"
+      ],
+      "additionalProperties": false,
+      "description": "`src` is filled by the compiler from `packs:audio` renders."
+    },
+    "QuoteBlock": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "quote"
+        },
+        "text": {
+          "type": "string"
+        },
+        "cite": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string"
+            },
+            "para": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "title"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "type",
+        "text",
+        "cite"
+      ],
+      "additionalProperties": false,
+      "description": "≤ 40 words; counts toward the word cap."
+    },
+    "CalloutBlock": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "callout"
+        },
+        "tone": {
+          "type": "string",
+          "enum": [
+            "note",
+            "caution",
+            "illustrative"
+          ]
+        },
+        "text": {
+          "$ref": "#/$defs/Markdown",
+          "description": "≤ 20 words; cloze uses {{answer}} once."
+        }
+      },
+      "required": [
+        "type",
+        "tone",
+        "text"
+      ],
+      "additionalProperties": false,
+      "description": "Counts toward the word cap."
+    },
+    "HookInteraction": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/__schema10"
+        },
+        {
+          "$ref": "#/$defs/__schema19"
+        },
+        {
+          "$ref": "#/$defs/__schema23"
+        },
+        {
+          "$ref": "#/$defs/__schema27"
+        }
+      ],
+      "description": "Hooks are always excluded from tuning and grading credit."
+    },
+    "__schema10": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ItemId"
+        },
+        "prompt": {
+          "$ref": "#/$defs/Markdown",
+          "description": "≤ 20 words; cloze uses {{answer}} once."
+        },
+        "confidence": {
+          "$ref": "#/$defs/__schema11"
+        },
+        "feedbackRight": {
+          "$ref": "#/$defs/__schema12"
+        },
+        "onWrong": {
+          "$ref": "#/$defs/__schema13"
+        },
+        "kind": {
+          "$ref": "#/$defs/__schema14"
+        },
+        "options": {
+          "$ref": "#/$defs/__schema15"
+        },
+        "answer": {
+          "$ref": "#/$defs/__schema16"
+        },
+        "multi": {
+          "$ref": "#/$defs/__schema17"
+        },
+        "shuffle": {
+          "$ref": "#/$defs/__schema18"
+        }
+      },
+      "required": [
+        "id",
+        "prompt",
+        "kind",
+        "options",
+        "answer"
+      ],
+      "additionalProperties": false
+    },
+    "ItemId": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+      "description": "Unique within a node: hook, screen interactions, items and flashcards share one namespace."
+    },
+    "__schema11": {
+      "type": "boolean"
+    },
+    "__schema12": {
+      "$ref": "#/$defs/Markdown",
+      "description": "≤ 20 words; cloze uses {{answer}} once."
+    },
+    "__schema13": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/OnWrong"
+      }
+    },
+    "OnWrong": {
+      "type": "object",
+      "properties": {
+        "misconception": {
+          "type": "string"
+        },
+        "feedback": {
+          "$ref": "#/$defs/Markdown",
+          "description": "≤ 20 words; cloze uses {{answer}} once."
+        }
+      },
+      "additionalProperties": false,
+      "description": "Feedback ≤ 25 words."
+    },
+    "__schema14": {
+      "type": "string",
+      "const": "choice"
+    },
+    "__schema15": {
+      "minItems": 2,
+      "maxItems": 5,
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/ChoiceOption"
+      }
+    },
+    "ChoiceOption": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "text": {
+          "$ref": "#/$defs/Markdown",
+          "description": "≤ 20 words; cloze uses {{answer}} once."
+        },
+        "misconception": {
+          "type": "string"
+        },
+        "why": {
+          "$ref": "#/$defs/Markdown",
+          "description": "≤ 20 words; cloze uses {{answer}} once."
+        },
+        "visualState": {
+          "$ref": "#/$defs/VisualState",
+          "description": "The canvas acts out what this answer would mean (required on widget canvases, L019)."
+        }
+      },
+      "required": [
+        "id",
+        "text"
+      ],
+      "additionalProperties": false
+    },
+    "VisualState": {
+      "type": "object",
+      "properties": {
+        "props": {
+          "description": "Merged into the canvas widget's props (validated by its schema).",
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {}
+        },
+        "note": {
+          "description": "≤ 8 words, drawn by WidgetHost as a label pinned on the canvas.",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "__schema16": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "__schema17": {
+      "type": "boolean"
+    },
+    "__schema18": {
+      "type": "boolean"
+    },
+    "__schema19": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ItemId"
+        },
+        "prompt": {
+          "$ref": "#/$defs/Markdown",
+          "description": "≤ 20 words; cloze uses {{answer}} once."
+        },
+        "confidence": {
+          "$ref": "#/$defs/__schema11"
+        },
+        "feedbackRight": {
+          "$ref": "#/$defs/__schema12"
+        },
+        "onWrong": {
+          "$ref": "#/$defs/__schema13"
+        },
+        "kind": {
+          "$ref": "#/$defs/__schema20"
+        },
+        "scale": {
+          "$ref": "#/$defs/EstimateScale"
+        },
+        "answer": {
+          "$ref": "#/$defs/__schema21"
+        },
+        "accept": {
+          "$ref": "#/$defs/__schema22"
+        }
+      },
+      "required": [
+        "id",
+        "prompt",
+        "kind",
+        "scale",
+        "answer",
+        "accept"
+      ],
+      "additionalProperties": false
+    },
+    "__schema20": {
+      "type": "string",
+      "const": "estimate"
+    },
+    "EstimateScale": {
+      "type": "object",
+      "properties": {
+        "min": {
+          "type": "number"
+        },
+        "max": {
+          "type": "number"
+        },
+        "log": {
+          "type": "boolean"
+        },
+        "unit": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "min",
+        "max"
+      ],
+      "additionalProperties": false
+    },
+    "__schema21": {
+      "type": "number"
+    },
+    "__schema22": {
+      "type": "object",
+      "properties": {
+        "factor": {
+          "type": "number"
+        },
+        "abs": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    },
+    "__schema23": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ItemId"
+        },
+        "prompt": {
+          "$ref": "#/$defs/Markdown",
+          "description": "≤ 20 words; cloze uses {{answer}} once."
+        },
+        "confidence": {
+          "$ref": "#/$defs/__schema11"
+        },
+        "feedbackRight": {
+          "$ref": "#/$defs/__schema12"
+        },
+        "onWrong": {
+          "$ref": "#/$defs/__schema13"
+        },
+        "kind": {
+          "$ref": "#/$defs/__schema24"
+        },
+        "items": {
+          "$ref": "#/$defs/__schema25"
+        },
+        "answer": {
+          "$ref": "#/$defs/__schema26"
+        }
+      },
+      "required": [
+        "id",
+        "prompt",
+        "kind",
+        "items",
+        "answer"
+      ],
+      "additionalProperties": false
+    },
+    "__schema24": {
+      "type": "string",
+      "const": "order"
+    },
+    "__schema25": {
+      "minItems": 2,
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Markdown",
+        "description": "≤ 20 words; cloze uses {{answer}} once."
+      }
+    },
+    "__schema26": {
+      "type": "array",
+      "items": {
+        "type": "integer",
+        "minimum": -9007199254740991,
+        "maximum": 9007199254740991
+      }
+    },
+    "__schema27": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ItemId"
+        },
+        "prompt": {
+          "$ref": "#/$defs/Markdown",
+          "description": "≤ 20 words; cloze uses {{answer}} once."
+        },
+        "confidence": {
+          "$ref": "#/$defs/__schema11"
+        },
+        "feedbackRight": {
+          "$ref": "#/$defs/__schema12"
+        },
+        "onWrong": {
+          "$ref": "#/$defs/__schema13"
+        },
+        "kind": {
+          "$ref": "#/$defs/__schema28"
+        },
+        "widget": {
+          "$ref": "#/$defs/WidgetRef"
+        },
+        "solution": {
+          "$ref": "#/$defs/__schema29"
+        },
+        "fallback": {
+          "$ref": "#/$defs/FallbackInteraction"
+        }
+      },
+      "required": [
+        "id",
+        "prompt",
+        "kind",
+        "widget",
+        "solution",
+        "fallback"
+      ],
+      "additionalProperties": false
+    },
+    "__schema28": {
+      "type": "string",
+      "const": "widget"
+    },
+    "__schema29": {},
+    "FallbackInteraction": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "prompt": {
+              "$ref": "#/$defs/Markdown",
+              "description": "≤ 20 words; cloze uses {{answer}} once."
+            },
+            "confidence": {
+              "$ref": "#/$defs/__schema11"
+            },
+            "feedbackRight": {
+              "$ref": "#/$defs/__schema12"
+            },
+            "onWrong": {
+              "$ref": "#/$defs/__schema13"
+            },
+            "kind": {
+              "$ref": "#/$defs/__schema14"
+            },
+            "options": {
+              "$ref": "#/$defs/__schema15"
+            },
+            "answer": {
+              "$ref": "#/$defs/__schema16"
+            },
+            "multi": {
+              "$ref": "#/$defs/__schema17"
+            },
+            "shuffle": {
+              "$ref": "#/$defs/__schema18"
+            },
+            "id": {
+              "$ref": "#/$defs/ItemId"
+            }
+          },
+          "required": [
+            "prompt",
+            "kind",
+            "options",
+            "answer"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "prompt": {
+              "$ref": "#/$defs/Markdown",
+              "description": "≤ 20 words; cloze uses {{answer}} once."
+            },
+            "confidence": {
+              "$ref": "#/$defs/__schema11"
+            },
+            "feedbackRight": {
+              "$ref": "#/$defs/__schema12"
+            },
+            "onWrong": {
+              "$ref": "#/$defs/__schema13"
+            },
+            "kind": {
+              "$ref": "#/$defs/__schema30"
+            },
+            "answer": {
+              "$ref": "#/$defs/__schema31"
+            },
+            "tolerance": {
+              "$ref": "#/$defs/__schema32"
+            },
+            "unit": {
+              "$ref": "#/$defs/__schema33"
+            },
+            "id": {
+              "$ref": "#/$defs/ItemId"
+            }
+          },
+          "required": [
+            "prompt",
+            "kind",
+            "answer"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "prompt": {
+              "$ref": "#/$defs/Markdown",
+              "description": "≤ 20 words; cloze uses {{answer}} once."
+            },
+            "confidence": {
+              "$ref": "#/$defs/__schema11"
+            },
+            "feedbackRight": {
+              "$ref": "#/$defs/__schema12"
+            },
+            "onWrong": {
+              "$ref": "#/$defs/__schema13"
+            },
+            "kind": {
+              "$ref": "#/$defs/__schema34"
+            },
+            "accept": {
+              "$ref": "#/$defs/__schema35"
+            },
+            "normalize": {
+              "$ref": "#/$defs/__schema37"
+            },
+            "lang": {
+              "$ref": "#/$defs/__schema38"
+            },
+            "id": {
+              "$ref": "#/$defs/ItemId"
+            }
+          },
+          "required": [
+            "prompt",
+            "kind",
+            "accept"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "prompt": {
+              "$ref": "#/$defs/Markdown",
+              "description": "≤ 20 words; cloze uses {{answer}} once."
+            },
+            "confidence": {
+              "$ref": "#/$defs/__schema11"
+            },
+            "feedbackRight": {
+              "$ref": "#/$defs/__schema12"
+            },
+            "onWrong": {
+              "$ref": "#/$defs/__schema13"
+            },
+            "kind": {
+              "$ref": "#/$defs/__schema24"
+            },
+            "items": {
+              "$ref": "#/$defs/__schema25"
+            },
+            "answer": {
+              "$ref": "#/$defs/__schema26"
+            },
+            "id": {
+              "$ref": "#/$defs/ItemId"
+            }
+          },
+          "required": [
+            "prompt",
+            "kind",
+            "items",
+            "answer"
+          ],
+          "additionalProperties": false
+        }
+      ],
+      "description": "A built-in interaction used where a widget, html interactive or explain can't run (a11y, old engines, offline explain). `id` is optional here."
+    },
+    "__schema30": {
+      "type": "string",
+      "const": "numeric"
+    },
+    "__schema31": {
+      "type": "number"
+    },
+    "__schema32": {
+      "type": "number"
+    },
+    "__schema33": {
+      "type": "string"
+    },
+    "__schema34": {
+      "type": "string",
+      "const": "text"
+    },
+    "__schema35": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/__schema36"
+      }
+    },
+    "__schema36": {
+      "type": "string"
+    },
+    "__schema37": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Normalize"
+      }
+    },
+    "Normalize": {
+      "type": "string",
+      "enum": [
+        "case",
+        "accents",
+        "punct",
+        "space",
+        "articles"
+      ]
+    },
+    "__schema38": {
+      "type": "string"
+    },
+    "__schema39": {
+      "minItems": 1,
+      "maxItems": 3,
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Screen"
+      }
+    },
+    "Screen": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^s\\d+(-[a-z0-9-]+)?$",
+          "description": "/^s\\d+(-[a-z0-9-]+)?$/, e.g. \"s1-trace\"."
+        },
+        "newIdea": {
+          "type": "string",
+          "description": "≤ 1 new idea."
+        },
+        "speaker": {
+          "type": "string",
+          "description": "An in-world character only (a waiter, a customer). No guides."
+        },
+        "visual": {
+          "$ref": "#/$defs/Visual",
+          "description": "Canvas (the beat's illustration); ignored if interaction.kind is \"widget\" or \"html\"."
+        },
+        "blocks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Block"
+          },
+          "description": "The beat's teaching text. Beat total ≤ 120 words: blocks + prompt + reveal + long options (L001)."
+        },
+        "interaction": {
+          "$ref": "#/$defs/Interaction",
+          "description": "The beat's small action. Optional per beat; ≥ 1 beat per card has one (L006)."
+        },
+        "reveal": {
+          "$ref": "#/$defs/Reveal",
+          "description": "Required when interaction is set (L006); forbidden otherwise."
+        },
+        "alts": {
+          "type": "object",
+          "propertyNames": {
+            "$ref": "#/$defs/AltStrategy"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/Markdown",
+            "description": "≤ 20 words; cloze uses {{answer}} once."
+          },
+          "description": "Each ≤ 60 words; the croc's offline \"explain it differently\" and \"another example\"."
+        },
+        "src": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Source ids, or paragraph ids (\"p12\") for pocket maps."
+        },
+        "confidence": {
+          "type": "string",
+          "enum": [
+            "sourced",
+            "model"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "blocks"
+      ],
+      "additionalProperties": false,
+      "description": "A teach beat. YAML key `screens`, run phase \"screen\"; designers say \"beat\"."
+    },
+    "Interaction": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/__schema10"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "$ref": "#/$defs/ItemId"
+            },
+            "prompt": {
+              "$ref": "#/$defs/Markdown",
+              "description": "≤ 20 words; cloze uses {{answer}} once."
+            },
+            "confidence": {
+              "$ref": "#/$defs/__schema11"
+            },
+            "feedbackRight": {
+              "$ref": "#/$defs/__schema12"
+            },
+            "onWrong": {
+              "$ref": "#/$defs/__schema13"
+            },
+            "kind": {
+              "$ref": "#/$defs/__schema30"
+            },
+            "answer": {
+              "$ref": "#/$defs/__schema31"
+            },
+            "tolerance": {
+              "$ref": "#/$defs/__schema32"
+            },
+            "unit": {
+              "$ref": "#/$defs/__schema33"
+            }
+          },
+          "required": [
+            "id",
+            "prompt",
+            "kind",
+            "answer"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "$ref": "#/$defs/__schema19"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "$ref": "#/$defs/ItemId"
+            },
+            "prompt": {
+              "$ref": "#/$defs/Markdown",
+              "description": "≤ 20 words; cloze uses {{answer}} once."
+            },
+            "confidence": {
+              "$ref": "#/$defs/__schema11"
+            },
+            "feedbackRight": {
+              "$ref": "#/$defs/__schema12"
+            },
+            "onWrong": {
+              "$ref": "#/$defs/__schema13"
+            },
+            "kind": {
+              "$ref": "#/$defs/__schema34"
+            },
+            "accept": {
+              "$ref": "#/$defs/__schema35"
+            },
+            "normalize": {
+              "$ref": "#/$defs/__schema37"
+            },
+            "lang": {
+              "$ref": "#/$defs/__schema38"
+            }
+          },
+          "required": [
+            "id",
+            "prompt",
+            "kind",
+            "accept"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "$ref": "#/$defs/__schema23"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "$ref": "#/$defs/ItemId"
+            },
+            "prompt": {
+              "$ref": "#/$defs/Markdown",
+              "description": "≤ 20 words; cloze uses {{answer}} once."
+            },
+            "confidence": {
+              "$ref": "#/$defs/__schema11"
+            },
+            "feedbackRight": {
+              "$ref": "#/$defs/__schema12"
+            },
+            "onWrong": {
+              "$ref": "#/$defs/__schema13"
+            },
+            "kind": {
+              "$ref": "#/$defs/__schema40"
+            },
+            "left": {
+              "$ref": "#/$defs/__schema41"
+            },
+            "right": {
+              "$ref": "#/$defs/__schema42"
+            },
+            "answer": {
+              "$ref": "#/$defs/__schema43"
+            }
+          },
+          "required": [
+            "id",
+            "prompt",
+            "kind",
+            "left",
+            "right",
+            "answer"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "$ref": "#/$defs/ItemId"
+            },
+            "prompt": {
+              "$ref": "#/$defs/Markdown",
+              "description": "≤ 20 words; cloze uses {{answer}} once."
+            },
+            "confidence": {
+              "$ref": "#/$defs/__schema11"
+            },
+            "feedbackRight": {
+              "$ref": "#/$defs/__schema12"
+            },
+            "onWrong": {
+              "$ref": "#/$defs/__schema13"
+            },
+            "kind": {
+              "$ref": "#/$defs/__schema44"
+            },
+            "text": {
+              "$ref": "#/$defs/Markdown",
+              "description": "≤ 20 words; cloze uses {{answer}} once."
+            },
+            "blanks": {
+              "$ref": "#/$defs/__schema45"
+            },
+            "normalize": {
+              "$ref": "#/$defs/__schema46"
+            }
+          },
+          "required": [
+            "id",
+            "prompt",
+            "kind",
+            "text",
+            "blanks"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "$ref": "#/$defs/__schema27"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "$ref": "#/$defs/ItemId"
+            },
+            "prompt": {
+              "$ref": "#/$defs/Markdown",
+              "description": "≤ 20 words; cloze uses {{answer}} once."
+            },
+            "confidence": {
+              "$ref": "#/$defs/__schema11"
+            },
+            "feedbackRight": {
+              "$ref": "#/$defs/__schema12"
+            },
+            "onWrong": {
+              "$ref": "#/$defs/__schema13"
+            },
+            "kind": {
+              "$ref": "#/$defs/__schema47"
+            },
+            "asset": {
+              "$ref": "#/$defs/AssetPath"
+            },
+            "height": {
+              "$ref": "#/$defs/__schema48"
+            },
+            "alt": {
+              "$ref": "#/$defs/__schema49"
+            },
+            "goal": {
+              "$ref": "#/$defs/HtmlGoal"
+            },
+            "solution": {
+              "$ref": "#/$defs/__schema50"
+            },
+            "fallback": {
+              "$ref": "#/$defs/FallbackInteraction"
+            }
+          },
+          "required": [
+            "id",
+            "prompt",
+            "kind",
+            "asset",
+            "height",
+            "alt",
+            "goal",
+            "solution",
+            "fallback"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "$ref": "#/$defs/ItemId"
+            },
+            "prompt": {
+              "$ref": "#/$defs/Markdown",
+              "description": "≤ 20 words; cloze uses {{answer}} once."
+            },
+            "confidence": {
+              "$ref": "#/$defs/__schema11"
+            },
+            "feedbackRight": {
+              "$ref": "#/$defs/__schema12"
+            },
+            "onWrong": {
+              "$ref": "#/$defs/__schema13"
+            },
+            "kind": {
+              "$ref": "#/$defs/__schema51"
+            },
+            "keyPoints": {
+              "$ref": "#/$defs/__schema52"
+            },
+            "minHits": {
+              "$ref": "#/$defs/__schema53"
+            },
+            "exemplar": {
+              "$ref": "#/$defs/Markdown",
+              "description": "≤ 20 words; cloze uses {{answer}} once."
+            },
+            "offline": {
+              "$ref": "#/$defs/FallbackInteraction"
+            }
+          },
+          "required": [
+            "id",
+            "prompt",
+            "kind",
+            "keyPoints",
+            "minHits",
+            "exemplar",
+            "offline"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "__schema40": {
+      "type": "string",
+      "const": "match"
+    },
+    "__schema41": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Markdown",
+        "description": "≤ 20 words; cloze uses {{answer}} once."
+      }
+    },
+    "__schema42": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Markdown",
+        "description": "≤ 20 words; cloze uses {{answer}} once."
+      }
+    },
+    "__schema43": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "prefixItems": [
+          {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          }
+        ],
+        "items": false,
+        "minItems": 2,
+        "maxItems": 2
+      }
+    },
+    "__schema44": {
+      "type": "string",
+      "const": "cloze"
+    },
+    "__schema45": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "accept": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "tiles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "accept"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "__schema46": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Normalize"
+      }
+    },
+    "__schema47": {
+      "type": "string",
+      "const": "html"
+    },
+    "__schema48": {
+      "type": "number"
+    },
+    "__schema49": {
+      "type": "string"
+    },
+    "HtmlGoal": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "equals"
+            },
+            "value": {
+              "type": [
+                "string",
+                "number",
+                "boolean"
+              ]
+            },
+            "tolerance": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "kind",
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "range"
+            },
+            "min": {
+              "type": "number"
+            },
+            "max": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "kind",
+            "min",
+            "max"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "set"
+            },
+            "values": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "match": {
+              "type": "string",
+              "enum": [
+                "any",
+                "all",
+                "exact"
+              ]
+            }
+          },
+          "required": [
+            "kind",
+            "values",
+            "match"
+          ],
+          "additionalProperties": false
+        }
+      ],
+      "description": "Graded on the host from the frame's last `report`."
+    },
+    "__schema50": {},
+    "__schema51": {
+      "type": "string",
+      "const": "explain"
+    },
+    "__schema52": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/KeyPoint"
+      }
+    },
+    "KeyPoint": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Phrases/synonyms for offline highlight matching (case- and accent-insensitive)."
+        }
+      },
+      "required": [
+        "id",
+        "text"
+      ],
+      "additionalProperties": false
+    },
+    "__schema53": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740991
+    },
+    "Reveal": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "$ref": "#/$defs/Markdown",
+          "description": "≤ 20 words; cloze uses {{answer}} once."
+        },
+        "speaker": {
+          "type": "string"
+        },
+        "visualState": {
+          "description": "Applied to the canvas after answering.",
+          "$ref": "#/$defs/VisualState"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "additionalProperties": false
+    },
+    "AltStrategy": {
+      "type": "string",
+      "enum": [
+        "simpler",
+        "example",
+        "analogy",
+        "why",
+        "story"
+      ]
+    },
+    "Close": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "$ref": "#/$defs/Markdown",
+          "description": "≤ 20 words; cloze uses {{answer}} once."
+        },
+        "byGuess": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]{0,31}$"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/Markdown",
+            "description": "≤ 20 words; cloze uses {{answer}} once."
+          },
+          "description": "Guess key → a close that names that guess, ≤ 60 words each (keys: allowedGuessKeys, checked by L023)."
+        },
+        "teaser": {
+          "$ref": "#/$defs/Markdown",
+          "description": "≤ 20 words; cloze uses {{answer}} once."
+        }
+      },
+      "required": [
+        "text",
+        "teaser"
+      ],
+      "additionalProperties": false
+    },
+    "__schema54": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Card"
+      }
+    },
+    "Card": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/IntroCard"
+        },
+        {
+          "$ref": "#/$defs/AskCard"
+        },
+        {
+          "$ref": "#/$defs/TeachCard"
+        },
+        {
+          "$ref": "#/$defs/TryCard"
+        },
+        {
+          "$ref": "#/$defs/CheckCard"
+        },
+        {
+          "$ref": "#/$defs/TakeawayCard"
+        }
+      ]
+    },
+    "IntroCard": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "intro"
+        },
+        "id": {
+          "$ref": "#/$defs/__schema55"
+        },
+        "blocks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Block"
+          }
+        }
+      },
+      "required": [
+        "type",
+        "id",
+        "blocks"
+      ],
+      "additionalProperties": false,
+      "description": "Article opening (quote) + Moss lines; the player derives the questions list from the other stops' ask cards."
+    },
+    "__schema55": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$"
+    },
+    "AskCard": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "ask"
+        },
+        "id": {
+          "$ref": "#/$defs/__schema55"
+        },
+        "blocks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Block"
+          }
+        },
+        "prompt": {
+          "$ref": "#/$defs/Markdown",
+          "description": "≤ 20 words; cloze uses {{answer}} once."
+        },
+        "hunches": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Hunch"
+          }
+        }
+      },
+      "required": [
+        "type",
+        "id",
+        "prompt"
+      ],
+      "additionalProperties": false,
+      "description": "The stop's question. Hunches are optional chips, never graded."
+    },
+    "Hunch": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{0,31}$"
+        },
+        "text": {
+          "$ref": "#/$defs/Markdown",
+          "description": "≤ 20 words; cloze uses {{answer}} once."
+        }
+      },
+      "required": [
+        "id",
+        "text"
+      ],
+      "additionalProperties": false,
+      "description": "A hunch chip on an ask card; never graded."
+    },
+    "TeachCard": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "teach"
+        },
+        "id": {
+          "$ref": "#/$defs/__schema55"
+        },
+        "blocks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Block"
+          }
+        },
+        "visual": {
+          "$ref": "#/$defs/Visual"
+        },
+        "alts": {
+          "type": "object",
+          "propertyNames": {
+            "$ref": "#/$defs/AltStrategy"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/Markdown",
+            "description": "≤ 20 words; cloze uses {{answer}} once."
+          }
+        },
+        "src": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "confidence": {
+          "type": "string",
+          "enum": [
+            "sourced",
+            "model"
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "id",
+        "blocks"
+      ],
+      "additionalProperties": false,
+      "description": "Teaching text (+ optional canvas); read-only."
+    },
+    "TryCard": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "try"
+        },
+        "id": {
+          "$ref": "#/$defs/__schema55"
+        },
+        "blocks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Block"
+          }
+        },
+        "visual": {
+          "$ref": "#/$defs/Visual"
+        },
+        "interaction": {
+          "$ref": "#/$defs/Interaction"
+        },
+        "reveal": {
+          "$ref": "#/$defs/Reveal"
+        }
+      },
+      "required": [
+        "type",
+        "id",
+        "interaction"
+      ],
+      "additionalProperties": false,
+      "description": "Graded like a beat: retry, hints, worked answer after 2 misses."
+    },
+    "CheckCard": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "check"
+        },
+        "id": {
+          "$ref": "#/$defs/__schema55"
+        },
+        "blocks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Block"
+          }
+        },
+        "interaction": {
+          "$ref": "#/$defs/Interaction"
+        },
+        "reveal": {
+          "$ref": "#/$defs/Reveal"
+        }
+      },
+      "required": [
+        "type",
+        "id",
+        "interaction"
+      ],
+      "additionalProperties": false,
+      "description": "One shot: any answer is recorded and the card is done; feedback for every option is shown."
+    },
+    "TakeawayCard": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "takeaway"
+        },
+        "id": {
+          "$ref": "#/$defs/__schema55"
+        },
+        "answers": {
+          "type": "string",
+          "description": "The ask card id this answers."
+        },
+        "text": {
+          "$ref": "#/$defs/Markdown",
+          "description": "≤ 20 words; cloze uses {{answer}} once."
+        },
+        "byHunch": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/Markdown",
+            "description": "≤ 20 words; cloze uses {{answer}} once."
+          }
+        },
+        "teaser": {
+          "$ref": "#/$defs/Markdown",
+          "description": "≤ 20 words; cloze uses {{answer}} once."
+        }
+      },
+      "required": [
+        "type",
+        "id",
+        "text"
+      ],
+      "additionalProperties": false,
+      "description": "The answer to an ask card (≤ 60 words, \"Because…\"); `byHunch` keys: hunch id | \"idk\" | \"typed\"."
+    },
+    "__schema56": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Item"
+      }
+    },
+    "Item": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "$ref": "#/$defs/ItemId"
+            },
+            "prompt": {
+              "$ref": "#/$defs/Markdown",
+              "description": "≤ 20 words; cloze uses {{answer}} once."
+            },
+            "confidence": {
+              "$ref": "#/$defs/__schema11"
+            },
+            "feedbackRight": {
+              "$ref": "#/$defs/__schema12"
+            },
+            "onWrong": {
+              "$ref": "#/$defs/__schema13"
+            },
+            "kind": {
+              "$ref": "#/$defs/__schema14"
+            },
+            "options": {
+              "$ref": "#/$defs/__schema15"
+            },
+            "answer": {
+              "$ref": "#/$defs/__schema16"
+            },
+            "multi": {
+              "$ref": "#/$defs/__schema17"
+            },
+            "shuffle": {
+              "$ref": "#/$defs/__schema18"
+            },
+            "level": {
+              "$ref": "#/$defs/__schema57"
+            },
+            "difficulty": {
+              "$ref": "#/$defs/__schema58"
+            },
+            "use": {
+              "$ref": "#/$defs/__schema59"
+            },
+            "params": {
+              "$ref": "#/$defs/__schema60"
+            },
+            "why": {
+              "$ref": "#/$defs/__schema62"
+            },
+            "callback": {
+              "$ref": "#/$defs/__schema63"
+            }
+          },
+          "required": [
+            "id",
+            "prompt",
+            "kind",
+            "options",
+            "answer",
+            "level",
+            "difficulty"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "$ref": "#/$defs/ItemId"
+            },
+            "prompt": {
+              "$ref": "#/$defs/Markdown",
+              "description": "≤ 20 words; cloze uses {{answer}} once."
+            },
+            "confidence": {
+              "$ref": "#/$defs/__schema11"
+            },
+            "feedbackRight": {
+              "$ref": "#/$defs/__schema12"
+            },
+            "onWrong": {
+              "$ref": "#/$defs/__schema13"
+            },
+            "kind": {
+              "$ref": "#/$defs/__schema30"
+            },
+            "answer": {
+              "$ref": "#/$defs/__schema31"
+            },
+            "tolerance": {
+              "$ref": "#/$defs/__schema32"
+            },
+            "unit": {
+              "$ref": "#/$defs/__schema33"
+            },
+            "level": {
+              "$ref": "#/$defs/__schema57"
+            },
+            "difficulty": {
+              "$ref": "#/$defs/__schema58"
+            },
+            "use": {
+              "$ref": "#/$defs/__schema59"
+            },
+            "params": {
+              "$ref": "#/$defs/__schema60"
+            },
+            "why": {
+              "$ref": "#/$defs/__schema62"
+            },
+            "callback": {
+              "$ref": "#/$defs/__schema63"
+            }
+          },
+          "required": [
+            "id",
+            "prompt",
+            "kind",
+            "answer",
+            "level",
+            "difficulty"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "$ref": "#/$defs/ItemId"
+            },
+            "prompt": {
+              "$ref": "#/$defs/Markdown",
+              "description": "≤ 20 words; cloze uses {{answer}} once."
+            },
+            "confidence": {
+              "$ref": "#/$defs/__schema11"
+            },
+            "feedbackRight": {
+              "$ref": "#/$defs/__schema12"
+            },
+            "onWrong": {
+              "$ref": "#/$defs/__schema13"
+            },
+            "kind": {
+              "$ref": "#/$defs/__schema20"
+            },
+            "scale": {
+              "$ref": "#/$defs/EstimateScale"
+            },
+            "answer": {
+              "$ref": "#/$defs/__schema21"
+            },
+            "accept": {
+              "$ref": "#/$defs/__schema22"
+            },
+            "level": {
+              "$ref": "#/$defs/__schema57"
+            },
+            "difficulty": {
+              "$ref": "#/$defs/__schema58"
+            },
+            "use": {
+              "$ref": "#/$defs/__schema59"
+            },
+            "params": {
+              "$ref": "#/$defs/__schema60"
+            },
+            "why": {
+              "$ref": "#/$defs/__schema62"
+            },
+            "callback": {
+              "$ref": "#/$defs/__schema63"
+            }
+          },
+          "required": [
+            "id",
+            "prompt",
+            "kind",
+            "scale",
+            "answer",
+            "accept",
+            "level",
+            "difficulty"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "$ref": "#/$defs/ItemId"
+            },
+            "prompt": {
+              "$ref": "#/$defs/Markdown",
+              "description": "≤ 20 words; cloze uses {{answer}} once."
+            },
+            "confidence": {
+              "$ref": "#/$defs/__schema11"
+            },
+            "feedbackRight": {
+              "$ref": "#/$defs/__schema12"
+            },
+            "onWrong": {
+              "$ref": "#/$defs/__schema13"
+            },
+            "kind": {
+              "$ref": "#/$defs/__schema34"
+            },
+            "accept": {
+              "$ref": "#/$defs/__schema35"
+            },
+            "normalize": {
+              "$ref": "#/$defs/__schema37"
+            },
+            "lang": {
+              "$ref": "#/$defs/__schema38"
+            },
+            "level": {
+              "$ref": "#/$defs/__schema57"
+            },
+            "difficulty": {
+              "$ref": "#/$defs/__schema58"
+            },
+            "use": {
+              "$ref": "#/$defs/__schema59"
+            },
+            "params": {
+              "$ref": "#/$defs/__schema60"
+            },
+            "why": {
+              "$ref": "#/$defs/__schema62"
+            },
+            "callback": {
+              "$ref": "#/$defs/__schema63"
+            }
+          },
+          "required": [
+            "id",
+            "prompt",
+            "kind",
+            "accept",
+            "level",
+            "difficulty"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "$ref": "#/$defs/ItemId"
+            },
+            "prompt": {
+              "$ref": "#/$defs/Markdown",
+              "description": "≤ 20 words; cloze uses {{answer}} once."
+            },
+            "confidence": {
+              "$ref": "#/$defs/__schema11"
+            },
+            "feedbackRight": {
+              "$ref": "#/$defs/__schema12"
+            },
+            "onWrong": {
+              "$ref": "#/$defs/__schema13"
+            },
+            "kind": {
+              "$ref": "#/$defs/__schema24"
+            },
+            "items": {
+              "$ref": "#/$defs/__schema25"
+            },
+            "answer": {
+              "$ref": "#/$defs/__schema26"
+            },
+            "level": {
+              "$ref": "#/$defs/__schema57"
+            },
+            "difficulty": {
+              "$ref": "#/$defs/__schema58"
+            },
+            "use": {
+              "$ref": "#/$defs/__schema59"
+            },
+            "params": {
+              "$ref": "#/$defs/__schema60"
+            },
+            "why": {
+              "$ref": "#/$defs/__schema62"
+            },
+            "callback": {
+              "$ref": "#/$defs/__schema63"
+            }
+          },
+          "required": [
+            "id",
+            "prompt",
+            "kind",
+            "items",
+            "answer",
+            "level",
+            "difficulty"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "$ref": "#/$defs/ItemId"
+            },
+            "prompt": {
+              "$ref": "#/$defs/Markdown",
+              "description": "≤ 20 words; cloze uses {{answer}} once."
+            },
+            "confidence": {
+              "$ref": "#/$defs/__schema11"
+            },
+            "feedbackRight": {
+              "$ref": "#/$defs/__schema12"
+            },
+            "onWrong": {
+              "$ref": "#/$defs/__schema13"
+            },
+            "kind": {
+              "$ref": "#/$defs/__schema40"
+            },
+            "left": {
+              "$ref": "#/$defs/__schema41"
+            },
+            "right": {
+              "$ref": "#/$defs/__schema42"
+            },
+            "answer": {
+              "$ref": "#/$defs/__schema43"
+            },
+            "level": {
+              "$ref": "#/$defs/__schema57"
+            },
+            "difficulty": {
+              "$ref": "#/$defs/__schema58"
+            },
+            "use": {
+              "$ref": "#/$defs/__schema59"
+            },
+            "params": {
+              "$ref": "#/$defs/__schema60"
+            },
+            "why": {
+              "$ref": "#/$defs/__schema62"
+            },
+            "callback": {
+              "$ref": "#/$defs/__schema63"
+            }
+          },
+          "required": [
+            "id",
+            "prompt",
+            "kind",
+            "left",
+            "right",
+            "answer",
+            "level",
+            "difficulty"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "$ref": "#/$defs/ItemId"
+            },
+            "prompt": {
+              "$ref": "#/$defs/Markdown",
+              "description": "≤ 20 words; cloze uses {{answer}} once."
+            },
+            "confidence": {
+              "$ref": "#/$defs/__schema11"
+            },
+            "feedbackRight": {
+              "$ref": "#/$defs/__schema12"
+            },
+            "onWrong": {
+              "$ref": "#/$defs/__schema13"
+            },
+            "kind": {
+              "$ref": "#/$defs/__schema44"
+            },
+            "text": {
+              "$ref": "#/$defs/Markdown",
+              "description": "≤ 20 words; cloze uses {{answer}} once."
+            },
+            "blanks": {
+              "$ref": "#/$defs/__schema45"
+            },
+            "normalize": {
+              "$ref": "#/$defs/__schema46"
+            },
+            "level": {
+              "$ref": "#/$defs/__schema57"
+            },
+            "difficulty": {
+              "$ref": "#/$defs/__schema58"
+            },
+            "use": {
+              "$ref": "#/$defs/__schema59"
+            },
+            "params": {
+              "$ref": "#/$defs/__schema60"
+            },
+            "why": {
+              "$ref": "#/$defs/__schema62"
+            },
+            "callback": {
+              "$ref": "#/$defs/__schema63"
+            }
+          },
+          "required": [
+            "id",
+            "prompt",
+            "kind",
+            "text",
+            "blanks",
+            "level",
+            "difficulty"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "$ref": "#/$defs/ItemId"
+            },
+            "prompt": {
+              "$ref": "#/$defs/Markdown",
+              "description": "≤ 20 words; cloze uses {{answer}} once."
+            },
+            "confidence": {
+              "$ref": "#/$defs/__schema11"
+            },
+            "feedbackRight": {
+              "$ref": "#/$defs/__schema12"
+            },
+            "onWrong": {
+              "$ref": "#/$defs/__schema13"
+            },
+            "kind": {
+              "$ref": "#/$defs/__schema28"
+            },
+            "widget": {
+              "$ref": "#/$defs/WidgetRef"
+            },
+            "solution": {
+              "$ref": "#/$defs/__schema29"
+            },
+            "fallback": {
+              "$ref": "#/$defs/FallbackInteraction"
+            },
+            "level": {
+              "$ref": "#/$defs/__schema57"
+            },
+            "difficulty": {
+              "$ref": "#/$defs/__schema58"
+            },
+            "use": {
+              "$ref": "#/$defs/__schema59"
+            },
+            "params": {
+              "$ref": "#/$defs/__schema60"
+            },
+            "why": {
+              "$ref": "#/$defs/__schema62"
+            },
+            "callback": {
+              "$ref": "#/$defs/__schema63"
+            }
+          },
+          "required": [
+            "id",
+            "prompt",
+            "kind",
+            "widget",
+            "solution",
+            "fallback",
+            "level",
+            "difficulty"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "$ref": "#/$defs/ItemId"
+            },
+            "prompt": {
+              "$ref": "#/$defs/Markdown",
+              "description": "≤ 20 words; cloze uses {{answer}} once."
+            },
+            "confidence": {
+              "$ref": "#/$defs/__schema11"
+            },
+            "feedbackRight": {
+              "$ref": "#/$defs/__schema12"
+            },
+            "onWrong": {
+              "$ref": "#/$defs/__schema13"
+            },
+            "kind": {
+              "$ref": "#/$defs/__schema47"
+            },
+            "asset": {
+              "$ref": "#/$defs/AssetPath"
+            },
+            "height": {
+              "$ref": "#/$defs/__schema48"
+            },
+            "alt": {
+              "$ref": "#/$defs/__schema49"
+            },
+            "goal": {
+              "$ref": "#/$defs/HtmlGoal"
+            },
+            "solution": {
+              "$ref": "#/$defs/__schema50"
+            },
+            "fallback": {
+              "$ref": "#/$defs/FallbackInteraction"
+            },
+            "level": {
+              "$ref": "#/$defs/__schema57"
+            },
+            "difficulty": {
+              "$ref": "#/$defs/__schema58"
+            },
+            "use": {
+              "$ref": "#/$defs/__schema59"
+            },
+            "params": {
+              "$ref": "#/$defs/__schema60"
+            },
+            "why": {
+              "$ref": "#/$defs/__schema62"
+            },
+            "callback": {
+              "$ref": "#/$defs/__schema63"
+            }
+          },
+          "required": [
+            "id",
+            "prompt",
+            "kind",
+            "asset",
+            "height",
+            "alt",
+            "goal",
+            "solution",
+            "fallback",
+            "level",
+            "difficulty"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "$ref": "#/$defs/ItemId"
+            },
+            "prompt": {
+              "$ref": "#/$defs/Markdown",
+              "description": "≤ 20 words; cloze uses {{answer}} once."
+            },
+            "confidence": {
+              "$ref": "#/$defs/__schema11"
+            },
+            "feedbackRight": {
+              "$ref": "#/$defs/__schema12"
+            },
+            "onWrong": {
+              "$ref": "#/$defs/__schema13"
+            },
+            "kind": {
+              "$ref": "#/$defs/__schema51"
+            },
+            "keyPoints": {
+              "$ref": "#/$defs/__schema52"
+            },
+            "minHits": {
+              "$ref": "#/$defs/__schema53"
+            },
+            "exemplar": {
+              "$ref": "#/$defs/Markdown",
+              "description": "≤ 20 words; cloze uses {{answer}} once."
+            },
+            "offline": {
+              "$ref": "#/$defs/FallbackInteraction"
+            },
+            "level": {
+              "$ref": "#/$defs/__schema57"
+            },
+            "difficulty": {
+              "$ref": "#/$defs/__schema58"
+            },
+            "use": {
+              "$ref": "#/$defs/__schema59"
+            },
+            "params": {
+              "$ref": "#/$defs/__schema60"
+            },
+            "why": {
+              "$ref": "#/$defs/__schema62"
+            },
+            "callback": {
+              "$ref": "#/$defs/__schema63"
+            }
+          },
+          "required": [
+            "id",
+            "prompt",
+            "kind",
+            "keyPoints",
+            "minHits",
+            "exemplar",
+            "offline",
+            "level",
+            "difficulty"
+          ],
+          "additionalProperties": false
+        }
+      ],
+      "description": "A bank item: an interaction plus tuning fields."
+    },
+    "__schema57": {
+      "type": "string",
+      "enum": [
+        "recall",
+        "apply",
+        "transfer"
+      ]
+    },
+    "__schema58": {
+      "type": "number",
+      "enum": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    "__schema59": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "checkpoint",
+          "relight"
+        ]
+      }
+    },
+    "__schema60": {
+      "$ref": "#/$defs/ItemParams"
+    },
+    "ItemParams": {
+      "type": "object",
+      "properties": {
+        "vars": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/__schema61"
+            }
+          },
+          "description": "Candidate values per variable, e.g. { n: [200, 400, 900] }; the prompt uses {n}."
+        },
+        "answerExpr": {
+          "type": "string",
+          "minLength": 1,
+          "description": "core/expr.ts expression over the vars; `answer` = its value for the first value of each var."
+        }
+      },
+      "required": [
+        "vars",
+        "answerExpr"
+      ],
+      "additionalProperties": false,
+      "description": "Numeric and estimate only: fresh numbers per instance."
+    },
+    "__schema61": {
+      "type": "number"
+    },
+    "__schema62": {
+      "$ref": "#/$defs/Markdown",
+      "description": "≤ 20 words; cloze uses {{answer}} once."
+    },
+    "__schema63": {
+      "type": "boolean"
+    },
+    "__schema64": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Flashcard"
+      }
+    },
+    "Flashcard": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/ItemId"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "qa",
+            "cloze"
+          ]
+        },
+        "front": {
+          "$ref": "#/$defs/Markdown",
+          "description": "≤ 20 words; cloze uses {{answer}} once."
+        },
+        "back": {
+          "$ref": "#/$defs/Markdown",
+          "description": "≤ 20 words; cloze uses {{answer}} once."
+        },
+        "visual": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "const": "figure"
+            },
+            "asset": {
+              "$ref": "#/$defs/AssetPath"
+            },
+            "alt": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "kind",
+            "asset",
+            "alt"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "front",
+        "back"
+      ],
+      "additionalProperties": false,
+      "description": "A spaced-repetition flashcard (FSRS). Never called a \"card\" in the UI."
+    },
+    "__schema65": {
+      "type": "object",
+      "properties": {
+        "widget": {
+          "$ref": "#/$defs/WidgetRef"
+        },
+        "prompt": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "widget",
+        "prompt"
+      ],
+      "additionalProperties": false
+    },
+    "__schema66": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "body": {
+          "$ref": "#/$defs/Markdown",
+          "description": "≤ 20 words; cloze uses {{answer}} once."
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "title",
+        "body"
+      ],
+      "additionalProperties": false
+    },
+    "__schema67": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "q": {
+            "type": "string"
+          },
+          "a": {
+            "$ref": "#/$defs/Markdown",
+            "description": "≤ 20 words; cloze uses {{answer}} once."
+          }
+        },
+        "required": [
+          "q",
+          "a"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "__schema68": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Source"
+      }
+    },
+    "Source": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "description": "\"vaswani-2017\""
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "by": {
+          "type": "string"
+        },
+        "year": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "url": {
+          "type": "string"
+        },
+        "license": {
+          "type": "string",
+          "description": "For quoted/adapted text, e.g. \"CC-BY-SA-4.0\"."
+        },
+        "note": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "title"
+      ],
+      "additionalProperties": false
+    },
+    "__schema69": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "reviewed"
+      ]
+    },
+    "__schema70": {
+      "$ref": "#/$defs/Provenance"
+    },
+    "__schema71": {
+      "type": "object",
+      "properties": {
+        "checked": {
+          "type": "boolean"
+        },
+        "unsupported": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "checked",
+        "unsupported"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,464 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://learncroc.github.io/schema/v1/registry.schema.json",
+  "title": "learncroc registry index",
+  "description": "A registry's index.json.",
+  "type": "object",
+  "properties": {
+    "registry": {
+      "type": "number",
+      "const": 1
+    },
+    "name": {
+      "type": "string",
+      "description": "\"learncroc builtin\" | \"learncroc official\""
+    },
+    "updated": {
+      "$ref": "#/$defs/IsoDate"
+    },
+    "packs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/RegistryPack"
+      }
+    }
+  },
+  "required": [
+    "registry",
+    "name",
+    "updated",
+    "packs"
+  ],
+  "$defs": {
+    "IsoDate": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}(T\\d{2}:\\d{2}(:\\d{2}(\\.\\d+)?)?(Z|[+-]\\d{2}:\\d{2}))?$",
+      "description": "\"2026-10-20T08:00:00Z\" (a plain date \"2026-10-20\" is also accepted in files)."
+    },
+    "RegistryPack": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/PackId"
+        },
+        "title": {
+          "type": "string"
+        },
+        "subtitle": {
+          "type": "string"
+        },
+        "tagline": {
+          "type": "string"
+        },
+        "publisher": {
+          "type": "string"
+        },
+        "tier": {
+          "type": "string",
+          "enum": [
+            "official",
+            "community"
+          ]
+        },
+        "category": {
+          "$ref": "#/$defs/PackCategory"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "lang": {
+          "type": "string"
+        },
+        "profile": {
+          "$ref": "#/$defs/LintProfile"
+        },
+        "review": {
+          "type": "string",
+          "enum": [
+            "reviewed",
+            "draft"
+          ]
+        },
+        "reviewers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "role": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "role"
+            ]
+          }
+        },
+        "customInteractives": {
+          "type": "boolean"
+        },
+        "theme": {
+          "type": "object",
+          "properties": {
+            "renderer": {
+              "$ref": "#/$defs/RendererId"
+            },
+            "world": {
+              "type": "string",
+              "minLength": 1
+            },
+            "mode": {
+              "type": "string",
+              "enum": [
+                "dark",
+                "light"
+              ]
+            },
+            "ground": {
+              "$ref": "#/$defs/Hex"
+            },
+            "texture": {
+              "$ref": "#/$defs/TextureId"
+            },
+            "lines": {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "$ref": "#/$defs/Hex"
+                },
+                {
+                  "$ref": "#/$defs/Hex"
+                },
+                {
+                  "$ref": "#/$defs/Hex"
+                },
+                {
+                  "$ref": "#/$defs/Hex"
+                },
+                {
+                  "$ref": "#/$defs/Hex"
+                }
+              ],
+              "items": false,
+              "minItems": 5,
+              "maxItems": 5
+            },
+            "token": {
+              "$ref": "#/$defs/TokenGlyph"
+            }
+          },
+          "required": [
+            "renderer",
+            "world",
+            "mode",
+            "ground",
+            "texture",
+            "lines",
+            "token"
+          ],
+          "additionalProperties": false
+        },
+        "outcomes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "sketch": {
+          "type": "object",
+          "properties": {
+            "width": {
+              "type": "number"
+            },
+            "height": {
+              "type": "number"
+            },
+            "nodes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "$ref": "#/$defs/NodeId"
+                  },
+                  "x": {
+                    "type": "number"
+                  },
+                  "y": {
+                    "type": "number"
+                  },
+                  "line": {
+                    "$ref": "#/$defs/LineId"
+                  },
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "node",
+                      "checkpoint"
+                    ]
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "playable",
+                      "planned"
+                    ]
+                  }
+                },
+                "required": [
+                  "id",
+                  "x",
+                  "y",
+                  "line",
+                  "kind",
+                  "status"
+                ]
+              }
+            },
+            "edges": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "from": {
+                    "$ref": "#/$defs/NodeId"
+                  },
+                  "to": {
+                    "$ref": "#/$defs/NodeId"
+                  },
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "line",
+                      "interchange",
+                      "transfer"
+                    ]
+                  }
+                },
+                "required": [
+                  "from",
+                  "to",
+                  "kind"
+                ]
+              }
+            },
+            "lines": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "$ref": "#/$defs/LineId"
+                  },
+                  "color": {
+                    "$ref": "#/$defs/LineColor"
+                  }
+                },
+                "required": [
+                  "id",
+                  "color"
+                ]
+              }
+            }
+          },
+          "required": [
+            "width",
+            "height",
+            "nodes",
+            "edges",
+            "lines"
+          ],
+          "description": "Enough to draw a poster without downloading."
+        },
+        "latest": {
+          "$ref": "#/$defs/SemVer"
+        },
+        "versions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "version": {
+                "$ref": "#/$defs/SemVer"
+              },
+              "engine": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string",
+                "description": "https, or relative to index.json; resolution keeps the index's scheme and origin."
+              },
+              "sha256": {
+                "type": "string"
+              },
+              "size": {
+                "type": "number",
+                "description": "Bytes."
+              },
+              "nodes": {
+                "type": "number"
+              },
+              "playable": {
+                "type": "number"
+              },
+              "estMinutes": {
+                "type": "number"
+              },
+              "license": {
+                "type": "string",
+                "enum": [
+                  "CC-BY-SA-4.0",
+                  "CC-BY-4.0",
+                  "CC0-1.0"
+                ]
+              },
+              "published": {
+                "$ref": "#/$defs/IsoDate"
+              },
+              "tryUrl": {
+                "type": "string",
+                "description": "TryBundle JSON; same URL rules."
+              }
+            },
+            "required": [
+              "version",
+              "engine",
+              "url",
+              "sha256",
+              "size",
+              "nodes",
+              "playable",
+              "estMinutes",
+              "license",
+              "published",
+              "tryUrl"
+            ]
+          }
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "publisher",
+        "tier",
+        "category",
+        "tags",
+        "lang",
+        "profile",
+        "review",
+        "customInteractives",
+        "theme",
+        "outcomes",
+        "sketch",
+        "latest",
+        "versions"
+      ]
+    },
+    "PackId": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{1,63}$",
+      "description": "\"how-llms-work\". Pocket maps use generated ids \"pm-<base32>\"."
+    },
+    "PackCategory": {
+      "type": "string",
+      "enum": [
+        "languages",
+        "science",
+        "tech-ai",
+        "thinking",
+        "arts",
+        "practical"
+      ]
+    },
+    "LintProfile": {
+      "type": "string",
+      "enum": [
+        "curated",
+        "sampler",
+        "community",
+        "pocket"
+      ]
+    },
+    "RendererId": {
+      "type": "string",
+      "enum": [
+        "metro",
+        "circuit",
+        "atlas",
+        "sketchbook"
+      ]
+    },
+    "Hex": {
+      "type": "string",
+      "pattern": "^#[0-9A-Fa-f]{6}$",
+      "description": "\"#RRGGBB\""
+    },
+    "TextureId": {
+      "type": "string",
+      "enum": [
+        "none",
+        "grid-fine",
+        "spacetime",
+        "world",
+        "ice",
+        "pcb",
+        "blueprint",
+        "topo",
+        "marble",
+        "snow",
+        "night-fair",
+        "paper",
+        "corkboard",
+        "watercolour"
+      ]
+    },
+    "TokenGlyph": {
+      "type": "string",
+      "enum": [
+        "train",
+        "comet",
+        "packet",
+        "note",
+        "electron",
+        "scooter",
+        "scroll",
+        "hiker",
+        "lantern",
+        "paper-plane",
+        "pin"
+      ]
+    },
+    "NodeId": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+      "description": "Unique within a pack."
+    },
+    "LineId": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+      "description": "Same pattern as NodeId."
+    },
+    "LineColor": {
+      "type": "number",
+      "enum": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "description": "Index into theme.lines."
+    },
+    "SemVer": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "\"1.2.0\""
+    }
+  }
+}

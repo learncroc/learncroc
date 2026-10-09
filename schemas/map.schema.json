@@ -1,0 +1,167 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://learncroc.github.io/schema/v1/map.schema.json",
+  "title": "learncroc map",
+  "description": "map.yaml: lines and the prerequisite graph of cards, checkpoints and planned cards.",
+  "type": "object",
+  "properties": {
+    "lines": {
+      "$ref": "#/$defs/__schema0",
+      "description": "1–5."
+    },
+    "nodes": {
+      "$ref": "#/$defs/__schema1"
+    }
+  },
+  "required": [
+    "lines",
+    "nodes"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "__schema0": {
+      "minItems": 1,
+      "maxItems": 5,
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/MapLine"
+      }
+    },
+    "MapLine": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/LineId"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "description": "\"Inside the Machine\""
+        },
+        "color": {
+          "$ref": "#/$defs/LineColor"
+        },
+        "outcome": {
+          "type": "string",
+          "description": "Logbook \"You can now…\", e.g. \"Explain why a model makes things up\"."
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "color",
+        "outcome"
+      ],
+      "additionalProperties": false
+    },
+    "LineId": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+      "description": "Same pattern as NodeId."
+    },
+    "LineColor": {
+      "type": "number",
+      "enum": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "description": "Index into theme.lines."
+    },
+    "__schema1": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "#/$defs/NodeId"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/MapNodeEntry"
+      }
+    },
+    "NodeId": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+      "description": "Unique within a pack."
+    },
+    "MapNodeEntry": {
+      "type": "object",
+      "properties": {
+        "requires": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/NodeId"
+          },
+          "description": "Prerequisites (cards or checkpoints). Cards of section n+1 require section n's checkpoint."
+        },
+        "line": {
+          "$ref": "#/$defs/LineId"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "node",
+            "checkpoint"
+          ],
+          "description": "Default \"node\"."
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "playable",
+            "planned"
+          ],
+          "description": "Default \"playable\". Planned: no node file (samplers: only beyond the final checkpoint)."
+        },
+        "title": {
+          "type": "string",
+          "description": "Required for planned entries. Checkpoint default: theme.gateName ?? \"Checkpoint <n>\"."
+        },
+        "teaser": {
+          "type": "string",
+          "description": "Required for planned entries. Optional for checkpoints (shown on the gate's peek)."
+        },
+        "covers": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/NodeId"
+          },
+          "description": "Checkpoint only: the cards it tests. Default: its section (checkpointCovers)."
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 3,
+          "maximum": 5,
+          "description": "Checkpoint only: questions per attempt, 3–5. Default: defaultCheckpointSize."
+        },
+        "pin": {
+          "type": "object",
+          "properties": {
+            "col": {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            },
+            "row": {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": [
+            "col",
+            "row"
+          ],
+          "additionalProperties": false,
+          "description": "Optional layout hint."
+        }
+      },
+      "required": [
+        "requires",
+        "line"
+      ],
+      "additionalProperties": false
+    }
+  }
+}
