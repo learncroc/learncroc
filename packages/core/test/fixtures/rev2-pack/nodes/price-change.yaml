@@ -1,0 +1,138 @@
+# yaml-language-server: $schema=https://learncroc.github.io/schema/v1/node.schema.json
+id: price-change
+title: Prices that go up and down
+tagline: A change is a percentage of the old price
+estMinutes: 4
+bigIdea: >
+  A percentage change is worked out from the starting amount. A 20% rise then a 20% fall does not
+  get you back where you started, because the fall is taken from the bigger number.
+objectives:
+  - Work out a new price after a percentage rise or fall
+  - Explain why a rise and an equal fall don't cancel
+visual:
+  kind: figure
+  asset: assets/img/hundred-grid.svg
+  alt: "A ten by ten grid of squares with the top two rows shaded."
+
+misconceptions:
+  changes-cancel:
+    label: Thinks an equal percentage rise and fall cancel out
+    upstream: ten-percent
+    hint: "Work out each step from the price you have at that moment."
+  wrong-base:
+    label: Takes a percentage change from the wrong amount, so the second change comes out the wrong size
+    upstream: ten-percent
+    hint: "Each change is a percentage of the amount just before it. Which of the two amounts is bigger?"
+
+hook:
+  blocks:
+    - type: story
+      text: "A £100 coat goes up 20% in autumn, then down 20% in the January sale."
+  interaction:
+    kind: choice
+    id: hook-q
+    prompt: What does it cost in January?
+    confidence: true
+    options:
+      - { id: hundred, text: "£100, back where it started", misconception: changes-cancel }
+      - { id: ninety-six, text: "£96" }
+      - { id: hundred-four, text: "£104", misconception: wrong-base }
+    answer: ninety-six
+  lotsGuess: hundred
+  reveal: "£96. The fall was 20% of £120, which is more than the £20 it went up."
+
+screens:
+  - id: s1-rise
+    role: resolve-hook
+    newIdea: A change is taken from the amount you start with
+    blocks:
+      - type: story
+        text: "First the rise: £100 goes up by 20%."
+    interaction:
+      kind: numeric
+      id: s1-q
+      prompt: What is the autumn price?
+      answer: 120
+      tolerance: 0
+      unit: "£"
+    reveal:
+      text: "£120. Now the sale starts from £120, not from £100."
+
+  - id: s2-fall
+    role: teach
+    newIdea: The second change uses the new price
+    blocks:
+      - type: story
+        text: "The sale takes 20% off £120."
+    interaction:
+      kind: numeric
+      id: s2-q
+      prompt: How many pounds come off in the sale?
+      answer: 24
+      tolerance: 0
+      unit: "£"
+      onWrong:
+        "20": { misconception: changes-cancel, feedback: "That's 20% of £100. The sale starts from £120." }
+    reveal:
+      text: "£24 off, so £96. The bigger base made the fall bigger than the rise."
+
+  - id: s3-transfer
+    role: transfer
+    blocks:
+      - type: story
+        text: "A £50 ticket rises 10%, then falls 10%."
+    interaction:
+      kind: numeric
+      id: s3-q
+      prompt: What does the ticket cost now?
+      answer: 49.5
+      tolerance: 0.001
+      unit: "£"
+      onWrong:
+        "50": { misconception: changes-cancel, feedback: "The fall is 10% of £55, not of £50." }
+    reveal:
+      text: "£55, then £5.50 off: £49.50. Same pattern, smaller numbers."
+
+items:
+  - id: i1
+    kind: numeric
+    level: recall
+    difficulty: 1
+    placement: true
+    prompt: "A £40 book is 25% off. What is the sale price?"
+    answer: 30
+    tolerance: 0
+  - id: i2
+    kind: numeric
+    level: apply
+    difficulty: 2
+    prompt: "Rent of £{r} rises by 10%. What is the new rent?"
+    params:
+      vars: { r: [800, 600, 1000, 750] }
+      answerExpr: "r * 1.1"
+    answer: 880
+    tolerance: 0.01
+  - id: i3
+    kind: choice
+    level: transfer
+    difficulty: 3
+    prompt: "A share price falls 50%, then rises 50%. Compared with the start, it is…"
+    options:
+      - { id: lower, text: "lower" }
+      - { id: same, text: "the same", misconception: changes-cancel }
+      - { id: higher, text: "higher", misconception: wrong-base }
+    answer: lower
+    why: "Half of 100 is 50; 50% more than 50 is 75."
+
+sayIt:
+  prompt: "Why doesn't a 20% rise and a 20% fall cancel out? One sentence."
+  keyPoints:
+    - { id: base, text: "each change is a percentage of a different amount", keywords: ["different amount", "new price", "from the bigger"] }
+    - { id: bigger, text: "the fall is taken from the larger, raised price", keywords: ["bigger", "larger", "more than"] }
+  minHits: 1
+  exemplar: "The fall is 20% of the higher price, so it takes off more than the rise added."
+
+sources:
+  - { id: bbc-bitesize-change, title: "Percentage change", by: "BBC Bitesize", url: "https://www.bbc.co.uk/bitesize/guides/z9tmn39/revision/1" }
+
+status: draft

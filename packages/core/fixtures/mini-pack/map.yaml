@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../../../schemas/map.schema.json
+# Key order is the reading order: two sections, each closed by a checkpoint, and a planned card beyond the last.
+lines:
+  - { id: basics, title: "Basics", color: 1, outcome: "Tell distance from time and convert between units" }
+  - { id: motion, title: "Motion", color: 2, outcome: "Read a speed off a distance-time line" }
+nodes:
+  units:             { requires: [], line: basics }
+  unit-conversion:   { requires: [units], line: basics }
+  checkpoint-basics: { requires: [unit-conversion], line: basics, kind: checkpoint }
+  speed:             { requires: [checkpoint-basics], line: motion }
+  checkpoint-trip:   { requires: [speed], line: motion, kind: checkpoint, title: "The Trip" }
+  average-speed:     { requires: [checkpoint-trip], line: motion, status: planned, title: "Average speed", teaser: "You drive 60 km/h there and 40 km/h back. Was your average 50?" }

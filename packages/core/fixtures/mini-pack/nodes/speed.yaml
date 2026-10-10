@@ -1,0 +1,194 @@
+# yaml-language-server: $schema=../../../../../schemas/node.schema.json
+id: speed
+title: Speed is a slope
+tagline: How steep is your trip?
+estMinutes: 4
+bigIdea: >
+  Speed is distance divided by time. On a distance-time graph it is the slope of the
+  line: steeper means faster.
+objectives:
+  - Compute speed from distance and time
+  - Read speed as the slope of a distance-time line
+
+misconceptions:
+  speed-is-distance:
+    label: Thinks the trip that went further was the faster one
+    hint: "Further isn't faster. How long did each trip take?"
+  multiply:
+    label: Multiplies distance by time to get speed
+    hint: "Speed is per hour. How far in one hour?"
+
+hook:
+  interaction:
+    kind: choice
+    id: hook-q
+    prompt: Train A goes 100 km in 2 hours. Train B goes 150 km in 3 hours. Which is faster?
+    confidence: true
+    options:
+      - { id: a, text: "Train A" }
+      - { id: b, text: "Train B", misconception: speed-is-distance }
+      - { id: same, text: "Same speed" }
+    answer: same
+  lotsGuess: b
+
+screens:
+  - id: s1-slope
+    newIdea: Speed is the slope of a distance-time line
+    blocks:
+      - type: story
+        text: "This line is a trip. Tilt it until it passes 100 km at 2 hours."
+    interaction:
+      kind: widget
+      id: s1-q
+      prompt: Set the speed so the line passes through 100 km at 2 hours.
+      widget:
+        id: plot
+        v: 1
+        props:
+          kind: function
+          x: { label: "time", min: 0, max: 4, unit: h }
+          y: { label: "distance", min: 0, max: 250, unit: km }
+          series: [ { id: trip, label: "trip", expr: "v * x", color: 1 } ]
+          params: [ { name: v, label: "speed", min: 0, max: 100, step: 5, value: 20, unit: km/h } ]
+          readouts: [ { label: "distance at 2 h", expr: "v * 2", unit: km, digits: 0 } ]
+          dataSource: formula
+        goal: { kind: param, name: v, target: 50, tolerance: 2.5 }
+      solution: { params: { v: 50 } }
+      fallback:
+        kind: numeric
+        prompt: What speed covers 100 km in 2 hours?
+        answer: 50
+        tolerance: 0
+        unit: km/h
+      feedbackRight: "50 km/h. Steeper line, faster trip."
+    reveal:
+      text: "The line tilted up to 50 km/h and crossed 100 km at exactly 2 hours."
+      visualState: { props: { markerAt: 2 }, note: "slope = speed" }
+
+  - id: s2-divide
+    newIdea: Speed = distance ÷ time
+    blocks:
+      - type: story
+        text: "Slope is rise over run: kilometres over hours."
+      - type: math
+        tex: "\\text{speed} = \\frac{\\text{distance}}{\\text{time}}"
+    visual:
+      kind: widget
+      widget:
+        id: plot
+        v: 1
+        props:
+          kind: function
+          x: { label: "time", min: 0, max: 4, unit: h }
+          y: { label: "distance", min: 0, max: 250, unit: km }
+          series: [ { id: trip, label: "trip", expr: "60 * x", color: 2 } ]
+          dataSource: formula
+      alt: "A straight line rising 60 km for every hour."
+    interaction:
+      kind: numeric
+      id: s2-q
+      prompt: A bus goes 180 km in 3 hours. Its speed in km/h?
+      answer: 60
+      tolerance: 0
+      unit: km/h
+      onWrong:
+        "540": { misconception: multiply, feedback: "That multiplies. Share the distance over the hours." }
+    reveal:
+      text: "60 km/h: the line climbs 60 km in each hour."
+
+  - id: s3-transfer
+    blocks:
+      - type: story
+        text: "A cyclist rides 45 km in 90 minutes."
+    interaction:
+      kind: numeric
+      id: s3-q
+      prompt: Her speed in km/h?
+      answer: 30
+      tolerance: 0
+      unit: km/h
+      onWrong:
+        "0.5": { feedback: "Minutes first: 90 minutes is 1.5 hours." }
+    reveal:
+      text: "30 km/h. 90 minutes is 1.5 hours, and 45 ÷ 1.5 = 30."
+
+close:
+  text: "Same speed. Both trains cover ==50 km each hour==; B just keeps going an hour longer."
+  byGuess:
+    b: "You picked *Train B*. Lots of people do: it went further. But further isn't faster; per hour, both cover 50 km."
+    a: "You picked *Train A*. Two hours for 100 km is 50 an hour, and B matches it."
+    idk: "No guess is fine. Per hour, both trains cover 50 km, so they tie."
+  teaser: "Speed is distance per hour. What if the trip is timed in minutes?"
+
+items:
+  - id: i1
+    kind: numeric
+    level: apply
+    difficulty: 2
+    prompt: "A car drives {d} km in 2 hours. Its speed in km/h?"
+    params:
+      vars: { d: [120, 80, 150, 200] }
+      answerExpr: "d / 2"
+    answer: 60
+    tolerance: 0
+    unit: km/h
+  - id: i2
+    kind: choice
+    level: recall
+    difficulty: 1
+    prompt: On a distance-time graph, a steeper line means…
+    options:
+      - { id: faster, text: faster }
+      - { id: further, text: "further", misconception: speed-is-distance }
+      - { id: slower, text: slower }
+    answer: faster
+  - id: i3
+    kind: explain
+    level: transfer
+    difficulty: 3
+    prompt: "In one sentence: why did both trains in the hook have the same speed?"
+    keyPoints:
+      - { id: per-hour, text: "both cover 50 km each hour", keywords: ["50", "per hour", "each hour"] }
+      - { id: divide, text: "distance divided by time is equal", keywords: [divide, "÷", ratio] }
+    minHits: 1
+    exemplar: "Both cover 50 km each hour: 100 ÷ 2 and 150 ÷ 3 are both 50."
+    offline:
+      kind: choice
+      prompt: Why do the trains have the same speed?
+      options:
+        - { id: rate, text: "Both cover 50 km each hour" }
+        - { id: far, text: "Both went far", misconception: speed-is-distance }
+      answer: rate
+  - id: i4
+    kind: estimate
+    level: apply
+    difficulty: 3
+    prompt: Roughly how fast is walking, in km/h?
+    scale: { min: 1, max: 100, log: true, unit: km/h }
+    answer: 5
+    accept: { factor: 1.6 }
+  - id: i5
+    kind: numeric
+    level: transfer
+    difficulty: 3
+    prompt: "A runner covers {d} km in 30 minutes. Her speed in km/h?"
+    params:
+      vars: { d: [5, 4, 6, 3] }
+      answerExpr: "d * 2"
+    answer: 10
+    tolerance: 0
+    unit: km/h
+    why: "30 minutes is half an hour, so double the distance."
+  - id: i6
+    kind: order
+    level: transfer
+    difficulty: 3
+    prompt: Order these trips from slowest to fastest.
+    items: ["60 km in 2 hours", "40 km in 1 hour", "90 km in 2 hours", "25 km in 30 minutes"]
+    answer: [0, 1, 2, 3]
+    why: "Per hour: 30, 40, 45 and 50 km."
+
+sources:
+  - { id: openstax-physics, title: "College Physics 2e, chapter 2", by: "OpenStax", year: 2022, url: "https://openstax.org/details/books/college-physics-2e", license: "CC-BY-4.0" }
+
+status: draft

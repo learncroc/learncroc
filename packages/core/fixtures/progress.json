@@ -1,0 +1,140 @@
+{
+  "packId": "mini-pack",
+  "nodes": {
+    "units": {
+      "nodeId": "units",
+      "status": "lit",
+      "source": "checkpoint",
+      "doneAt": 1792306800000,
+      "litAt": 1792314000000,
+      "theta": 0.4,
+      "bestScore": 1,
+      "relightsOk": 0
+    },
+    "unit-conversion": {
+      "nodeId": "unit-conversion",
+      "status": "lit",
+      "source": "checkpoint",
+      "doneAt": 1792310400000,
+      "litAt": 1792314000000,
+      "theta": 0.2,
+      "relightsOk": 0
+    },
+    "checkpoint-basics": {
+      "nodeId": "checkpoint-basics",
+      "status": "lit",
+      "source": "checkpoint",
+      "litAt": 1792314000000,
+      "theta": 0,
+      "relightsOk": 0
+    },
+    "speed": {
+      "nodeId": "speed",
+      "status": "done",
+      "source": "run",
+      "doneAt": 1792483200000,
+      "theta": 0,
+      "relightsOk": 0
+    }
+  },
+  "views": {
+    "units": {
+      "id": "units",
+      "state": "lit",
+      "brightness": 1,
+      "retrievability": 0.96781335,
+      "durable": false,
+      "suggested": false,
+      "missing": [],
+      "fadingPrereqs": []
+    },
+    "unit-conversion": {
+      "id": "unit-conversion",
+      "state": "lit",
+      "brightness": 1,
+      "retrievability": 0.90949326,
+      "durable": false,
+      "suggested": false,
+      "missing": [],
+      "fadingPrereqs": []
+    },
+    "checkpoint-basics": {
+      "id": "checkpoint-basics",
+      "state": "lit",
+      "brightness": 1,
+      "durable": false,
+      "suggested": false,
+      "missing": [],
+      "fadingPrereqs": []
+    },
+    "speed": {
+      "id": "speed",
+      "state": "done",
+      "brightness": 0,
+      "durable": false,
+      "suggested": false,
+      "missing": [],
+      "fadingPrereqs": []
+    },
+    "checkpoint-trip": {
+      "id": "checkpoint-trip",
+      "state": "ready",
+      "brightness": 0,
+      "durable": false,
+      "suggested": true,
+      "missing": [],
+      "fadingPrereqs": [],
+      "tries": 0
+    },
+    "average-speed": {
+      "id": "average-speed",
+      "state": "planned",
+      "brightness": 0,
+      "durable": false,
+      "suggested": false,
+      "missing": [],
+      "fadingPrereqs": []
+    }
+  },
+  "nodeCards": {
+    "units": {
+      "id": "node:mini-pack:units",
+      "packId": "mini-pack",
+      "nodeId": "units",
+      "kind": "node",
+      "due": 1793005200000,
+      "stability": 8.2956,
+      "difficulty": 1,
+      "elapsedDays": 0,
+      "scheduledDays": 8,
+      "reps": 1,
+      "lapses": 0,
+      "state": 2,
+      "lastReview": 1792314000000,
+      "suspended": false
+    },
+    "unit-conversion": {
+      "id": "node:mini-pack:unit-conversion",
+      "packId": "mini-pack",
+      "nodeId": "unit-conversion",
+      "kind": "node",
+      "due": 1792573200000,
+      "stability": 2.3065,
+      "difficulty": 2.11810397,
+      "elapsedDays": 0,
+      "scheduledDays": 3,
+      "reps": 1,
+      "lapses": 0,
+      "state": 2,
+      "lastReview": 1792314000000,
+      "suspended": false
+    }
+  },
+  "due": {
+    "relight": 0,
+    "flashcards": 0
+  },
+  "lastOpenedAt": 1792483200000,
+  "finished": false,
+  "now": 1792486800000
+}

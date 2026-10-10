@@ -1,0 +1,10 @@
+kind: trace-run
+title: Run the till
+source: illustrative
+minLit: 1
+inputs:
+  - id: a
+    text: "A 20 pound shirt, 10% off"
+    steps:
+      - { node: ten-percent, label: "10%", output: "2 pounds" }
+      - { node: price-change, label: "new price", output: "18 pounds" }

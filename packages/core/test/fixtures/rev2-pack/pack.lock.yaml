@@ -1,0 +1,5 @@
+# yaml-language-server: $schema=https://learncroc.github.io/schema/v1/lock.schema.json
+provenance:
+  toy.yaml: { feature: toy, prompt: "create-toy@1", provider: script, model: none, at: 2026-10-01 }
+  bosses/boss-shop.yaml: { feature: build, prompt: "author-boss@1", provider: script, model: none, at: 2026-10-01 }
+  nodes/per-hundred.yaml: { feature: build, prompt: "author-node@1", provider: script, model: none, at: 2026-10-01 }

@@ -1,0 +1,200 @@
+# yaml-language-server: $schema=../../../../../schemas/node.schema.json
+id: unit-conversion
+title: Minutes into hours
+tagline: Sixty, not a hundred
+estMinutes: 4
+bigIdea: >
+  An hour has 60 minutes, not 100, so 90 minutes is 1.5 hours, not 0.9. Divide minutes
+  by 60 to get hours.
+objectives:
+  - Convert minutes to hours by dividing by 60
+  - Explain why 90 minutes is 1.5 hours and not 0.9
+
+misconceptions:
+  decimal-hours:
+    label: Thinks an hour has 100 minutes, so 90 minutes is 0.9 hours
+    hint: "How many minutes are in one hour? Use that, not 100."
+  multiply-60:
+    label: Multiplies by 60 when going from minutes to hours
+    upstream: units
+    hint: "Hours are bigger than minutes, so you need fewer of them."
+
+hook:
+  interaction:
+    kind: choice
+    id: hook-q
+    prompt: How many hours is 90 minutes?
+    confidence: true
+    options:
+      - { id: h09, text: "0.9 hours", misconception: decimal-hours }
+      - { id: h15, text: "1.5 hours" }
+      - { id: h5400, text: "5400 hours", misconception: multiply-60 }
+    answer: h15
+  lotsGuess: h09
+
+screens:
+  - id: s1-slider
+    newIdea: Hours = minutes ÷ 60
+    blocks:
+      - type: story
+        text: "Slide the minutes until the hours readout says 1.5."
+    interaction:
+      kind: widget
+      id: s1-q
+      prompt: Set the minutes so the trip lasts 1.5 hours.
+      widget:
+        id: plot
+        v: 1
+        props:
+          kind: function
+          x: { label: "minutes", min: 0, max: 180, unit: min }
+          y: { label: "hours", min: 0, max: 3, unit: h }
+          series: [ { id: conv, label: "hours", expr: "x / 60", color: 1 } ]
+          params: [ { name: m, label: "minutes", min: 0, max: 180, step: 5, value: 30, unit: min } ]
+          readouts: [ { label: "hours", expr: "m / 60", unit: h, digits: 2 } ]
+          dataSource: formula
+        goal: { kind: readout, label: "hours", target: 1.5, tolerance: 0.01 }
+      solution: { params: { m: 90 } }
+      fallback:
+        kind: numeric
+        prompt: How many minutes make 1.5 hours?
+        answer: 90
+        tolerance: 0
+        unit: min
+    reveal:
+      text: "The readout hit 1.5 at 90 minutes: every 60 minutes adds one hour."
+      visualState: { props: { markerAt: 90 }, note: "90 ÷ 60 = 1.5" }
+
+  - id: s2-divide
+    newIdea: Going to a bigger unit means dividing
+    blocks:
+      - type: story
+        text: "Hours are bigger than minutes, so the same trip needs fewer of them. Every 60 minutes on the line becomes one step up in hours."
+      - type: callout
+        tone: note
+        text: "Bigger unit, smaller number: divide by 60. 45 minutes is 45 ÷ 60 = 0.75 hours, three quarters of the way to 1."
+    visual:
+      kind: widget
+      widget:
+        id: plot
+        v: 1
+        props:
+          kind: function
+          x: { label: "minutes", min: 0, max: 180, unit: min }
+          y: { label: "hours", min: 0, max: 3, unit: h }
+          series: [ { id: conv, label: "hours", expr: "x / 60", color: 1 } ]
+          dataSource: formula
+      alt: "A line from 0 hours at 0 minutes to 3 hours at 180 minutes."
+
+  - id: s3-transfer
+    blocks:
+      - type: story
+        text: "A film runs 150 minutes."
+    interaction:
+      kind: numeric
+      id: s3-q
+      prompt: How long is it in hours?
+      answer: 2.5
+      tolerance: 0.001
+      unit: h
+      onWrong:
+        "1.5": { misconception: decimal-hours }
+    reveal:
+      text: "2.5 hours: two full hours and 30 minutes."
+
+close:
+  text: "1.5 hours. An hour has 60 minutes, not 100, so 90 minutes is ==one and a half hours==."
+  byGuess:
+    h09: "You picked *0.9 hours*. Lots of people do: it treats an hour as 100 minutes. It has 60, so 90 minutes is 1.5 hours."
+    h5400: "You picked *5400 hours*. That multiplies by 60. Hours are bigger than minutes, so the number shrinks: 90 ÷ 60 = 1.5."
+    idk: "No guess is fine. An hour has 60 minutes, so 90 minutes is one hour and a half."
+  teaser: "Two trains, two distances, two times. Is the one that went further the faster one?"
+
+items:
+  - id: i1
+    kind: numeric
+    level: apply
+    difficulty: 2
+    prompt: "How many hours is {m} minutes?"
+    params:
+      vars: { m: [120, 30, 90, 210] }
+      answerExpr: "m / 60"
+    answer: 2
+    tolerance: 0.001
+    unit: h
+  - id: i2
+    kind: choice
+    level: recall
+    difficulty: 1
+    prompt: To turn minutes into hours, you…
+    options:
+      - { id: div, text: "divide by 60" }
+      - { id: mul, text: "multiply by 60", misconception: multiply-60 }
+      - { id: div100, text: "divide by 100", misconception: decimal-hours }
+    answer: div
+  - id: i3
+    kind: numeric
+    level: apply
+    difficulty: 3
+    prompt: How many minutes is 0.2 hours?
+    answer: 12
+    tolerance: 0
+    unit: min
+  - id: i4
+    kind: text
+    level: recall
+    difficulty: 1
+    prompt: "How many minutes are in an hour? (digits)"
+    accept: ["60"]
+  - id: st2-clock
+    kind: widget
+    level: transfer
+    difficulty: 3
+    prompt: The first leg takes 1.25 hours. Set the minutes.
+    widget:
+      id: plot
+      v: 1
+      props:
+        kind: function
+        x: { label: "minutes", min: 0, max: 180, unit: min }
+        y: { label: "hours", min: 0, max: 3, unit: h }
+        series: [ { id: conv, label: "hours", expr: "x / 60", color: 1 } ]
+        params: [ { name: m, label: "minutes", min: 0, max: 180, step: 5, value: 0, unit: min } ]
+        readouts: [ { label: "hours", expr: "m / 60", unit: h, digits: 2 } ]
+        dataSource: formula
+      goal: { kind: readout, label: "hours", target: 1.25, tolerance: 0.01 }
+    solution: { params: { m: 75 } }
+    fallback:
+      kind: numeric
+      prompt: How many minutes is 1.25 hours?
+      answer: 75
+      tolerance: 0
+    why: "75 minutes. The first leg is set."
+  - id: st3-second
+    kind: widget
+    level: transfer
+    difficulty: 3
+    prompt: The second leg takes 40 minutes. Drag the marker to 40 minutes and read the hours.
+    widget:
+      id: plot
+      v: 1
+      props:
+        kind: function
+        x: { label: "minutes", min: 0, max: 180, unit: min }
+        y: { label: "hours", min: 0, max: 3, unit: h }
+        series: [ { id: conv, label: "hours", expr: "x / 60", color: 1 } ]
+        marker: point
+        dataSource: formula
+      goal: { kind: point, x: 40, tolerance: 2.5 }
+    solution: { point: [40, 0.667] }
+    fallback:
+      kind: numeric
+      prompt: How many hours is 40 minutes? (Two decimals.)
+      answer: 0.67
+      tolerance: 0.01
+    why: "About 0.67 hours: two thirds of an hour."
+
+sources:
+  - { id: si-brochure, title: "The International System of Units (SI)", by: "BIPM", year: 2019 }
+
+status: draft

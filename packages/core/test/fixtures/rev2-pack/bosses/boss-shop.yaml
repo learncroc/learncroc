@@ -1,0 +1,46 @@
+id: boss-shop
+title: Shop test
+intro: "The till is broken. Price the shelf by hand."
+setPiece: generic
+stages:
+  - id: st1-share
+    node: per-hundred
+    title: Read the sign
+    prompt: Sort each sign into a share or a count.
+    widget:
+      id: sorter
+      v: 1
+      props:
+        mode: buckets
+        buckets: [ { id: share, label: Share }, { id: count, label: Count } ]
+        cards: [ { id: a, text: "20%" }, { id: b, text: "20 tins" } ]
+      goal: { kind: buckets, assignment: { a: share, b: count } }
+    solution: { assignment: { a: share, b: count } }
+    fallback:
+      kind: choice
+      prompt: Which sign is a share?
+      options: [ { id: a, text: "20%" }, { id: b, text: "20 tins" } ]
+      answer: a
+    reveal: "A percentage is a share of the whole, whatever the whole is. A count is just a number of things, and it says nothing about the size of the shelf or the shop at all."
+  - id: st2-price
+    node: price-change
+    title: Price it
+    prompt: Rank the prices after the change.
+    widget:
+      id: sorter
+      v: 1
+      props:
+        mode: rank
+        rankLabels: [cheapest, dearest]
+        cards: [ { id: x, text: "20 less 10%" }, { id: y, text: "20" } ]
+      goal: { kind: rank, order: [x, y] }
+    solution: { order: [x, y] }
+    fallback:
+      kind: order
+      prompt: Cheapest first.
+      items: ["20 less 10%", "20"]
+      answer: [0, 1]
+    reveal: "18 is less than 20."
+pass: 1
+teach: price-change
+victory: "The shelf is priced."

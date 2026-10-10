@@ -1,0 +1,45 @@
+# A frozen revision-2 pack (format 1) for the 1 → 2 codemod tests. Never migrate this copy in place.
+# yaml-language-server: $schema=https://learncroc.github.io/schema/v1/pack.schema.json
+schema: 1
+id: rev2-pack
+version: 0.1.0
+title: Revision 2 pack
+subtitle: Percentages without a calculator
+tagline: Read, find and change percentages in your head.
+publisher: learncroc tests
+authors:
+  - { name: learncroc tests }
+license: CC-BY-SA-4.0
+lang: en
+level: beginner
+estMinutes: 12
+tags: [numbers, percentages]
+category: practical
+engine: ">=0.1.0 <1.0.0"
+widgets: { sorter: 1 }
+profile: community
+theme:
+  renderer: metro
+  world: The Percent Line
+  mode: dark
+  direction: lr
+  ground: "#0F1430"
+  texture: grid-fine
+  lines: ["#7FB2FF", "#C792F2", "#F07DA6", "#9AD07A", "#E6E1D3"]
+  token: train
+  terminusName: Shop test
+guide:
+  id: guide
+  name: Pip
+  role: a shopkeeper who does sums on receipts
+  voice: "Dry and friendly. Short sentences. No exclamation marks."
+  glyph: generic
+  sampleLines:
+    - "Per cent means per hundred. Start there."
+    - "Ten per cent first. Everything else is built from it."
+entry: { suggestedStart: per-hundred, coldOpenNode: per-hundred, placement: true }
+outcomes:
+  - Read a percentage as a part of a hundred
+  - Find 10%, 5% and 25% of an amount in your head
+  - Work out a price after a percentage change
+status: draft

@@ -1,0 +1,1511 @@
+{
+  "format": 2,
+  "manifest": {
+    "schema": 2,
+    "id": "mini-pack",
+    "version": "0.1.0",
+    "title": "Mini pack",
+    "subtitle": "A three-card fixture for tests and stub screens",
+    "tagline": "Sort units, convert minutes, read a speed line.",
+    "publisher": "learncroc tests",
+    "authors": [
+      {
+        "name": "learncroc contributors"
+      }
+    ],
+    "reviewers": [],
+    "license": "CC-BY-SA-4.0",
+    "lang": "en",
+    "level": "beginner",
+    "estMinutes": 15,
+    "tags": ["fixture", "units", "speed"],
+    "category": "practical",
+    "engine": ">=0.1.0 <1.0.0",
+    "widgets": {
+      "sorter": 1,
+      "plot": 1
+    },
+    "profile": "community",
+    "theme": {
+      "renderer": "metro",
+      "world": "The Test Line",
+      "mode": "dark",
+      "direction": "lr",
+      "ground": "#0F1430",
+      "texture": "grid-fine",
+      "lines": ["#7FB2FF", "#C792F2", "#F07DA6", "#9AD07A", "#E6E1D3"],
+      "token": "train",
+      "landmarks": {
+        "checkpoint-trip": {
+          "name": "The Trip",
+          "glyph": "station"
+        }
+      },
+      "gateName": "Check",
+      "fieldNoteStyle": "ticket"
+    },
+    "entry": {
+      "suggestedStart": "units"
+    },
+    "outcomes": [
+      "Sort quantities into distance and time",
+      "Convert minutes to hours without a calculator",
+      "Read a speed off a distance-time line"
+    ],
+    "status": "draft"
+  },
+  "map": {
+    "lines": [
+      {
+        "id": "basics",
+        "title": "Basics",
+        "color": 1,
+        "outcome": "Tell distance from time and convert between units"
+      },
+      {
+        "id": "motion",
+        "title": "Motion",
+        "color": 2,
+        "outcome": "Read a speed off a distance-time line"
+      }
+    ],
+    "nodes": {
+      "units": {
+        "id": "units",
+        "requires": [],
+        "line": "basics",
+        "kind": "node",
+        "status": "playable",
+        "title": "Distance or time?",
+        "teaser": "Which is longer, 90 minutes or 2 hours?",
+        "estMinutes": 3,
+        "gate": "checkpoint-basics"
+      },
+      "unit-conversion": {
+        "id": "unit-conversion",
+        "requires": ["units"],
+        "line": "basics",
+        "kind": "node",
+        "status": "playable",
+        "title": "Minutes into hours",
+        "teaser": "How many hours is 90 minutes?",
+        "estMinutes": 4,
+        "gate": "checkpoint-basics"
+      },
+      "checkpoint-basics": {
+        "id": "checkpoint-basics",
+        "requires": ["unit-conversion"],
+        "line": "basics",
+        "kind": "checkpoint",
+        "status": "playable",
+        "title": "Check 1",
+        "teaser": "",
+        "covers": ["units", "unit-conversion"],
+        "size": 3,
+        "estMinutes": 3
+      },
+      "speed": {
+        "id": "speed",
+        "requires": ["checkpoint-basics"],
+        "line": "motion",
+        "kind": "node",
+        "status": "playable",
+        "title": "Speed is a slope",
+        "teaser": "Train A goes 100 km in 2 hours. Train B goes 150 km in 3 hours. Which is faster?",
+        "estMinutes": 4,
+        "gate": "checkpoint-trip"
+      },
+      "checkpoint-trip": {
+        "id": "checkpoint-trip",
+        "requires": ["speed"],
+        "line": "motion",
+        "kind": "checkpoint",
+        "status": "playable",
+        "title": "The Trip",
+        "teaser": "",
+        "covers": ["speed"],
+        "size": 3,
+        "estMinutes": 3
+      },
+      "average-speed": {
+        "id": "average-speed",
+        "requires": ["checkpoint-trip"],
+        "line": "motion",
+        "kind": "node",
+        "status": "planned",
+        "title": "Average speed",
+        "teaser": "You drive 60 km/h there and 40 km/h back. Was your average 50?"
+      }
+    },
+    "topo": ["units", "unit-conversion", "checkpoint-basics", "speed", "checkpoint-trip", "average-speed"],
+    "layout": {
+      "width": 1008,
+      "height": 112,
+      "direction": "lr",
+      "cell": {
+        "w": 168,
+        "h": 112
+      },
+      "nodes": {
+        "units": {
+          "x": 84,
+          "y": 56,
+          "col": 0,
+          "row": 0
+        },
+        "unit-conversion": {
+          "x": 252,
+          "y": 56,
+          "col": 1,
+          "row": 0
+        },
+        "checkpoint-basics": {
+          "x": 420,
+          "y": 56,
+          "col": 2,
+          "row": 0
+        },
+        "speed": {
+          "x": 588,
+          "y": 56,
+          "col": 3,
+          "row": 0
+        },
+        "checkpoint-trip": {
+          "x": 756,
+          "y": 56,
+          "col": 4,
+          "row": 0
+        },
+        "average-speed": {
+          "x": 924,
+          "y": 56,
+          "col": 5,
+          "row": 0
+        }
+      },
+      "edges": [
+        {
+          "from": "units",
+          "to": "unit-conversion",
+          "kind": "line",
+          "points": [[84, 56], [252, 56]]
+        },
+        {
+          "from": "unit-conversion",
+          "to": "checkpoint-basics",
+          "kind": "line",
+          "points": [[252, 56], [420, 56]]
+        },
+        {
+          "from": "checkpoint-basics",
+          "to": "speed",
+          "kind": "interchange",
+          "points": [[420, 56], [588, 56]]
+        },
+        {
+          "from": "speed",
+          "to": "checkpoint-trip",
+          "kind": "line",
+          "points": [[588, 56], [756, 56]]
+        },
+        {
+          "from": "checkpoint-trip",
+          "to": "average-speed",
+          "kind": "line",
+          "points": [[756, 56], [924, 56]]
+        }
+      ],
+      "lines": {
+        "basics": ["units", "unit-conversion", "checkpoint-basics"],
+        "motion": ["speed", "checkpoint-trip", "average-speed"]
+      }
+    }
+  },
+  "nodes": {
+    "units": {
+      "id": "units",
+      "title": "Distance or time?",
+      "tagline": "Every quantity has a kind",
+      "estMinutes": 3,
+      "bigIdea": "A unit tells you what kind of quantity a number is. Kilometres and miles measure distance; seconds and hours measure time. You can only compare like with like.\n",
+      "objectives": ["Sort units into distance and time", "Spot a comparison between quantities of different kinds"],
+      "misconceptions": {
+        "bigger-number": {
+          "label": "Thinks the bigger number is always the bigger quantity, whatever the unit",
+          "hint": "Check the units first. 90 minutes and 2 hours: which unit is bigger?"
+        },
+        "all-units-same": {
+          "label": "Treats any unit as interchangeable with any other",
+          "hint": "Could you add 3 kilometres to 2 hours? What would the answer be measured in?"
+        }
+      },
+      "hook": {
+        "blocks": [
+          {
+            "type": "story",
+            "text": "A sign says the next town is 40. You don't know if that's minutes or kilometres."
+          }
+        ],
+        "visual": {
+          "kind": "figure",
+          "asset": "assets/img/clock-and-road.svg",
+          "alt": "A clock face beside a road with distance markers."
+        },
+        "interaction": {
+          "id": "hook-q",
+          "prompt": "Which is longer, 90 minutes or 2 hours?",
+          "confidence": true,
+          "kind": "choice",
+          "options": [
+            {
+              "id": "minutes",
+              "text": "90 minutes",
+              "misconception": "bigger-number"
+            },
+            {
+              "id": "hours",
+              "text": "2 hours"
+            },
+            {
+              "id": "same",
+              "text": "They're the same",
+              "misconception": "all-units-same"
+            }
+          ],
+          "answer": "hours"
+        },
+        "lotsGuess": "minutes"
+      },
+      "screens": [
+        {
+          "id": "s1-sort",
+          "newIdea": "Units come in kinds; distance and time are different kinds",
+          "blocks": [
+            {
+              "type": "story",
+              "text": "Six labels fell off the timetable. Put each back where it belongs."
+            }
+          ],
+          "interaction": {
+            "id": "s1-q",
+            "prompt": "Sort each unit into distance or time.",
+            "feedbackRight": "Two piles, two kinds. You can compare within a pile, not across.",
+            "kind": "widget",
+            "widget": {
+              "id": "sorter",
+              "v": 1,
+              "props": {
+                "mode": "buckets",
+                "buckets": [
+                  {
+                    "id": "distance",
+                    "label": "Distance"
+                  },
+                  {
+                    "id": "time",
+                    "label": "Time"
+                  }
+                ],
+                "cards": [
+                  {
+                    "id": "km",
+                    "text": "kilometre"
+                  },
+                  {
+                    "id": "h",
+                    "text": "hour"
+                  },
+                  {
+                    "id": "mi",
+                    "text": "mile"
+                  },
+                  {
+                    "id": "min",
+                    "text": "minute"
+                  },
+                  {
+                    "id": "m",
+                    "text": "metre"
+                  },
+                  {
+                    "id": "s",
+                    "text": "second"
+                  }
+                ]
+              },
+              "goal": {
+                "kind": "buckets",
+                "assignment": {
+                  "km": "distance",
+                  "mi": "distance",
+                  "m": "distance",
+                  "h": "time",
+                  "min": "time",
+                  "s": "time"
+                }
+              }
+            },
+            "solution": {
+              "assignment": {
+                "km": "distance",
+                "mi": "distance",
+                "m": "distance",
+                "h": "time",
+                "min": "time",
+                "s": "time"
+              }
+            },
+            "fallback": {
+              "prompt": "Which of these units measures time?",
+              "kind": "choice",
+              "options": [
+                {
+                  "id": "km",
+                  "text": "kilometre"
+                },
+                {
+                  "id": "min",
+                  "text": "minute"
+                },
+                {
+                  "id": "mi",
+                  "text": "mile"
+                }
+              ],
+              "answer": "min"
+            }
+          },
+          "reveal": {
+            "text": "The labels snapped into two piles: three for distance, three for time."
+          }
+        },
+        {
+          "id": "s2-compare",
+          "newIdea": "Convert to the same unit before comparing",
+          "visual": {
+            "kind": "widget",
+            "widget": {
+              "id": "sorter",
+              "v": 1,
+              "props": {
+                "mode": "rank",
+                "rankLabels": ["shortest", "longest"],
+                "cards": [
+                  {
+                    "id": "a",
+                    "text": "45 minutes"
+                  },
+                  {
+                    "id": "b",
+                    "text": "1 hour"
+                  },
+                  {
+                    "id": "c",
+                    "text": "90 minutes"
+                  }
+                ]
+              }
+            },
+            "alt": "Three time cards in a column, ready to rank from shortest to longest."
+          },
+          "blocks": [
+            {
+              "type": "story",
+              "text": "To compare, put both numbers in the same unit first."
+            }
+          ],
+          "interaction": {
+            "id": "s2-q",
+            "prompt": "How many minutes are in 2 hours?",
+            "onWrong": {
+              "2": {
+                "misconception": "bigger-number",
+                "feedback": "That's still hours. Each hour is 60 minutes."
+              },
+              "default": {
+                "feedback": "Multiply the hours by 60."
+              }
+            },
+            "kind": "numeric",
+            "answer": 120,
+            "tolerance": 0,
+            "unit": "min"
+          },
+          "reveal": {
+            "text": "120 minutes. Now the cards line up: 45, 60, 90, 120.",
+            "visualState": {
+              "note": "same unit, easy compare"
+            }
+          }
+        },
+        {
+          "id": "s3-transfer",
+          "blocks": [
+            {
+              "type": "story",
+              "text": "A runner covers 5 km. A cyclist covers 4 miles."
+            }
+          ],
+          "interaction": {
+            "id": "s3-q",
+            "prompt": "What do you need before saying who went further?",
+            "kind": "choice",
+            "options": [
+              {
+                "id": "convert",
+                "text": "Put both distances in the same unit"
+              },
+              {
+                "id": "bigger",
+                "text": "Nothing: 5 is bigger than 4",
+                "misconception": "bigger-number"
+              },
+              {
+                "id": "time",
+                "text": "Their times",
+                "misconception": "all-units-same"
+              }
+            ],
+            "answer": "convert"
+          },
+          "reveal": {
+            "text": "Same unit first. 4 miles is about 6.4 km, so the cyclist went further."
+          }
+        }
+      ],
+      "close": {
+        "text": "==2 hours is 120 minutes==, so it beats 90. The number alone told you nothing until the units matched.",
+        "byGuess": {
+          "minutes": "You picked *90 minutes*. Lots of people do: 90 looks bigger than 2. But 2 hours is 120 minutes, so it's longer.",
+          "same": "You picked *They're the same*. They aren't: 2 hours is 120 minutes, which is 30 more than 90.",
+          "idk": "No guess is fine. Put both in minutes: 2 hours is 120, so it beats 90."
+        },
+        "teaser": "Minutes and hours don't mix. So how many hours is 90 minutes?"
+      },
+      "items": [
+        {
+          "id": "i1",
+          "prompt": "Which unit measures distance?",
+          "kind": "choice",
+          "options": [
+            {
+              "id": "hour",
+              "text": "hour",
+              "misconception": "all-units-same"
+            },
+            {
+              "id": "mile",
+              "text": "mile"
+            },
+            {
+              "id": "second",
+              "text": "second",
+              "misconception": "all-units-same"
+            }
+          ],
+          "answer": "mile",
+          "level": "recall",
+          "difficulty": 1
+        },
+        {
+          "id": "i2",
+          "prompt": "How many minutes are in {h} hours?",
+          "kind": "numeric",
+          "answer": 180,
+          "tolerance": 0,
+          "level": "apply",
+          "difficulty": 2,
+          "params": {
+            "vars": {
+              "h": [3, 2, 4, 5]
+            },
+            "answerExpr": "h * 60"
+          },
+          "why": "Each hour is 60 minutes."
+        },
+        {
+          "id": "i3",
+          "prompt": "One word: kilometres and miles both measure…",
+          "kind": "text",
+          "accept": ["distance", "length"],
+          "level": "recall",
+          "difficulty": 1
+        },
+        {
+          "id": "i4",
+          "prompt": "Put these from shortest to longest.",
+          "kind": "order",
+          "items": ["30 seconds", "1 minute", "100 seconds", "2 minutes"],
+          "answer": [0, 1, 2, 3],
+          "level": "transfer",
+          "difficulty": 3
+        },
+        {
+          "id": "st1-sort",
+          "prompt": "Sort each timetable entry into distance or time.",
+          "kind": "widget",
+          "widget": {
+            "id": "sorter",
+            "v": 1,
+            "props": {
+              "mode": "buckets",
+              "buckets": [
+                {
+                  "id": "distance",
+                  "label": "Distance"
+                },
+                {
+                  "id": "time",
+                  "label": "Time"
+                }
+              ],
+              "cards": [
+                {
+                  "id": "a",
+                  "text": "12 km"
+                },
+                {
+                  "id": "b",
+                  "text": "40 min"
+                },
+                {
+                  "id": "c",
+                  "text": "3 miles"
+                },
+                {
+                  "id": "d",
+                  "text": "2 h"
+                }
+              ]
+            },
+            "goal": {
+              "kind": "buckets",
+              "assignment": {
+                "a": "distance",
+                "b": "time",
+                "c": "distance",
+                "d": "time"
+              }
+            }
+          },
+          "solution": {
+            "assignment": {
+              "a": "distance",
+              "b": "time",
+              "c": "distance",
+              "d": "time"
+            }
+          },
+          "fallback": {
+            "prompt": "Which entry is a time?",
+            "kind": "choice",
+            "options": [
+              {
+                "id": "a",
+                "text": "12 km"
+              },
+              {
+                "id": "b",
+                "text": "40 min"
+              }
+            ],
+            "answer": "b"
+          },
+          "level": "transfer",
+          "difficulty": 3,
+          "why": "Two distances, two times. The timetable makes sense again."
+        },
+        {
+          "id": "st4-rank",
+          "prompt": "Rank the legs from shortest to longest.",
+          "kind": "widget",
+          "widget": {
+            "id": "sorter",
+            "v": 1,
+            "props": {
+              "mode": "rank",
+              "rankLabels": ["shortest", "longest"],
+              "cards": [
+                {
+                  "id": "x",
+                  "text": "40 minutes"
+                },
+                {
+                  "id": "y",
+                  "text": "1.25 hours"
+                },
+                {
+                  "id": "z",
+                  "text": "2 hours"
+                }
+              ]
+            },
+            "goal": {
+              "kind": "rank",
+              "order": ["x", "y", "z"]
+            }
+          },
+          "solution": {
+            "order": ["x", "y", "z"]
+          },
+          "fallback": {
+            "prompt": "Shortest to longest.",
+            "kind": "order",
+            "items": ["40 minutes", "1.25 hours", "2 hours"],
+            "answer": [0, 1, 2]
+          },
+          "level": "transfer",
+          "difficulty": 3,
+          "why": "40 minutes, 75 minutes, 120 minutes. Same unit, clear order."
+        }
+      ],
+      "faq": [
+        {
+          "q": "Why not just compare the numbers?",
+          "a": "Because the unit changes what the number means. 90 minutes is less than 2 hours."
+        }
+      ],
+      "sources": [
+        {
+          "id": "si-brochure",
+          "title": "The International System of Units (SI)",
+          "by": "BIPM",
+          "year": 2019
+        }
+      ],
+      "status": "draft",
+      "flashcards": [
+        {
+          "id": "card-1",
+          "kind": "qa",
+          "front": "Which unit measures distance?",
+          "back": "mile"
+        },
+        {
+          "id": "card-2",
+          "kind": "qa",
+          "front": "One word: kilometres and miles both measure…",
+          "back": "distance"
+        }
+      ]
+    },
+    "unit-conversion": {
+      "id": "unit-conversion",
+      "title": "Minutes into hours",
+      "tagline": "Sixty, not a hundred",
+      "estMinutes": 4,
+      "bigIdea": "An hour has 60 minutes, not 100, so 90 minutes is 1.5 hours, not 0.9. Divide minutes by 60 to get hours.\n",
+      "objectives": ["Convert minutes to hours by dividing by 60", "Explain why 90 minutes is 1.5 hours and not 0.9"],
+      "misconceptions": {
+        "decimal-hours": {
+          "label": "Thinks an hour has 100 minutes, so 90 minutes is 0.9 hours",
+          "hint": "How many minutes are in one hour? Use that, not 100."
+        },
+        "multiply-60": {
+          "label": "Multiplies by 60 when going from minutes to hours",
+          "upstream": "units",
+          "hint": "Hours are bigger than minutes, so you need fewer of them."
+        }
+      },
+      "hook": {
+        "interaction": {
+          "id": "hook-q",
+          "prompt": "How many hours is 90 minutes?",
+          "confidence": true,
+          "kind": "choice",
+          "options": [
+            {
+              "id": "h09",
+              "text": "0.9 hours",
+              "misconception": "decimal-hours"
+            },
+            {
+              "id": "h15",
+              "text": "1.5 hours"
+            },
+            {
+              "id": "h5400",
+              "text": "5400 hours",
+              "misconception": "multiply-60"
+            }
+          ],
+          "answer": "h15"
+        },
+        "lotsGuess": "h09"
+      },
+      "screens": [
+        {
+          "id": "s1-slider",
+          "newIdea": "Hours = minutes ÷ 60",
+          "blocks": [
+            {
+              "type": "story",
+              "text": "Slide the minutes until the hours readout says 1.5."
+            }
+          ],
+          "interaction": {
+            "id": "s1-q",
+            "prompt": "Set the minutes so the trip lasts 1.5 hours.",
+            "kind": "widget",
+            "widget": {
+              "id": "plot",
+              "v": 1,
+              "props": {
+                "kind": "function",
+                "x": {
+                  "label": "minutes",
+                  "min": 0,
+                  "max": 180,
+                  "unit": "min"
+                },
+                "y": {
+                  "label": "hours",
+                  "min": 0,
+                  "max": 3,
+                  "unit": "h"
+                },
+                "series": [
+                  {
+                    "id": "conv",
+                    "label": "hours",
+                    "expr": "x / 60",
+                    "color": 1
+                  }
+                ],
+                "params": [
+                  {
+                    "name": "m",
+                    "label": "minutes",
+                    "min": 0,
+                    "max": 180,
+                    "step": 5,
+                    "value": 30,
+                    "unit": "min"
+                  }
+                ],
+                "readouts": [
+                  {
+                    "label": "hours",
+                    "expr": "m / 60",
+                    "unit": "h",
+                    "digits": 2
+                  }
+                ],
+                "dataSource": "formula"
+              },
+              "goal": {
+                "kind": "readout",
+                "label": "hours",
+                "target": 1.5,
+                "tolerance": 0.01
+              }
+            },
+            "solution": {
+              "params": {
+                "m": 90
+              }
+            },
+            "fallback": {
+              "prompt": "How many minutes make 1.5 hours?",
+              "kind": "numeric",
+              "answer": 90,
+              "tolerance": 0,
+              "unit": "min"
+            }
+          },
+          "reveal": {
+            "text": "The readout hit 1.5 at 90 minutes: every 60 minutes adds one hour.",
+            "visualState": {
+              "props": {
+                "markerAt": 90
+              },
+              "note": "90 ÷ 60 = 1.5"
+            }
+          }
+        },
+        {
+          "id": "s2-divide",
+          "newIdea": "Going to a bigger unit means dividing",
+          "visual": {
+            "kind": "widget",
+            "widget": {
+              "id": "plot",
+              "v": 1,
+              "props": {
+                "kind": "function",
+                "x": {
+                  "label": "minutes",
+                  "min": 0,
+                  "max": 180,
+                  "unit": "min"
+                },
+                "y": {
+                  "label": "hours",
+                  "min": 0,
+                  "max": 3,
+                  "unit": "h"
+                },
+                "series": [
+                  {
+                    "id": "conv",
+                    "label": "hours",
+                    "expr": "x / 60",
+                    "color": 1
+                  }
+                ],
+                "dataSource": "formula"
+              }
+            },
+            "alt": "A line from 0 hours at 0 minutes to 3 hours at 180 minutes."
+          },
+          "blocks": [
+            {
+              "type": "story",
+              "text": "Hours are bigger than minutes, so the same trip needs fewer of them. Every 60 minutes on the line becomes one step up in hours."
+            },
+            {
+              "type": "callout",
+              "tone": "note",
+              "text": "Bigger unit, smaller number: divide by 60. 45 minutes is 45 ÷ 60 = 0.75 hours, three quarters of the way to 1."
+            }
+          ]
+        },
+        {
+          "id": "s3-transfer",
+          "blocks": [
+            {
+              "type": "story",
+              "text": "A film runs 150 minutes."
+            }
+          ],
+          "interaction": {
+            "id": "s3-q",
+            "prompt": "How long is it in hours?",
+            "onWrong": {
+              "1.5": {
+                "misconception": "decimal-hours"
+              }
+            },
+            "kind": "numeric",
+            "answer": 2.5,
+            "tolerance": 0.001,
+            "unit": "h"
+          },
+          "reveal": {
+            "text": "2.5 hours: two full hours and 30 minutes."
+          }
+        }
+      ],
+      "close": {
+        "text": "1.5 hours. An hour has 60 minutes, not 100, so 90 minutes is ==one and a half hours==.",
+        "byGuess": {
+          "h09": "You picked *0.9 hours*. Lots of people do: it treats an hour as 100 minutes. It has 60, so 90 minutes is 1.5 hours.",
+          "h5400": "You picked *5400 hours*. That multiplies by 60. Hours are bigger than minutes, so the number shrinks: 90 ÷ 60 = 1.5.",
+          "idk": "No guess is fine. An hour has 60 minutes, so 90 minutes is one hour and a half."
+        },
+        "teaser": "Two trains, two distances, two times. Is the one that went further the faster one?"
+      },
+      "items": [
+        {
+          "id": "i1",
+          "prompt": "How many hours is {m} minutes?",
+          "kind": "numeric",
+          "answer": 2,
+          "tolerance": 0.001,
+          "unit": "h",
+          "level": "apply",
+          "difficulty": 2,
+          "params": {
+            "vars": {
+              "m": [120, 30, 90, 210]
+            },
+            "answerExpr": "m / 60"
+          }
+        },
+        {
+          "id": "i2",
+          "prompt": "To turn minutes into hours, you…",
+          "kind": "choice",
+          "options": [
+            {
+              "id": "div",
+              "text": "divide by 60"
+            },
+            {
+              "id": "mul",
+              "text": "multiply by 60",
+              "misconception": "multiply-60"
+            },
+            {
+              "id": "div100",
+              "text": "divide by 100",
+              "misconception": "decimal-hours"
+            }
+          ],
+          "answer": "div",
+          "level": "recall",
+          "difficulty": 1
+        },
+        {
+          "id": "i3",
+          "prompt": "How many minutes is 0.2 hours?",
+          "kind": "numeric",
+          "answer": 12,
+          "tolerance": 0,
+          "unit": "min",
+          "level": "apply",
+          "difficulty": 3
+        },
+        {
+          "id": "i4",
+          "prompt": "How many minutes are in an hour? (digits)",
+          "kind": "text",
+          "accept": ["60"],
+          "level": "recall",
+          "difficulty": 1
+        },
+        {
+          "id": "st2-clock",
+          "prompt": "The first leg takes 1.25 hours. Set the minutes.",
+          "kind": "widget",
+          "widget": {
+            "id": "plot",
+            "v": 1,
+            "props": {
+              "kind": "function",
+              "x": {
+                "label": "minutes",
+                "min": 0,
+                "max": 180,
+                "unit": "min"
+              },
+              "y": {
+                "label": "hours",
+                "min": 0,
+                "max": 3,
+                "unit": "h"
+              },
+              "series": [
+                {
+                  "id": "conv",
+                  "label": "hours",
+                  "expr": "x / 60",
+                  "color": 1
+                }
+              ],
+              "params": [
+                {
+                  "name": "m",
+                  "label": "minutes",
+                  "min": 0,
+                  "max": 180,
+                  "step": 5,
+                  "value": 0,
+                  "unit": "min"
+                }
+              ],
+              "readouts": [
+                {
+                  "label": "hours",
+                  "expr": "m / 60",
+                  "unit": "h",
+                  "digits": 2
+                }
+              ],
+              "dataSource": "formula"
+            },
+            "goal": {
+              "kind": "readout",
+              "label": "hours",
+              "target": 1.25,
+              "tolerance": 0.01
+            }
+          },
+          "solution": {
+            "params": {
+              "m": 75
+            }
+          },
+          "fallback": {
+            "prompt": "How many minutes is 1.25 hours?",
+            "kind": "numeric",
+            "answer": 75,
+            "tolerance": 0
+          },
+          "level": "transfer",
+          "difficulty": 3,
+          "why": "75 minutes. The first leg is set."
+        },
+        {
+          "id": "st3-second",
+          "prompt": "The second leg takes 40 minutes. Drag the marker to 40 minutes and read the hours.",
+          "kind": "widget",
+          "widget": {
+            "id": "plot",
+            "v": 1,
+            "props": {
+              "kind": "function",
+              "x": {
+                "label": "minutes",
+                "min": 0,
+                "max": 180,
+                "unit": "min"
+              },
+              "y": {
+                "label": "hours",
+                "min": 0,
+                "max": 3,
+                "unit": "h"
+              },
+              "series": [
+                {
+                  "id": "conv",
+                  "label": "hours",
+                  "expr": "x / 60",
+                  "color": 1
+                }
+              ],
+              "marker": "point",
+              "dataSource": "formula"
+            },
+            "goal": {
+              "kind": "point",
+              "x": 40,
+              "tolerance": 2.5
+            }
+          },
+          "solution": {
+            "point": [40, 0.667]
+          },
+          "fallback": {
+            "prompt": "How many hours is 40 minutes? (Two decimals.)",
+            "kind": "numeric",
+            "answer": 0.67,
+            "tolerance": 0.01
+          },
+          "level": "transfer",
+          "difficulty": 3,
+          "why": "About 0.67 hours: two thirds of an hour."
+        }
+      ],
+      "sources": [
+        {
+          "id": "si-brochure",
+          "title": "The International System of Units (SI)",
+          "by": "BIPM",
+          "year": 2019
+        }
+      ],
+      "status": "draft",
+      "flashcards": [
+        {
+          "id": "card-1",
+          "kind": "qa",
+          "front": "To turn minutes into hours, you…",
+          "back": "divide by 60"
+        },
+        {
+          "id": "card-2",
+          "kind": "qa",
+          "front": "How many minutes are in an hour? (digits)",
+          "back": "60"
+        },
+        {
+          "id": "card-3",
+          "kind": "qa",
+          "front": "How many minutes is 0.2 hours?",
+          "back": "12 min"
+        }
+      ]
+    },
+    "speed": {
+      "id": "speed",
+      "title": "Speed is a slope",
+      "tagline": "How steep is your trip?",
+      "estMinutes": 4,
+      "bigIdea": "Speed is distance divided by time. On a distance-time graph it is the slope of the line: steeper means faster.\n",
+      "objectives": ["Compute speed from distance and time", "Read speed as the slope of a distance-time line"],
+      "misconceptions": {
+        "speed-is-distance": {
+          "label": "Thinks the trip that went further was the faster one",
+          "hint": "Further isn't faster. How long did each trip take?"
+        },
+        "multiply": {
+          "label": "Multiplies distance by time to get speed",
+          "hint": "Speed is per hour. How far in one hour?"
+        }
+      },
+      "hook": {
+        "interaction": {
+          "id": "hook-q",
+          "prompt": "Train A goes 100 km in 2 hours. Train B goes 150 km in 3 hours. Which is faster?",
+          "confidence": true,
+          "kind": "choice",
+          "options": [
+            {
+              "id": "a",
+              "text": "Train A"
+            },
+            {
+              "id": "b",
+              "text": "Train B",
+              "misconception": "speed-is-distance"
+            },
+            {
+              "id": "same",
+              "text": "Same speed"
+            }
+          ],
+          "answer": "same"
+        },
+        "lotsGuess": "b"
+      },
+      "screens": [
+        {
+          "id": "s1-slope",
+          "newIdea": "Speed is the slope of a distance-time line",
+          "blocks": [
+            {
+              "type": "story",
+              "text": "This line is a trip. Tilt it until it passes 100 km at 2 hours."
+            }
+          ],
+          "interaction": {
+            "id": "s1-q",
+            "prompt": "Set the speed so the line passes through 100 km at 2 hours.",
+            "feedbackRight": "50 km/h. Steeper line, faster trip.",
+            "kind": "widget",
+            "widget": {
+              "id": "plot",
+              "v": 1,
+              "props": {
+                "kind": "function",
+                "x": {
+                  "label": "time",
+                  "min": 0,
+                  "max": 4,
+                  "unit": "h"
+                },
+                "y": {
+                  "label": "distance",
+                  "min": 0,
+                  "max": 250,
+                  "unit": "km"
+                },
+                "series": [
+                  {
+                    "id": "trip",
+                    "label": "trip",
+                    "expr": "v * x",
+                    "color": 1
+                  }
+                ],
+                "params": [
+                  {
+                    "name": "v",
+                    "label": "speed",
+                    "min": 0,
+                    "max": 100,
+                    "step": 5,
+                    "value": 20,
+                    "unit": "km/h"
+                  }
+                ],
+                "readouts": [
+                  {
+                    "label": "distance at 2 h",
+                    "expr": "v * 2",
+                    "unit": "km",
+                    "digits": 0
+                  }
+                ],
+                "dataSource": "formula"
+              },
+              "goal": {
+                "kind": "param",
+                "name": "v",
+                "target": 50,
+                "tolerance": 2.5
+              }
+            },
+            "solution": {
+              "params": {
+                "v": 50
+              }
+            },
+            "fallback": {
+              "prompt": "What speed covers 100 km in 2 hours?",
+              "kind": "numeric",
+              "answer": 50,
+              "tolerance": 0,
+              "unit": "km/h"
+            }
+          },
+          "reveal": {
+            "text": "The line tilted up to 50 km/h and crossed 100 km at exactly 2 hours.",
+            "visualState": {
+              "props": {
+                "markerAt": 2
+              },
+              "note": "slope = speed"
+            }
+          }
+        },
+        {
+          "id": "s2-divide",
+          "newIdea": "Speed = distance ÷ time",
+          "visual": {
+            "kind": "widget",
+            "widget": {
+              "id": "plot",
+              "v": 1,
+              "props": {
+                "kind": "function",
+                "x": {
+                  "label": "time",
+                  "min": 0,
+                  "max": 4,
+                  "unit": "h"
+                },
+                "y": {
+                  "label": "distance",
+                  "min": 0,
+                  "max": 250,
+                  "unit": "km"
+                },
+                "series": [
+                  {
+                    "id": "trip",
+                    "label": "trip",
+                    "expr": "60 * x",
+                    "color": 2
+                  }
+                ],
+                "dataSource": "formula"
+              }
+            },
+            "alt": "A straight line rising 60 km for every hour."
+          },
+          "blocks": [
+            {
+              "type": "story",
+              "text": "Slope is rise over run: kilometres over hours."
+            },
+            {
+              "type": "math",
+              "tex": "\\text{speed} = \\frac{\\text{distance}}{\\text{time}}"
+            }
+          ],
+          "interaction": {
+            "id": "s2-q",
+            "prompt": "A bus goes 180 km in 3 hours. Its speed in km/h?",
+            "onWrong": {
+              "540": {
+                "misconception": "multiply",
+                "feedback": "That multiplies. Share the distance over the hours."
+              }
+            },
+            "kind": "numeric",
+            "answer": 60,
+            "tolerance": 0,
+            "unit": "km/h"
+          },
+          "reveal": {
+            "text": "60 km/h: the line climbs 60 km in each hour."
+          }
+        },
+        {
+          "id": "s3-transfer",
+          "blocks": [
+            {
+              "type": "story",
+              "text": "A cyclist rides 45 km in 90 minutes."
+            }
+          ],
+          "interaction": {
+            "id": "s3-q",
+            "prompt": "Her speed in km/h?",
+            "onWrong": {
+              "0.5": {
+                "feedback": "Minutes first: 90 minutes is 1.5 hours."
+              }
+            },
+            "kind": "numeric",
+            "answer": 30,
+            "tolerance": 0,
+            "unit": "km/h"
+          },
+          "reveal": {
+            "text": "30 km/h. 90 minutes is 1.5 hours, and 45 ÷ 1.5 = 30."
+          }
+        }
+      ],
+      "close": {
+        "text": "Same speed. Both trains cover ==50 km each hour==; B just keeps going an hour longer.",
+        "byGuess": {
+          "b": "You picked *Train B*. Lots of people do: it went further. But further isn't faster; per hour, both cover 50 km.",
+          "a": "You picked *Train A*. Two hours for 100 km is 50 an hour, and B matches it.",
+          "idk": "No guess is fine. Per hour, both trains cover 50 km, so they tie."
+        },
+        "teaser": "Speed is distance per hour. What if the trip is timed in minutes?"
+      },
+      "items": [
+        {
+          "id": "i1",
+          "prompt": "A car drives {d} km in 2 hours. Its speed in km/h?",
+          "kind": "numeric",
+          "answer": 60,
+          "tolerance": 0,
+          "unit": "km/h",
+          "level": "apply",
+          "difficulty": 2,
+          "params": {
+            "vars": {
+              "d": [120, 80, 150, 200]
+            },
+            "answerExpr": "d / 2"
+          }
+        },
+        {
+          "id": "i2",
+          "prompt": "On a distance-time graph, a steeper line means…",
+          "kind": "choice",
+          "options": [
+            {
+              "id": "faster",
+              "text": "faster"
+            },
+            {
+              "id": "further",
+              "text": "further",
+              "misconception": "speed-is-distance"
+            },
+            {
+              "id": "slower",
+              "text": "slower"
+            }
+          ],
+          "answer": "faster",
+          "level": "recall",
+          "difficulty": 1
+        },
+        {
+          "id": "i3",
+          "prompt": "In one sentence: why did both trains in the hook have the same speed?",
+          "kind": "explain",
+          "keyPoints": [
+            {
+              "id": "per-hour",
+              "text": "both cover 50 km each hour",
+              "keywords": ["50", "per hour", "each hour"]
+            },
+            {
+              "id": "divide",
+              "text": "distance divided by time is equal",
+              "keywords": ["divide", "÷", "ratio"]
+            }
+          ],
+          "minHits": 1,
+          "exemplar": "Both cover 50 km each hour: 100 ÷ 2 and 150 ÷ 3 are both 50.",
+          "offline": {
+            "prompt": "Why do the trains have the same speed?",
+            "kind": "choice",
+            "options": [
+              {
+                "id": "rate",
+                "text": "Both cover 50 km each hour"
+              },
+              {
+                "id": "far",
+                "text": "Both went far",
+                "misconception": "speed-is-distance"
+              }
+            ],
+            "answer": "rate"
+          },
+          "level": "transfer",
+          "difficulty": 3
+        },
+        {
+          "id": "i4",
+          "prompt": "Roughly how fast is walking, in km/h?",
+          "kind": "estimate",
+          "scale": {
+            "min": 1,
+            "max": 100,
+            "log": true,
+            "unit": "km/h"
+          },
+          "answer": 5,
+          "accept": {
+            "factor": 1.6
+          },
+          "level": "apply",
+          "difficulty": 3
+        },
+        {
+          "id": "i5",
+          "prompt": "A runner covers {d} km in 30 minutes. Her speed in km/h?",
+          "kind": "numeric",
+          "answer": 10,
+          "tolerance": 0,
+          "unit": "km/h",
+          "level": "transfer",
+          "difficulty": 3,
+          "params": {
+            "vars": {
+              "d": [5, 4, 6, 3]
+            },
+            "answerExpr": "d * 2"
+          },
+          "why": "30 minutes is half an hour, so double the distance."
+        },
+        {
+          "id": "i6",
+          "prompt": "Order these trips from slowest to fastest.",
+          "kind": "order",
+          "items": ["60 km in 2 hours", "40 km in 1 hour", "90 km in 2 hours", "25 km in 30 minutes"],
+          "answer": [0, 1, 2, 3],
+          "level": "transfer",
+          "difficulty": 3,
+          "why": "Per hour: 30, 40, 45 and 50 km."
+        }
+      ],
+      "sources": [
+        {
+          "id": "openstax-physics",
+          "title": "College Physics 2e, chapter 2",
+          "by": "OpenStax",
+          "year": 2022,
+          "url": "https://openstax.org/details/books/college-physics-2e",
+          "license": "CC-BY-4.0"
+        }
+      ],
+      "status": "draft",
+      "flashcards": [
+        {
+          "id": "card-1",
+          "kind": "qa",
+          "front": "On a distance-time graph, a steeper line means…",
+          "back": "faster"
+        }
+      ]
+    }
+  },
+  "stats": {
+    "nodes": 6,
+    "playable": 5,
+    "planned": 1,
+    "checkpoints": 2,
+    "screens": 9,
+    "items": 18,
+    "flashcards": 6,
+    "words": 388
+  },
+  "compiledWith": {
+    "learncroc": "0.1.0",
+    "at": "2026-10-20T00:00:00Z"
+  },
+  "contentHash": "7311f23b3bf1648aa2c221ce1c45cebae994204b9849a975a393430b1f03f149"
+}

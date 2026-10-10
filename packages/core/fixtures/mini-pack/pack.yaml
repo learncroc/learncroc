@@ -1,0 +1,38 @@
+# yaml-language-server: $schema=../../../../schemas/pack.schema.json
+schema: 2
+id: mini-pack
+version: 0.1.0
+title: Mini pack
+subtitle: A three-card fixture for tests and stub screens
+tagline: Sort units, convert minutes, read a speed line.
+publisher: learncroc tests
+authors: [ { name: learncroc contributors } ]
+reviewers: []
+license: CC-BY-SA-4.0
+lang: en
+level: beginner
+estMinutes: 15
+tags: [fixture, units, speed]
+category: practical
+engine: ">=0.1.0 <1.0.0"
+widgets: { sorter: 1, plot: 1 }
+profile: community
+theme:
+  renderer: metro
+  world: The Test Line
+  mode: dark
+  direction: lr
+  ground: "#0F1430"
+  texture: grid-fine
+  lines: ["#7FB2FF", "#C792F2", "#F07DA6", "#9AD07A", "#E6E1D3"]
+  token: train
+  gateName: Check
+  fieldNoteStyle: ticket
+  landmarks:
+    checkpoint-trip: { name: The Trip, glyph: station }
+entry: { suggestedStart: units }
+outcomes:
+  - Sort quantities into distance and time
+  - Convert minutes to hours without a calculator
+  - Read a speed off a distance-time line
+status: draft

@@ -1,0 +1,230 @@
+# yaml-language-server: $schema=../../../../../schemas/node.schema.json
+id: units
+title: Distance or time?
+tagline: Every quantity has a kind
+estMinutes: 3
+bigIdea: >
+  A unit tells you what kind of quantity a number is. Kilometres and miles measure
+  distance; seconds and hours measure time. You can only compare like with like.
+objectives:
+  - Sort units into distance and time
+  - Spot a comparison between quantities of different kinds
+
+misconceptions:
+  bigger-number:
+    label: Thinks the bigger number is always the bigger quantity, whatever the unit
+    hint: "Check the units first. 90 minutes and 2 hours: which unit is bigger?"
+  all-units-same:
+    label: Treats any unit as interchangeable with any other
+    hint: "Could you add 3 kilometres to 2 hours? What would the answer be measured in?"
+
+hook:
+  blocks:
+    - type: story
+      text: "A sign says the next town is 40. You don't know if that's minutes or kilometres."
+  visual:
+    kind: figure
+    asset: assets/img/clock-and-road.svg
+    alt: "A clock face beside a road with distance markers."
+  interaction:
+    kind: choice
+    id: hook-q
+    prompt: Which is longer, 90 minutes or 2 hours?
+    confidence: true
+    options:
+      - { id: minutes, text: "90 minutes", misconception: bigger-number }
+      - { id: hours, text: "2 hours" }
+      - { id: same, text: "They're the same", misconception: all-units-same }
+    answer: hours
+  lotsGuess: minutes
+
+screens:
+  - id: s1-sort
+    newIdea: Units come in kinds; distance and time are different kinds
+    blocks:
+      - type: story
+        text: "Six labels fell off the timetable. Put each back where it belongs."
+    interaction:
+      kind: widget
+      id: s1-q
+      prompt: Sort each unit into distance or time.
+      widget:
+        id: sorter
+        v: 1
+        props:
+          mode: buckets
+          buckets:
+            - { id: distance, label: Distance }
+            - { id: time, label: Time }
+          cards:
+            - { id: km, text: kilometre }
+            - { id: h, text: hour }
+            - { id: mi, text: mile }
+            - { id: min, text: minute }
+            - { id: m, text: metre }
+            - { id: s, text: second }
+        goal: { kind: buckets, assignment: { km: distance, mi: distance, m: distance, h: time, min: time, s: time } }
+      solution: { assignment: { km: distance, mi: distance, m: distance, h: time, min: time, s: time } }
+      fallback:
+        kind: choice
+        prompt: Which of these units measures time?
+        options:
+          - { id: km, text: kilometre }
+          - { id: min, text: minute }
+          - { id: mi, text: mile }
+        answer: min
+      feedbackRight: "Two piles, two kinds. You can compare within a pile, not across."
+    reveal:
+      text: "The labels snapped into two piles: three for distance, three for time."
+
+  - id: s2-compare
+    newIdea: Convert to the same unit before comparing
+    blocks:
+      - type: story
+        text: "To compare, put both numbers in the same unit first."
+    visual:
+      kind: widget
+      widget:
+        id: sorter
+        v: 1
+        props:
+          mode: rank
+          rankLabels: [shortest, longest]
+          cards:
+            - { id: a, text: "45 minutes" }
+            - { id: b, text: "1 hour" }
+            - { id: c, text: "90 minutes" }
+      alt: "Three time cards in a column, ready to rank from shortest to longest."
+    interaction:
+      kind: numeric
+      id: s2-q
+      prompt: How many minutes are in 2 hours?
+      answer: 120
+      tolerance: 0
+      unit: min
+      onWrong:
+        "2": { misconception: bigger-number, feedback: "That's still hours. Each hour is 60 minutes." }
+        default: { feedback: "Multiply the hours by 60." }
+    reveal:
+      text: "120 minutes. Now the cards line up: 45, 60, 90, 120."
+      visualState: { note: "same unit, easy compare" }
+
+  - id: s3-transfer
+    blocks:
+      - type: story
+        text: "A runner covers 5 km. A cyclist covers 4 miles."
+    interaction:
+      kind: choice
+      id: s3-q
+      prompt: What do you need before saying who went further?
+      options:
+        - { id: convert, text: "Put both distances in the same unit" }
+        - { id: bigger, text: "Nothing: 5 is bigger than 4", misconception: bigger-number }
+        - { id: time, text: "Their times", misconception: all-units-same }
+      answer: convert
+    reveal:
+      text: "Same unit first. 4 miles is about 6.4 km, so the cyclist went further."
+
+close:
+  text: "==2 hours is 120 minutes==, so it beats 90. The number alone told you nothing until the units matched."
+  byGuess:
+    minutes: "You picked *90 minutes*. Lots of people do: 90 looks bigger than 2. But 2 hours is 120 minutes, so it's longer."
+    same: "You picked *They're the same*. They aren't: 2 hours is 120 minutes, which is 30 more than 90."
+    idk: "No guess is fine. Put both in minutes: 2 hours is 120, so it beats 90."
+  teaser: "Minutes and hours don't mix. So how many hours is 90 minutes?"
+
+items:
+  - id: i1
+    kind: choice
+    level: recall
+    difficulty: 1
+    prompt: Which unit measures distance?
+    options:
+      - { id: hour, text: hour, misconception: all-units-same }
+      - { id: mile, text: mile }
+      - { id: second, text: second, misconception: all-units-same }
+    answer: mile
+  - id: i2
+    kind: numeric
+    level: apply
+    difficulty: 2
+    prompt: "How many minutes are in {h} hours?"
+    params:
+      vars: { h: [3, 2, 4, 5] }
+      answerExpr: "h * 60"
+    answer: 180
+    tolerance: 0
+    why: "Each hour is 60 minutes."
+  - id: i3
+    kind: text
+    level: recall
+    difficulty: 1
+    prompt: "One word: kilometres and miles both measure…"
+    accept: [distance, length]
+  - id: i4
+    kind: order
+    level: transfer
+    difficulty: 3
+    prompt: Put these from shortest to longest.
+    items: ["30 seconds", "1 minute", "100 seconds", "2 minutes"]
+    answer: [0, 1, 2, 3]
+  - id: st1-sort
+    kind: widget
+    level: transfer
+    difficulty: 3
+    prompt: Sort each timetable entry into distance or time.
+    widget:
+      id: sorter
+      v: 1
+      props:
+        mode: buckets
+        buckets:
+          - { id: distance, label: Distance }
+          - { id: time, label: Time }
+        cards:
+          - { id: a, text: "12 km" }
+          - { id: b, text: "40 min" }
+          - { id: c, text: "3 miles" }
+          - { id: d, text: "2 h" }
+      goal: { kind: buckets, assignment: { a: distance, b: time, c: distance, d: time } }
+    solution: { assignment: { a: distance, b: time, c: distance, d: time } }
+    fallback:
+      kind: choice
+      prompt: Which entry is a time?
+      options:
+        - { id: a, text: "12 km" }
+        - { id: b, text: "40 min" }
+      answer: b
+    why: "Two distances, two times. The timetable makes sense again."
+  - id: st4-rank
+    kind: widget
+    level: transfer
+    difficulty: 3
+    prompt: Rank the legs from shortest to longest.
+    widget:
+      id: sorter
+      v: 1
+      props:
+        mode: rank
+        rankLabels: [shortest, longest]
+        cards:
+          - { id: x, text: "40 minutes" }
+          - { id: y, text: "1.25 hours" }
+          - { id: z, text: "2 hours" }
+      goal: { kind: rank, order: [x, y, z] }
+    solution: { order: [x, y, z] }
+    fallback:
+      kind: order
+      prompt: Shortest to longest.
+      items: ["40 minutes", "1.25 hours", "2 hours"]
+      answer: [0, 1, 2]
+    why: "40 minutes, 75 minutes, 120 minutes. Same unit, clear order."
+
+faq:
+  - q: Why not just compare the numbers?
+    a: "Because the unit changes what the number means. 90 minutes is less than 2 hours."
+
+sources:
+  - { id: si-brochure, title: "The International System of Units (SI)", by: "BIPM", year: 2019 }
+
+status: draft

@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=https://learncroc.github.io/schema/v1/map.schema.json
+lines:
+  - { id: basics, title: "Basics", color: 1, outcome: "Find and change percentages in your head" }
+nodes:
+  per-hundred: { requires: [], line: basics }
+  ten-percent: { requires: [per-hundred], line: basics }
+  price-change: { requires: [ten-percent], line: basics }
+  boss-shop: { requires: [price-change], line: basics, kind: boss }
+  sale-season: { requires: [boss-shop], line: basics, status: planned, title: "Sale season", teaser: "Two discounts in a row: is 20% then 10% the same as 30%?" }
