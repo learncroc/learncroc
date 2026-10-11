@@ -1,0 +1,231 @@
+/*
+ * learncroc design tokens: "Night school" (PLAN §6). Final values; do not change without a contract request.
+ * Light is earned: Lumen (gold) means "you know this" and nothing else. No red anywhere.
+ */
+
+/* 6.1 Colour */
+:root,
+[data-theme="light"] {
+  --bg: #edeff5;
+  --surface: #ffffff;
+  --surface-2: #f6f7fb;
+  --surface-sunk: #e3e6ef;
+  --line: #d7dae6;
+  --line-strong: #b9bdd0;
+  --ink: #1c1a3d;
+  --ink-2: #4a4870;
+  --ink-3: #66648b;
+  --lumen: #ffc23d;
+  --lumen-soft: #ffe9b0;
+  --lumen-text: #8a5a00;
+  --ember: #e5793f;
+  --ember-soft: #fbdcc8;
+  --ember-text: #a1461a;
+  --sea: #12877a;
+  --sea-soft: #cdeee9;
+  --sea-text: #0d6b61;
+  --iris: #5e48d6;
+  --iris-soft: #e7e2fb;
+  --focus: #12877a;
+  --scrim: rgb(28 26 61 / 0.38);
+  --key-edge: rgb(28 26 61 / 0.85);
+  /* Moss, the croc: one constant across worlds, never a state colour. Outline ≥ 4.5:1 on the body. */
+  --croc: #5c9a4b;
+  --croc-belly: #dcedc5;
+  --croc-ink: #11250d;
+  --croc-eye: #ffffff;
+  /* The card modal's lighter scrim: the map stays visible on both sides. */
+  --scrim-card: rgb(28 26 61 / 0.18);
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --bg: #14132e;
+  --surface: #1d1c3d;
+  --surface-2: #232249;
+  --surface-sunk: #100f26;
+  --line: #33326a;
+  --line-strong: #4a4990;
+  --ink: #ecebfa;
+  --ink-2: #b6b4da;
+  --ink-3: #8f8dba;
+  --lumen: #ffcb57;
+  --lumen-soft: #4a3a12;
+  --lumen-text: #ffd67a;
+  --ember: #f08a50;
+  --ember-soft: #4a2a1c;
+  --ember-text: #ffae80;
+  --sea: #4fd1bf;
+  --sea-soft: #163f3b;
+  --sea-text: #7fe3d5;
+  --iris: #a493ff;
+  --iris-soft: #2c2560;
+  --focus: #7fe3d5;
+  --scrim: rgb(8 8 24 / 0.6);
+  --key-edge: #0a0a1c;
+  --croc: #79bf62;
+  --croc-belly: #b5dfa0;
+  --croc-ink: #0f220c;
+  --croc-eye: #f4f9ee;
+  --scrim-card: rgb(8 8 24 / 0.42);
+  color-scheme: dark;
+}
+
+:root {
+  /* Gate-open budget; skippable. */
+  --dur-celebrate: 4800ms;
+  --modal-card-w: 960px;
+  --modal-cp-w: 720px;
+  /* Where the card modal centres: right of the app rail. The shell sets 0px when the rail is hidden. */
+  --modal-inset-left: var(--rail-width);
+}
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-motion="full"]) {
+    --dur-celebrate: 120ms;
+  }
+}
+[data-motion="reduced"] {
+  --dur-celebrate: 120ms;
+}
+
+[data-contrast="more"] {
+  --line: var(--ink-3);
+  --ink-2: var(--ink);
+  --ink-3: var(--ink-2);
+}
+
+/*
+ * World tokens: set by <WorldTheme pack> on the map and run roots, from manifest.theme.
+ * --w-ground --w-ink --w-ink-2 --w-grid --w-1 … --w-5 (line colours) --w-mode (light|dark)
+ * Defaults below keep un-themed previews legible.
+ */
+:root {
+  --w-ground: var(--surface-2);
+  --w-ink: var(--ink);
+  --w-ink-2: var(--ink-2);
+  --w-grid: var(--line);
+  --w-1: #7fb2ff;
+  --w-2: #c792f2;
+  --w-3: #f07da6;
+  --w-4: #9ad07a;
+  --w-5: #e6e1d3;
+  --w-mode: light;
+}
+
+/* 6.2 Typography: Recursive (Linear CASL 0 = the product talking, Casual CASL 1 = a person talking) */
+:root {
+  --font-recursive: "Recursive Variable", "Recursive", ui-sans-serif, system-ui, sans-serif;
+  --font-atkinson:
+    "Atkinson Hyperlegible Next Variable", "Atkinson Hyperlegible Next", ui-sans-serif, system-ui, sans-serif;
+  --font-code: "Recursive Variable", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  --t-hero-size: 56px;
+  --t-hero-lh: 64px;
+  --t-hero-wght: 820;
+  --t-hero-casl: 1;
+  --t-display-size: 40px;
+  --t-display-lh: 48px;
+  --t-display-wght: 760;
+  --t-display-casl: 0.7;
+  --t-title-size: 30px;
+  --t-title-lh: 36px;
+  --t-title-wght: 700;
+  --t-title-casl: 0.2;
+  --t-heading-size: 24px;
+  --t-heading-lh: 32px;
+  --t-heading-wght: 650;
+  --t-heading-casl: 0;
+  --t-lead-size: 19px;
+  --t-lead-lh: 30px;
+  --t-lead-wght: 430;
+  --t-lead-casl: 0;
+  --t-body-size: 16px;
+  --t-body-lh: 24px;
+  --t-body-wght: 430;
+  --t-body-casl: 0;
+  --t-small-size: 14px;
+  --t-small-lh: 20px;
+  --t-small-wght: 480;
+  --t-small-casl: 0;
+  --t-micro-size: 12px;
+  --t-micro-lh: 16px;
+  --t-micro-wght: 600;
+  --t-micro-casl: 0;
+  --t-code-size: 15px;
+  --t-code-lh: 24px;
+  --t-code-wght: 450;
+  --t-voice-size: 19px;
+  --t-voice-lh: 28px;
+  --t-voice-wght: 480;
+  --t-voice-casl: 1;
+  --t-voice-slnt: -6;
+
+  /* Coach text measure */
+  --measure-lead: 46ch;
+}
+
+/* 6.3 Space, radii, depth */
+:root {
+  --space-0: 2px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+
+  --rail-width: 64px;
+  --grid-gutter: 24px;
+  --grid-margin: 32px;
+
+  --r-xs: 4px; /* chips, kbd */
+  --r-sm: 8px; /* inputs */
+  --r-key: 12px; /* answer keys */
+  --r-md: 16px; /* panels, popovers */
+  --r-stage: 28px; /* canvas, map viewport, posters */
+  --r-pill: 999px; /* status pills only */
+
+  --shadow-1: 0 1px 0 rgb(28 26 61 / 0.06), 0 1px 2px rgb(28 26 61 / 0.06);
+  --shadow-2: 0 1px 0 rgb(28 26 61 / 0.06), 0 10px 28px -14px rgb(28 26 61 / 0.3);
+  --shadow-3: 0 2px 0 rgb(28 26 61 / 0.05), 0 24px 60px -24px rgb(28 26 61 / 0.45);
+  --key-rest: 0 3px 0 var(--key-edge);
+  --key-down: 0 1px 0 var(--key-edge);
+  --glow-lit: 0 0 0 3px rgb(255 194 61 / 0.35), 0 0 28px 6px rgb(255 194 61 / 0.45);
+  --glow-ready: 0 0 0 2px rgb(18 135 122 / 0.5), 0 0 18px 2px rgb(18 135 122 / 0.35);
+  --inset-dark: inset 0 1px 0 rgb(255 255 255 / 0.04);
+}
+
+/* 6.4 Motion (craft, not research) */
+:root {
+  --dur-press: 80ms;
+  --dur-quick: 140ms;
+  --dur-base: 220ms;
+  --dur-move: 360ms;
+  --dur-reveal: 700ms;
+  --dur-flow: 900ms;
+  --dur-lightup: 2400ms;
+  --dur-breathe: 3200ms;
+  --dur-flicker: 6000ms;
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-in: cubic-bezier(0.5, 0, 0.75, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-motion="full"]) {
+    --dur-move: 120ms;
+    --dur-reveal: 120ms;
+    --dur-flow: 0ms;
+    --dur-lightup: 120ms;
+  }
+}
+
+[data-motion="reduced"] {
+  --dur-move: 120ms;
+  --dur-reveal: 120ms;
+  --dur-flow: 0ms;
+  --dur-lightup: 120ms;
+}

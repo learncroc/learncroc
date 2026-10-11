@@ -1,0 +1,3 @@
+/* Bundled fonts (offline). Recursive with every axis (wght, CASL, MONO, slnt, CRSV); Atkinson Hyperlegible Next as the accessibility option. */
+@import "@fontsource-variable/recursive/full.css";
+@import "@fontsource-variable/atkinson-hyperlegible-next/index.css";

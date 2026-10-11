@@ -1,0 +1,760 @@
+/*
+ * Tailwind v4 theme: maps the design tokens to utilities (bg-surface, text-ink-2, rounded-key,
+ * shadow-2, text-display, duration-base, ease-out…). Import after tailwindcss and tokens.css:
+ *
+ *   @import "tailwindcss";
+ *   @import "@learncroc/ui/tokens.css";
+ *   @import "@learncroc/ui/theme.css";
+ *
+ * `inline` keeps utilities pointing at the CSS variables, so data-theme switches restyle at runtime.
+ */
+/* Dark variant follows the app's data-theme (and a world root's), not only the OS. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+@theme inline {
+  --color-*: initial;
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-sunk: var(--surface-sunk);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-lumen: var(--lumen);
+  --color-lumen-soft: var(--lumen-soft);
+  --color-lumen-text: var(--lumen-text);
+  --color-ember: var(--ember);
+  --color-ember-soft: var(--ember-soft);
+  --color-ember-text: var(--ember-text);
+  --color-sea: var(--sea);
+  --color-sea-soft: var(--sea-soft);
+  --color-sea-text: var(--sea-text);
+  --color-iris: var(--iris);
+  --color-iris-soft: var(--iris-soft);
+  --color-focus: var(--focus);
+  --color-scrim: var(--scrim);
+  --color-scrim-card: var(--scrim-card);
+  --color-croc: var(--croc);
+  --color-croc-belly: var(--croc-belly);
+  --color-croc-ink: var(--croc-ink);
+  --color-croc-eye: var(--croc-eye);
+  --color-transparent: transparent;
+  --color-current: currentColor;
+  --color-w-ground: var(--w-ground);
+  --color-w-ink: var(--w-ink);
+  --color-w-ink-2: var(--w-ink-2);
+  --color-w-grid: var(--w-grid);
+  --color-w-1: var(--w-1);
+  --color-w-2: var(--w-2);
+  --color-w-3: var(--w-3);
+  --color-w-4: var(--w-4);
+  --color-w-5: var(--w-5);
+
+  --font-*: initial;
+  --font-sans: var(--font-recursive);
+  --font-a11y: var(--font-atkinson);
+  --font-mono: var(--font-code);
+
+  --text-*: initial;
+  --text-hero: var(--t-hero-size);
+  --text-hero--line-height: var(--t-hero-lh);
+  --text-hero--font-weight: var(--t-hero-wght);
+  --text-display: var(--t-display-size);
+  --text-display--line-height: var(--t-display-lh);
+  --text-display--font-weight: var(--t-display-wght);
+  --text-title: var(--t-title-size);
+  --text-title--line-height: var(--t-title-lh);
+  --text-title--font-weight: var(--t-title-wght);
+  --text-heading: var(--t-heading-size);
+  --text-heading--line-height: var(--t-heading-lh);
+  --text-heading--font-weight: var(--t-heading-wght);
+  --text-lead: var(--t-lead-size);
+  --text-lead--line-height: var(--t-lead-lh);
+  --text-lead--font-weight: var(--t-lead-wght);
+  --text-body: var(--t-body-size);
+  --text-body--line-height: var(--t-body-lh);
+  --text-body--font-weight: var(--t-body-wght);
+  --text-small: var(--t-small-size);
+  --text-small--line-height: var(--t-small-lh);
+  --text-small--font-weight: var(--t-small-wght);
+  --text-micro: var(--t-micro-size);
+  --text-micro--line-height: var(--t-micro-lh);
+  --text-micro--font-weight: var(--t-micro-wght);
+  --text-code: var(--t-code-size);
+  --text-code--line-height: var(--t-code-lh);
+  --text-code--font-weight: var(--t-code-wght);
+  --text-voice: var(--t-voice-size);
+  --text-voice--line-height: var(--t-voice-lh);
+  --text-voice--font-weight: var(--t-voice-wght);
+
+  --radius-*: initial;
+  --radius-xs: var(--r-xs);
+  --radius-sm: var(--r-sm);
+  --radius-key: var(--r-key);
+  --radius-md: var(--r-md);
+  --radius-stage: var(--r-stage);
+  --radius-pill: var(--r-pill);
+
+  --shadow-*: initial;
+  /* Same values as tokens.css (Tailwind's namespace uses the same variable names; a test keeps them equal). */
+  --shadow-1: 0 1px 0 rgb(28 26 61 / 0.06), 0 1px 2px rgb(28 26 61 / 0.06);
+  --shadow-2: 0 1px 0 rgb(28 26 61 / 0.06), 0 10px 28px -14px rgb(28 26 61 / 0.3);
+  --shadow-3: 0 2px 0 rgb(28 26 61 / 0.05), 0 24px 60px -24px rgb(28 26 61 / 0.45);
+  --shadow-key-rest: var(--key-rest);
+  --shadow-key-down: var(--key-down);
+  --shadow-glow-lit: var(--glow-lit);
+  --shadow-glow-ready: var(--glow-ready);
+
+  --ease-*: initial;
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-in: cubic-bezier(0.5, 0, 0.75, 0);
+
+  --animate-breathe: lm-breathe var(--dur-breathe) var(--ease-in-out) infinite;
+  --animate-flicker: lm-flicker var(--dur-flicker) var(--ease-in-out) infinite;
+}
+
+/* Durations as utilities: duration-press, duration-quick, duration-base, duration-move, duration-reveal, duration-flow, duration-lightup */
+@utility duration-press {
+  transition-duration: var(--dur-press);
+}
+@utility duration-quick {
+  transition-duration: var(--dur-quick);
+}
+@utility duration-base {
+  transition-duration: var(--dur-base);
+}
+@utility duration-move {
+  transition-duration: var(--dur-move);
+}
+@utility duration-reveal {
+  transition-duration: var(--dur-reveal);
+}
+@utility duration-flow {
+  transition-duration: var(--dur-flow);
+}
+@utility duration-lightup {
+  transition-duration: var(--dur-lightup);
+}
+
+/* The two voices of Recursive, plus mono. */
+@utility voice-linear {
+  font-variation-settings:
+    "CASL" 0,
+    "MONO" 0;
+}
+@utility voice-casual {
+  font-variation-settings:
+    "CASL" 1,
+    "MONO" 0;
+}
+@utility voice-guide {
+  font-size: var(--t-voice-size);
+  line-height: var(--t-voice-lh);
+  font-weight: var(--t-voice-wght);
+  font-variation-settings:
+    "CASL" 1,
+    "slnt" -6;
+}
+@utility voice-mono {
+  font-family: var(--font-code);
+  font-variation-settings:
+    "MONO" 1,
+    "CASL" 0;
+}
+@utility t-hero {
+  font-size: var(--t-hero-size);
+  line-height: var(--t-hero-lh);
+  font-weight: var(--t-hero-wght);
+  font-variation-settings: "CASL" 1;
+}
+@utility t-display {
+  font-size: var(--t-display-size);
+  line-height: var(--t-display-lh);
+  font-weight: var(--t-display-wght);
+  font-variation-settings: "CASL" 0.7;
+}
+@utility t-title {
+  font-size: var(--t-title-size);
+  line-height: var(--t-title-lh);
+  font-weight: var(--t-title-wght);
+  font-variation-settings: "CASL" 0.2;
+}
+@utility tabular {
+  font-variant-numeric: tabular-nums;
+}
+@utility t-heading {
+  font-size: var(--t-heading-size);
+  line-height: var(--t-heading-lh);
+  font-weight: var(--t-heading-wght);
+}
+@utility t-lead {
+  font-size: var(--t-lead-size);
+  line-height: var(--t-lead-lh);
+  font-weight: var(--t-lead-wght);
+  max-width: var(--measure-lead);
+}
+@utility t-micro {
+  font-size: var(--t-micro-size);
+  line-height: var(--t-micro-lh);
+  font-weight: var(--t-micro-wght);
+  letter-spacing: 0.01em;
+}
+
+/* Enter animation for popovers, menus, toasts and dialogs (duration set inline or 220 ms). */
+@utility lm-pop-in {
+  animation: lm-pop-in var(--dur-base) var(--ease-out) both;
+}
+@utility lm-fade-in {
+  animation: lm-fade var(--dur-base) var(--ease-out) both;
+}
+/* Drawers slide in over --dur-move (120 ms crossfade under reduced motion). */
+@utility lm-slide-in-right {
+  animation: lm-slide-right var(--dur-move) var(--ease-out) both;
+}
+@utility lm-slide-in-up {
+  animation: lm-slide-up var(--dur-move) var(--ease-out) both;
+}
+/* The Building glyph's rotating dash. */
+@utility lm-spin {
+  animation: lm-spin 1.6s linear infinite;
+}
+/* A ready glyph's breathing halo (3.2 s, the only idle motion besides the fading flicker). */
+@utility lm-breathe-halo {
+  animation: lm-breathe-halo var(--dur-breathe) var(--ease-in-out) infinite;
+}
+/* Strokes that draw themselves once (install, empty shelf). Set --lm-len to the path length. */
+@utility lm-draw {
+  stroke-dasharray: var(--lm-len, 1000);
+  stroke-dashoffset: var(--lm-len, 1000);
+  animation: lm-draw var(--lm-draw-dur, 600ms) var(--ease-out) var(--lm-draw-delay, 0ms) forwards;
+}
+
+@keyframes lm-breathe {
+  0%,
+  100% {
+    box-shadow: 0 0 0 2px rgb(18 135 122 / 0.35);
+  }
+  50% {
+    box-shadow: var(--glow-ready);
+  }
+}
+@keyframes lm-pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes lm-slide-right {
+  from {
+    opacity: 0;
+    transform: translateX(48px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes lm-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(48px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes lm-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes lm-breathe-halo {
+  0%,
+  100% {
+    opacity: 0.08;
+  }
+  50% {
+    opacity: 0.32;
+  }
+}
+/* A whole drawing revealed left to right (a poster that draws itself in without touching its dashes). */
+@utility lm-wipe {
+  animation: lm-wipe var(--lm-draw-dur, 600ms) var(--ease-out) var(--lm-draw-delay, 0ms) both;
+}
+@keyframes lm-wipe {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+@keyframes lm-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes lm-flicker {
+  0%,
+  100% {
+    opacity: 0.72;
+  }
+  50% {
+    opacity: 0.58;
+  }
+}
+
+@keyframes lm-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@layer base {
+  html {
+    font-family: var(--font-recursive);
+    font-size: var(--t-body-size);
+    line-height: var(--t-body-lh);
+    font-weight: var(--t-body-wght);
+    background: var(--bg);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+  [data-font="atkinson"] {
+    font-family: var(--font-atkinson);
+  }
+  :focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: var(--sea-soft);
+    color: var(--ink);
+  }
+  /* Windows High Contrast: shapes stay, colours fall back to the system's. */
+  @media (forced-colors: active) {
+    :focus-visible {
+      outline-color: Highlight;
+    }
+  }
+}
+
+/*
+ * The close highlighter: ==x== renders as <mark class="lm-sweep-mark">. A --sea-soft band sweeps in once,
+ * 500 ms, 300 ms after its sentence appears (--lm-sweep-delay). Never Lumen: the close isn't mastery.
+ */
+@utility lm-sweep-mark {
+  background-color: transparent;
+  background-image: linear-gradient(var(--sea-soft), var(--sea-soft));
+  background-repeat: no-repeat;
+  background-position: 0 88%;
+  background-size: 100% 0.6em;
+  color: inherit;
+  border-radius: 2px;
+  padding-inline: 0.08em;
+  animation: lm-sweep-mark 500ms var(--ease-out) var(--lm-sweep-delay, 300ms) both;
+}
+@keyframes lm-sweep-mark {
+  from {
+    background-size: 0% 0.6em;
+  }
+}
+/* The croc hop (two 8 px hops, 360 ms each: ease-out up, ease-in down). */
+@utility lm-hop {
+  animation: lm-hop 720ms linear both;
+}
+@keyframes lm-hop {
+  0%,
+  50% {
+    transform: translateY(0);
+    animation-timing-function: var(--ease-out);
+  }
+  25%,
+  75% {
+    transform: translateY(-8px);
+    animation-timing-function: var(--ease-in);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+/* A single Sea halo pulse (a clicked glyph, a "next" card, a newly ready card). Never Lumen. */
+@utility lm-once-pulse {
+  animation: lm-once-pulse var(--dur-reveal) var(--ease-out) both;
+}
+@keyframes lm-once-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgb(18 135 122 / 0.45);
+  }
+  100% {
+    box-shadow: 0 0 0 14px rgb(18 135 122 / 0);
+  }
+}
+
+/* ------------------------------------------------------------------------------------------ Modal */
+/* Open: scale 0.94 → 1 and fade over --dur-move from the clicked glyph (transform-origin set inline). */
+.lm-modal {
+  animation: lm-modal-in var(--dur-move) var(--ease-out) both;
+}
+.lm-modal[data-status="closing"] {
+  animation: lm-modal-out var(--dur-base) var(--ease-in) both;
+}
+.lm-modal-scrim {
+  animation: lm-fade var(--dur-base) var(--ease-out) both;
+}
+.lm-modal-scrim[data-status="closing"] {
+  animation: lm-fade-out var(--dur-base) var(--ease-in) both;
+}
+/* The peek: a small popover, no scale from afar. */
+.lm-modal[data-modal-size="peek"] {
+  animation-name: lm-pop-in;
+  animation-duration: var(--dur-base);
+}
+.lm-modal[data-modal-size="peek"][data-status="closing"] {
+  animation: lm-fade-out var(--dur-quick) var(--ease-in) both;
+}
+/* Content stagger inside a card: header 0, canvas 60, text 120, action 180 ms (a fade with an 8 px rise). */
+@utility lm-rise {
+  animation: lm-rise var(--dur-move) var(--ease-out) var(--lm-rise-delay, 0ms) both;
+}
+@keyframes lm-modal-in {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes lm-modal-out {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+}
+@keyframes lm-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@keyframes lm-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ------------------------------------------------------------------------------- Pips, gate charge */
+.lm-pip [data-part="tick"] {
+  stroke-dasharray: 12;
+  stroke-dashoffset: 0;
+}
+.lm-pip[data-land] [data-part="tick"] {
+  animation: lm-pip-tick 200ms var(--ease-out) both;
+}
+.lm-pip[data-land] [data-part="disc"] {
+  animation: lm-pip-land 360ms var(--ease-out) both;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.lm-pip [data-part="halo"] {
+  animation: lm-breathe-halo var(--dur-breathe) var(--ease-in-out) infinite;
+}
+.lm-pip :is([data-part="disc"], [data-part="ring"]) {
+  transition:
+    fill var(--dur-base) var(--ease-out),
+    stroke var(--dur-base) var(--ease-out);
+  transition-delay: var(--lm-sweep-at, 0ms);
+}
+.lm-gate-charge [data-part="segment"] {
+  transition: stroke var(--dur-base) var(--ease-out);
+  transition-delay: var(--lm-sweep-at, 0ms);
+}
+.lm-gate-charge[data-open] [data-part="glow"] {
+  animation: lm-fade var(--dur-reveal) var(--ease-out) both;
+}
+@keyframes lm-pip-tick {
+  from {
+    stroke-dashoffset: 12;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes lm-pip-land {
+  0% {
+    transform: scale(0.6);
+  }
+  60% {
+    transform: scale(1.12);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* ------------------------------------------------------------------------------------- Moss, the croc */
+/* Motion keyed on data-croc-state and data-part (Croc.tsx). Idle only blinks; nothing else loops on idle. */
+.lm-croc [data-part] {
+  transform-box: view-box;
+}
+.lm-croc [data-part="head"] {
+  transform-origin: 70px 64px; /* the neck */
+  transition: transform var(--dur-move) var(--ease-out);
+}
+.lm-croc[data-croc-state="curious"] [data-part="head"] {
+  transform: rotate(-8deg);
+}
+.lm-croc [data-part="brow"] {
+  opacity: 0;
+  transition:
+    opacity var(--dur-quick) var(--ease-out),
+    transform var(--dur-move) var(--ease-out);
+}
+.lm-croc[data-croc-state="curious"] [data-part="brow"] {
+  opacity: 1;
+  transform: translateY(-2px);
+}
+.lm-croc [data-part="pupils"] {
+  transition: transform var(--dur-base) var(--ease-out);
+}
+.lm-croc[data-croc-state="listening"] [data-part="pupils"] {
+  transform: translate(1.6px, 1.2px);
+}
+.lm-croc[data-croc-state="thinking"] [data-part="pupils"] {
+  transform: translate(-1.8px, -1.8px);
+}
+.lm-croc[data-croc-state="curious"] [data-part="pupils"] {
+  transform: translate(0.8px, -1px);
+}
+.lm-croc [data-part="lids"] > * {
+  transform-box: fill-box;
+  transform-origin: 50% 0%;
+  transform: scaleY(0);
+}
+.lm-croc[data-blink] [data-part="lids"] > * {
+  animation: lm-croc-lid 320ms linear both;
+}
+.lm-croc [data-part="tail"] {
+  transform-origin: 88px 96px;
+}
+.lm-croc[data-croc-state="happy"] [data-part="tail"] {
+  animation: lm-croc-tail 600ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+.lm-croc[data-croc-state="happy"] [data-part="figure"] {
+  animation: lm-croc-bounce 600ms var(--ease-out) both;
+}
+.lm-croc[data-croc-state="cheering"] [data-part="figure"] {
+  animation: lm-hop 720ms linear both;
+}
+.lm-croc[data-croc-state="cheering"] [data-part="arms"] {
+  animation: lm-croc-arms 360ms var(--ease-out) both;
+  transform-origin: 62px 78px;
+}
+.lm-croc [data-part="glow"] {
+  animation: lm-croc-glow 1600ms var(--ease-out) both;
+}
+.lm-croc [data-part="dot"] {
+  animation: lm-croc-dot 900ms var(--ease-in-out) infinite;
+}
+.lm-croc[data-hold] [data-part="dot"] {
+  animation: none;
+  opacity: 1;
+}
+.lm-croc [data-part="confetti"] {
+  animation: lm-croc-confetti 1600ms var(--ease-out) both;
+}
+@keyframes lm-croc-lid {
+  0% {
+    transform: scaleY(0);
+  }
+  37.5%,
+  62.5% {
+    transform: scaleY(1);
+  }
+  100% {
+    transform: scaleY(0);
+  }
+}
+@keyframes lm-croc-tail {
+  0% {
+    transform: rotate(0);
+  }
+  35% {
+    transform: rotate(-10deg);
+  }
+  70% {
+    transform: rotate(6deg);
+  }
+  100% {
+    transform: rotate(0);
+  }
+}
+@keyframes lm-croc-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-4px);
+  }
+}
+@keyframes lm-croc-arms {
+  from {
+    transform: scale(0.9) translateY(4px);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes lm-croc-glow {
+  0% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 0.85;
+  }
+}
+@keyframes lm-croc-dot {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  33% {
+    opacity: 1;
+  }
+}
+@keyframes lm-croc-confetti {
+  0% {
+    opacity: 0;
+    translate: 0 14px;
+  }
+  15% {
+    opacity: 1;
+    translate: 0 -6px;
+  }
+  100% {
+    opacity: 0;
+    translate: 0 40px;
+  }
+}
+
+/* Unlayered so it wins over utility animations (layers lose to unlayered rules). */
+/* Reduced motion (OS, unless the app says full; or the app override): idle motion stops, travel becomes a fade. */
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-motion="full"]) .animate-breathe {
+    animation: none;
+    box-shadow: 0 0 0 2px var(--sea);
+  }
+  :root:not([data-motion="full"]) :is(.animate-flicker, .lm-spin, .lm-breathe-halo) {
+    animation: none;
+  }
+  :root:not([data-motion="full"]) .lm-draw {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+  :root:not([data-motion="full"]) .lm-wipe {
+    animation-name: lm-fade;
+  }
+  :root:not([data-motion="full"]) :is(.lm-pop-in, .lm-slide-in-right, .lm-slide-in-up, .lm-rise) {
+    animation-name: lm-fade;
+    animation-delay: 0ms;
+  }
+  :root:not([data-motion="full"]) :is(.lm-modal, .lm-modal-scrim) {
+    animation: lm-fade 120ms linear both;
+  }
+  :root:not([data-motion="full"]) :is(.lm-modal, .lm-modal-scrim)[data-status="closing"] {
+    animation: lm-fade-out 120ms linear both;
+  }
+  :root:not([data-motion="full"]) :is(.lm-hop, .lm-once-pulse, .lm-sweep-mark),
+  :root:not([data-motion="full"]) .lm-croc [data-part],
+  :root:not([data-motion="full"]) .lm-pip [data-part],
+  :root:not([data-motion="full"]) .lm-pip[data-land] [data-part],
+  :root:not([data-motion="full"]) .lm-gate-charge [data-part] {
+    animation: none;
+  }
+  :root:not([data-motion="full"]) .lm-croc [data-part],
+  :root:not([data-motion="full"]) .lm-pip [data-part],
+  :root:not([data-motion="full"]) .lm-gate-charge [data-part] {
+    transition-duration: 120ms;
+    transition-delay: 0ms;
+  }
+  :root:not([data-motion="full"]) .lm-croc [data-part="confetti"] {
+    opacity: 0.85;
+  }
+  :root:not([data-motion="full"]) .lm-croc [data-part="glow"] {
+    opacity: 0.85;
+  }
+}
+[data-motion="reduced"] .animate-breathe {
+  animation: none;
+  box-shadow: 0 0 0 2px var(--sea);
+}
+[data-motion="reduced"] :is(.animate-flicker, .lm-spin, .lm-breathe-halo) {
+  animation: none;
+}
+[data-motion="reduced"] .lm-draw {
+  animation: none;
+  stroke-dashoffset: 0;
+}
+[data-motion="reduced"] .lm-wipe {
+  animation-name: lm-fade;
+}
+[data-motion="reduced"] :is(.lm-pop-in, .lm-slide-in-right, .lm-slide-in-up, .lm-rise) {
+  animation-name: lm-fade;
+  animation-delay: 0ms;
+}
+[data-motion="reduced"] :is(.lm-modal, .lm-modal-scrim) {
+  animation: lm-fade 120ms linear both;
+}
+[data-motion="reduced"] :is(.lm-modal, .lm-modal-scrim)[data-status="closing"] {
+  animation: lm-fade-out 120ms linear both;
+}
+[data-motion="reduced"] :is(.lm-hop, .lm-once-pulse, .lm-sweep-mark),
+[data-motion="reduced"] .lm-croc [data-part],
+[data-motion="reduced"] .lm-pip [data-part],
+[data-motion="reduced"] .lm-pip[data-land] [data-part],
+[data-motion="reduced"] .lm-gate-charge [data-part] {
+  animation: none;
+}
+[data-motion="reduced"] .lm-croc [data-part],
+[data-motion="reduced"] .lm-pip [data-part],
+[data-motion="reduced"] .lm-gate-charge [data-part] {
+  transition-duration: 120ms;
+  transition-delay: 0ms;
+}
+[data-motion="reduced"] .lm-croc [data-part="confetti"] {
+  opacity: 0.85;
+}
+[data-motion="reduced"] .lm-croc [data-part="glow"] {
+  opacity: 0.85;
+}
