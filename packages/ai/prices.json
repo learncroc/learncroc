@@ -1,0 +1,11 @@
+{
+  "$comment": "USD per million tokens, used by the spend meter (estimates; update by PR). Cloud providers only; local models cost 0. cacheWrite is the 5-minute write price.",
+  "anthropic": {
+    "claude-haiku-5-5": { "input": 0.1, "output": 0.5, "cacheRead": 0.01, "cacheWrite": 0.125 },
+    "claude-sonnet-5-5": { "input": 2, "output": 10, "cacheRead": 0.2, "cacheWrite": 2.5 },
+    "claude-opus-5-5": { "input": 4, "output": 20, "cacheRead": 0.2, "cacheWrite": 5 }
+  },
+  "openai-compatible": {
+    "$default": { "input": 2, "output": 8, "cacheRead": 0.5, "cacheWrite": 2 }
+  }
+}
