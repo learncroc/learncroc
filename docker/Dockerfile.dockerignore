@@ -1,0 +1,7 @@
+**/node_modules
+**/dist
+!registry/dist
+e2e/test-results
+e2e/shots
+.git
+storyboard
