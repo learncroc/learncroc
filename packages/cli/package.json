@@ -1,0 +1,36 @@
+{
+  "name": "@learncroc/cli",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "The learncroc command line (serve, install, lint, build-pack, new, relight, ...).",
+  "bin": {
+    "learncroc": "./src/index.ts"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p .",
+    "test": "bun test",
+    "start": "bun src/index.ts"
+  },
+  "dependencies": {
+    "@clack/prompts": "^1.8.1",
+    "@learncroc/ai": "workspace:*",
+    "@learncroc/core": "workspace:*",
+    "@learncroc/server": "workspace:*",
+    "@learncroc/widgets": "workspace:*",
+    "open": "^11.0.4",
+    "picocolors": "^1.1.1",
+    "semver": "^7.8.5",
+    "tar": "^7.5.22",
+    "yaml": "^2.9.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.4.3",
+    "@types/semver": "^7.8.0"
+  }
+}
