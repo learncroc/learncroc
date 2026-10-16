@@ -1,0 +1,9 @@
+@import "tailwindcss";
+@import "@learncroc/ui/fonts.css";
+@import "@learncroc/ui/tokens.css";
+@import "@learncroc/ui/theme.css";
+
+/* Tailwind scans the workspace packages that ship class names. */
+@source "../../../packages/ui/src";
+@source "../../../packages/widgets/src";
+@source "../../../packages/maps/src";
