@@ -1,0 +1,35 @@
+# yaml-language-server: $schema=https://learncroc.github.io/schema/v1/pack.schema.json
+schema: 2
+id: __PACK_ID__
+version: 0.1.0
+title: __PACK_TITLE__
+subtitle: Percentages without a calculator
+tagline: Read, find and change percentages in your head.
+publisher: __AUTHOR__
+authors:
+  - { name: __AUTHOR__ }
+license: CC-BY-SA-4.0
+lang: en
+level: beginner
+estMinutes: 12
+tags: [numbers, percentages]
+category: practical
+engine: ">=0.1.0 <1.0.0"
+widgets: {}
+profile: community
+theme:
+  renderer: metro
+  world: The Percent Line
+  mode: dark
+  direction: lr
+  ground: "#0F1430"
+  texture: grid-fine
+  lines: ["#7FB2FF", "#C792F2", "#F07DA6", "#9AD07A", "#E6E1D3"]
+  token: train
+entry:
+  suggestedStart: per-hundred
+outcomes:
+  - Read a percentage as a part of a hundred
+  - Find 10%, 5% and 25% of an amount in your head
+  - Work out a price after a percentage change
+status: draft

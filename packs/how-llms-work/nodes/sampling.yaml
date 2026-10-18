@@ -1,0 +1,361 @@
+# yaml-language-server: $schema=../../../schemas/node.schema.json
+id: sampling
+title: Same question, new answer
+tagline: Sampling and temperature
+estMinutes: 4
+bigIdea: >
+  The model only produces odds. A sampler then rolls a weighted die to pick the next token, so the
+  same prompt can give different replies. Temperature reshapes the odds before the roll: low
+  sharpens them toward the top token, high flattens them. It changes variety, never the facts the
+  scores encode.
+objectives:
+  - Predict how often a token comes up from its probability
+  - Set a temperature to sharpen or flatten a distribution
+  - Choose a temperature for a task
+concepts: [llm.sampling, llm.temperature]
+
+misconceptions:
+  always-top:
+    label: Thinks the model always outputs its top-scoring token
+    hint: "Ten rolls gave ten different words. If it always took the top bar, what would you have seen?"
+  uniform:
+    label: Thinks random sampling makes every word equally likely
+    upstream: next-token
+    hint: "The die is weighted by the bars. Would a 5% token and a 0.01% token come up equally often?"
+  learns-live:
+    label: Thinks a different answer means the model learned or changed between asks
+    hint: "The scores were identical both times. What else in the loop involves chance?"
+  temp-truth:
+    label: Thinks lowering temperature makes answers more accurate
+    hint: "Low temperature just makes the top token win more often. Is the top token always true?"
+
+hook:
+  interaction:
+    kind: choice
+    id: hook-q
+    prompt: You ask a chatbot the same question twice and get two different answers. Why?
+    confidence: true
+    options:
+      - { id: learned, text: "It learned from your first ask", misconception: learns-live }
+      - { id: dice, text: "It rolls dice weighted by its scores" }
+      - { id: choosing, text: "It decides to be creative", misconception: always-top }
+      - { id: any-word, text: "It picks any word at random", misconception: uniform }
+    answer: dice
+  lotsGuess: learned
+  style: puzzle
+
+screens:
+  - id: s1-roll
+    newIdea: A sampler picks tokens at random, weighted by their probabilities
+    blocks:
+      - type: story
+        text: "\"My favourite colour is ___\". GPT-2's bars are odds on a weighted die. Each roll picks one word, and taller bars win more often."
+    visual:
+      kind: widget
+      widget:
+        id: probability-bars
+        v: 1
+        props:
+          context: { $data: "data/sampling.json#/colour/context" }
+          tokens: { $data: "data/sampling.json#/colour/tokens" }
+          task: view
+          samples: { $data: "data/sampling.json#/colour/samples" }
+          source: "precomputed:gpt2"
+      alt: "Bars after \"My favourite colour is\": the 10.6%, blue 5.1%, black 3.7%, red 3.6%, a 3.3%, pink 3.1%, and a large everything-else bar."
+    interaction:
+      kind: numeric
+      id: s1-q
+      prompt: '"the" is the tallest bar, at 10.6%. Roll the die ten times. How many times does "the" come up?'
+      answer: 1
+      tolerance: 1
+      onWrong:
+        "10": { misconception: always-top, feedback: "That's what always taking the top bar would give. The die only favours it." }
+        "5": { misconception: always-top, feedback: "Tallest isn't the same as most. 10.6% is about one roll in ten." }
+      feedbackRight: "About one in ten: the bar is the odds."
+    reveal:
+      text: >
+        GPT-2's ten real rolls: then, blue, grape, spotted, pineapple, probably, water, cheered, Grey,
+        go. Not a single "the", and ten different words. The six tallest bars hold under 30% between
+        them. The rest is spread thin over 50,000 small ones, and that's where most rolls land.
+      visualState: { props: { temperature: 1 }, note: "10 rolls, 10 words" }
+    src: [radford-2019]
+
+  - id: s2-temperature
+    newIdea: Temperature sharpens or flattens the odds before the roll
+    blocks:
+      - type: story
+        text: "The temperature dial reshapes the bars before each roll. 1 means as computed."
+    interaction:
+      kind: widget
+      id: s2-q
+      prompt: Turn the temperature down until one bar takes almost everything.
+      widget:
+        id: probability-bars
+        v: 1
+        props:
+          context: { $data: "data/sampling.json#/colour/context" }
+          tokens: { $data: "data/sampling.json#/colour/tokens" }
+          task: temperature
+          temperature: 1
+          samples: { $data: "data/sampling.json#/colour/samples" }
+          source: "precomputed:gpt2"
+        goal: { kind: temperature, range: [0.1, 0.2] }
+      solution: { temperature: 0.15 }
+      fallback:
+        kind: choice
+        prompt: Which temperature makes one bar take almost all the probability?
+        options:
+          - { id: low, text: "0.2" }
+          - { id: one, text: "1.0", misconception: always-top }
+          - { id: high, text: "1.5", misconception: uniform }
+        answer: low
+      feedbackRight: "Low temperature: the top bar swallows the rest."
+    reveal:
+      text: >
+        Down near 0.1, "the" swallowed nearly all the probability, so every roll gave the same word. Above
+        1 the bars flatten and odd tokens win more often. The scores never changed; only how
+        boldly the die favours them.
+      visualState: { props: { temperature: 1.5 }, note: "now flattened: 1.5" }
+    alts:
+      simpler: "Low temperature: play it safe, take the favourite. High temperature: give the long shots a chance."
+      analogy: "Like a talent show judged by applause. Low temperature turns up the loudest act until it always wins; high temperature quiets the gaps so anyone might."
+    src: [holtzman-2020]
+
+  - id: s3-jobs
+    blocks:
+      - type: story
+        text: "You're configuring a model for six jobs. Some want the same answer every time; others want surprises. Each gets one temperature setting."
+    interaction:
+      kind: widget
+      id: s3-q
+      prompt: Sort each job into low or high temperature.
+      widget:
+        id: sorter
+        v: 1
+        props:
+          mode: buckets
+          buckets:
+            - { id: low, label: "Low (near 0)", hint: "same output every time" }
+            - { id: high, label: "High (around 1)", hint: "variety" }
+          cards:
+            - { id: invoice, text: "Pull the date out of an invoice" }
+            - { id: bands, text: "Brainstorm twenty band names" }
+            - { id: spam, text: "Label an email spam or not" }
+            - { id: poem, text: "Write a surprising line of poetry" }
+            - { id: units, text: "Convert a recipe to grams" }
+            - { id: gifts, text: "Suggest gift ideas" }
+        goal: { kind: buckets, assignment: { invoice: low, bands: high, spam: low, poem: high, units: low, gifts: high } }
+      solution: { assignment: { invoice: low, bands: high, spam: low, poem: high, units: low, gifts: high } }
+      fallback:
+        kind: choice
+        prompt: Which job wants a temperature near 0?
+        options:
+          - { id: invoice, text: "Pull the date out of an invoice" }
+          - { id: bands, text: "Brainstorm band names", misconception: temp-truth }
+          - { id: poem, text: "Write a surprising poem", misconception: temp-truth }
+        answer: invoice
+      feedbackRight: "Repeatable jobs go low; jobs that want variety go high."
+    reveal:
+      text: >
+        The cards split cleanly: extraction and labelling went low, ideas and poetry went high. Low
+        temperature buys repeatability, not accuracy: if the top token is wrong, you'll get the same
+        wrong token every time.
+      visualState: { note: "low = repeatable, not truer" }
+
+close:
+  text: "Because it rolls ==weighted dice==. The model's scores were identical both times; a sampler picks each token at random, weighted by those scores, so the reply can branch differently. Temperature sets how boldly the dice favour the top score."
+  byGuess:
+    learned: "You picked *it learned from your first ask*. Lots of people do. But nothing changed inside: same weights, same scores. It differs because a sampler rolls ==weighted dice== for each token, so the reply branches differently each time."
+    choosing: "You picked *it decides to be creative*. There's no decision. It differs because a sampler rolls ==weighted dice== over the same scores for each token. Likely tokens win often, unlikely ones sometimes, and the reply branches."
+    any-word: "You picked *it picks any word at random*. Random, yes, but not any word. It differs because the sampler rolls ==weighted dice==: a 5% token wins about 5 times in 100, a 0.01% token almost never."
+    idk: "No guess is fine. The scores were identical both times. It differs because a sampler rolls ==weighted dice== for each token, so likely words win often, unlikely ones sometimes, and the reply branches."
+  teaser: "Every reply is rolled from what the model can read. But how much can it read at once?"
+
+items:
+  - id: i1
+    kind: choice
+    level: recall
+    difficulty: 2
+    prompt: At temperature 0, you ask the same question twice. What do you get?
+    options:
+      - { id: same, text: "Essentially the same answer" }
+      - { id: different, text: "Two different answers", misconception: uniform }
+      - { id: better, text: "A more accurate second answer", misconception: learns-live }
+    answer: same
+    why: "At 0 the top token always wins, so the loop repeats itself."
+  - id: i2
+    kind: numeric
+    level: apply
+    difficulty: 2
+    prompt: "A token has probability {p}%. Over 200 samples, about how many times does it come up?"
+    params:
+      vars: { p: [5, 10, 25, 40] }
+      answerExpr: "p * 2"
+    answer: 10
+    tolerance: 3
+    onWrong:
+      "0": { misconception: always-top }
+    why: "Probability times the number of rolls."
+  - id: i3
+    kind: choice
+    level: apply
+    difficulty: 2
+    prompt: Your test suite needs the same output on every run. Which temperature?
+    options:
+      - { id: zero, text: "0, or very close to it" }
+      - { id: high, text: "1.5", misconception: uniform }
+      - { id: any, text: "Any: the model always takes the top token", misconception: always-top }
+    answer: zero
+  - id: i4
+    kind: numeric
+    level: apply
+    difficulty: 3
+    prompt: "\"yes\" has 60%, \"no\" 30%, everything else 10%. At temperature 1, out of {n} replies, about how many start with \"no\"?"
+    params:
+      vars: { n: [100, 50, 200, 20] }
+      answerExpr: "n * 0.3"
+    answer: 30
+    tolerance: 3
+    onWrong:
+      "0": { misconception: always-top, feedback: "\"no\" isn't the favourite, but 30% is a lot of rolls." }
+  - id: i5
+    kind: order
+    level: apply
+    difficulty: 2
+    prompt: Order these temperatures from most repeatable to most varied output.
+    items: ["0.1", "0.5", "1.0", "1.5"]
+    answer: [0, 1, 2, 3]
+  - id: i6
+    kind: cloze
+    level: recall
+    difficulty: 2
+    prompt: Fill the gaps.
+    text: "Low temperature makes the top token {{1}} likely. High temperature makes the bars {{2}}."
+    blanks:
+      "1": { accept: [more, "even more"], tiles: [more, less, exactly as] }
+      "2": { accept: [flatter, flat, "more even", even], tiles: [flatter, taller, disappear] }
+  - id: i7
+    kind: choice
+    level: transfer
+    difficulty: 3
+    prompt: Same prompt, temperature 1, two different replies. What changed between the runs?
+    options:
+      - { id: roll, text: "Only the random picks" }
+      - { id: learned, text: "The model learned from the first run", misconception: learns-live }
+      - { id: scores, text: "The model's scores drifted", misconception: learns-live }
+    answer: roll
+    why: "Same weights, same scores. Only the dice differ."
+  - id: i8
+    kind: estimate
+    level: transfer
+    difficulty: 4
+    prompt: "At temperature 0.1, GPT-2 gives \"the\" 99.9% after \"My favourite colour is\". In 1,000 rolls, roughly how many are NOT \"the\"?"
+    scale: { min: 0.1, max: 1000, log: true, label: rolls }
+    answer: 1
+    accept: { factor: 3 }
+    why: "0.1% of 1,000 is about 1."
+  - id: i9
+    kind: text
+    level: recall
+    difficulty: 1
+    prompt: "One word: the setting that sharpens or flattens the odds before a token is picked."
+    accept: [temperature, temp]
+  - id: i10
+    kind: explain
+    level: transfer
+    difficulty: 3
+    prompt: "In one sentence: why does a chatbot write a different poem each time you ask?"
+    keyPoints:
+      - { id: odds, text: "the model gives odds for many possible next tokens", keywords: [odds, probabilities, scores, chances, "many options"] }
+      - { id: roll, text: "a random but weighted pick chooses among them each time", keywords: [random, dice, roll, sample, sampling, weighted, temperature] }
+    minHits: 2
+    exemplar: "At each step it has odds on many tokens, and a weighted random roll picks one, so the poem branches differently each time."
+    offline:
+      kind: choice
+      prompt: Why do you get a different poem each time?
+      options:
+        - { id: roll, text: "Each token is a weighted random pick from the model's odds" }
+        - { id: learns, text: "It improves the poem after each ask", misconception: learns-live }
+        - { id: uniform, text: "Every word is equally likely", misconception: uniform }
+      answer: roll
+  - id: i11
+    kind: match
+    level: apply
+    difficulty: 2
+    prompt: Match each temperature to what you'd expect.
+    left: ["0", "0.7", "1.8"]
+    right: ["the same reply every time", "natural variety", "wild, often nonsense"]
+    answer: [[0, 0], [1, 1], [2, 2]]
+  - id: i12
+    kind: widget
+    level: transfer
+    difficulty: 3
+    prompt: "\"The cat sat on the ___\": floor and bed are close rivals. Turn the temperature down until floor takes most of the rolls."
+    widget:
+      id: probability-bars
+      v: 1
+      props:
+        context: { $data: data/next-token.json#/catSat/context }
+        tokens: { $data: data/next-token.json#/catSat/tokens }
+        task: temperature
+        temperature: 1
+        source: precomputed:gpt2
+      goal:
+        kind: temperature
+        range: [0.1, 0.15]
+    solution: { temperature: 0.1 }
+    fallback:
+      kind: choice
+      prompt: Which temperature makes floor take most of the rolls?
+      options:
+        - { id: low, text: "0.1" }
+        - { id: one, text: "1.0", misconception: always-top }
+        - { id: high, text: "1.8", misconception: uniform }
+      answer: low
+    why: "Floor takes most rolls now, but bed, a hair behind at 1.0, still steals some: close rivals stay close."
+
+flashcards:
+  - { id: c1, kind: qa, front: "Who picks the next token: the network or the sampler?", back: "The sampler, by a weighted random roll over the network's probabilities." }
+  - { id: c2, kind: qa, front: "What does low temperature do to the odds?", back: "Sharpens them toward the top token, so output repeats." }
+  - { id: c3, kind: qa, front: "What does high temperature do to the odds?", back: "Flattens them, so unlikely tokens win more often." }
+  - { id: c4, kind: qa, front: "Does temperature 0 make a model more accurate?", back: "No. It makes it repeatable. A wrong top token repeats every time." }
+
+toy:
+  prompt: "Turn the dial and roll. Find where the words turn strange."
+  widget:
+    id: probability-bars
+    v: 1
+    props:
+      context: { $data: "data/sampling.json#/colour/context" }
+      tokens: { $data: "data/sampling.json#/colour/tokens" }
+      task: temperature
+      temperature: 1
+      samples: { $data: "data/sampling.json#/colour/samples" }
+      source: "precomputed:gpt2"
+
+underTheHood:
+  title: The formula behind the dial
+  body: >
+    The network outputs a logit z for every token. Sampling at temperature T uses
+    p = exp(z/T) / Σ exp(z/T). T = 1 gives the model's own probabilities. As T falls toward 0, the
+    largest logit dominates and sampling becomes greedy: always the top token. Large T pushes all
+    probabilities toward equal.
+
+    Real systems usually trim the long tail too. Top-k keeps only the k most likely tokens; top-p
+    (nucleus sampling) keeps the smallest set whose probabilities add up to p, such as 0.9. Holtzman
+    and colleagues showed that pure sampling from the full tail produces incoherent text, which is
+    what GPT-2's temperature-1 rolls on this card look like. "Temperature 0" in an API is close to
+    deterministic, though tiny numerical differences on GPUs can still change a word now and then.
+  sources: [holtzman-2020]
+
+faq:
+  - q: Where does the randomness come from?
+    a: "A random number generator in the sampler, not in the network. Fix the seed and you get the same rolls."
+  - q: Why do GPT-2's samples look so strange?
+    a: "It's a small model, and these are pure samples from its full distribution. Products trim the long tail with top-k or top-p."
+
+sources:
+  - { id: holtzman-2020, title: "The Curious Case of Neural Text Degeneration", by: "Holtzman, Buys, Du, Forbes & Choi", year: 2020, url: "https://arxiv.org/abs/1904.09751" }
+  - { id: radford-2019, title: "Language Models are Unsupervised Multitask Learners", by: "Radford et al.", year: 2019, url: "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf", note: "Samples and bars on this card computed with GPT-2 small by scripts/precompute (seeded)." }
+
+status: draft

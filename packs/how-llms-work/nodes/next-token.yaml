@@ -1,0 +1,384 @@
+# yaml-language-server: $schema=../../../schemas/node.schema.json
+id: next-token
+title: The guessing machine
+tagline: What happens inside one reply
+estMinutes: 5
+bigIdea: >
+  A language model does one thing per run: it gives every token in its vocabulary a score
+  (a probability) for coming next. One token is picked and appended, and the whole network
+  runs again on the longer text. A reply is this loop, once per token, with no take-backs.
+objectives:
+  - Describe what the model outputs in a single step
+  - Run the score, pick, append loop and count the runs for a reply
+  - Explain why an early token can't be revised
+concepts: [llm.next-token, llm.autoregression]
+visual:
+  kind: figure
+  asset: assets/img/loop.svg
+  alt: "A loop: text goes into the network, bars come out, one token is picked and joins the end of the text."
+
+misconceptions:
+  whole-answer:
+    label: Thinks the model writes the whole reply first, then displays it word by word
+    hint: "After the first run, what exactly is the input to the second run?"
+  stored-answer:
+    label: Thinks the model looks the answer up in a database or online
+    hint: "No tools are switched on. Where could these scores come from, if not a lookup?"
+  one-right-word:
+    label: Thinks there is one correct next word that the model knows
+    hint: "Count the bars. How many tokens got a score above zero?"
+  take-backs:
+    label: Thinks the model can go back and change tokens it already wrote
+    hint: "Each run adds one token at the end. Which button did the loop never give you?"
+
+hook:
+  interaction:
+    kind: choice
+    id: hook-q
+    prompt: A chatbot writes you a 500-word answer. How many times does it run its whole network?
+    confidence: true
+    options:
+      - { id: once, text: "Once: it plans, then prints", misconception: whole-answer }
+      - { id: sentences, text: "About 25: once per sentence", misconception: whole-answer }
+      - { id: tokens, text: "About 650: once per token" }
+      - { id: zero, text: "Zero: it fetches a stored answer", misconception: stored-answer }
+    answer: tokens
+  lotsGuess: once
+  style: surprise
+
+screens:
+  - id: s1-finish
+    newIdea: Each run scores every possible next token
+    blocks:
+      - type: story
+        text: "The cat sat on the ___. Five endings, one model. Which does it like best?"
+    interaction:
+      kind: widget
+      id: s1-q
+      prompt: Rank the endings from most to least likely, as GPT-2 sees them.
+      widget:
+        id: probability-bars
+        v: 1
+        props:
+          context: { $data: "data/next-token.json#/catSat/context" }
+          tokens: { $data: "data/next-token.json#/catSat/tokens" }
+          task: rank
+          hideTruth: true
+          source: "precomputed:gpt2"
+        goal: { kind: rank, topK: 2, minOverlap: 1 }
+      solution: { ranking: { $data: "data/next-token.json#/catSat/ranking" } }
+      fallback:
+        kind: choice
+        prompt: Which ending did GPT-2 score highest after "The cat sat on the"?
+        options:
+          - { id: floor, text: floor }
+          - { id: mat, text: mat, misconception: one-right-word }
+          - { id: moon, text: moon }
+        answer: floor
+      feedbackRight: "Floor and bed lead. Mat, the textbook answer, barely registers."
+    reveal:
+      text: >
+        The real bars rose behind your chips: floor 7.6%, bed 6.5%, mat 0.4%. That's the whole
+        job of one run: a score for each of 50,257 tokens. Not a sentence. No database. One
+        next token.
+      visualState: { note: "computed with GPT-2" }
+    src: [radford-2019]
+
+  - id: s2-loop
+    newIdea: Score, pick, append, repeat
+    blocks:
+      - type: story
+        text: "Now you're the machine. Pick a token, push it onto the end, and run again. Each run sees everything written so far."
+    interaction:
+      kind: widget
+      id: s2-q
+      prompt: Run the loop three times. Pick, append, repeat.
+      widget:
+        id: probability-bars
+        v: 1
+        props:
+          context: { $data: "data/next-token.json#/catSat/context" }
+          tokens: { $data: "data/next-token.json#/loopStart/tokens" }
+          task: loop
+          loop: { $data: "data/next-token.json#/loop" }
+          source: "precomputed:gpt2"
+        goal: { kind: loop, runs: 3 }
+      solution: { appended: ["floor", ",", "and"] }
+      fallback:
+        kind: order
+        prompt: Put one turn of the loop in order.
+        items:
+          - "Score every token"
+          - "Pick one token"
+          - "Append it to the text"
+          - "Run the network on the longer text"
+        answer: [0, 1, 2, 3]
+      feedbackRight: "Three runs, three tokens. The text grew, and each run saw it."
+    reveal:
+      text: >
+        The counter reads 3: three runs, three tokens. Each pick joined the input, and the whole
+        network ran again. A 500-word reply is about 650 tokens, so about 650 runs. That's why
+        replies stream in.
+      visualState: { note: "runs: 3" }
+    alts:
+      simpler: "The model only ever answers one question: what comes next? To write more, it adds its answer to the text and asks again."
+      analogy: "Like a phone keyboard's suggestion bar, if you always tapped a suggestion and the phone asked again. Same loop, much bigger brain."
+
+  - id: s3-no-takebacks
+    newIdea: Written tokens are never revised
+    blocks:
+      - type: story
+        text: "Run 3 is about to happen. \"floor\" is already written."
+    visual:
+      kind: widget
+      widget:
+        id: probability-bars
+        v: 1
+        props:
+          context: { $data: "data/next-token.json#/loop/steps/1/context" }
+          tokens: { $data: "data/next-token.json#/loop/steps/1/tokens" }
+          task: view
+          source: "precomputed:gpt2"
+      alt: "Bars for the next token after \"The cat sat on the floor,\": and, his, her, its, staring."
+    interaction:
+      kind: choice
+      id: s3-q
+      prompt: Can run 3 swap "floor" for "mat"?
+      options:
+        - id: no
+          text: "No, it can only add"
+          visualState: { note: "new token goes on the end" }
+        - id: yes-better
+          text: "Yes, if mat scores higher now"
+          misconception: take-backs
+          visualState: { note: "no bar for \"floor\" here" }
+        - id: yes-end
+          text: "Yes, it tidies up at the end"
+          misconception: whole-answer
+          visualState: { note: "the bars only offer next tokens" }
+      answer: no
+      feedbackRight: "Right. Every bar is a candidate for the next slot, never an old one."
+    reveal:
+      text: >
+        The bars only offer the next slot. There's no delete key, so "floor" stays and everything
+        after builds on it. That isn't zero foresight: researchers caught a model choosing a rhyme
+        before writing the line. But what's written stays written.
+    src: [lindsey-2025]
+
+close:
+  text: "About 650: once for every token it writes. Each run scores every possible ==next token==, one is picked and appended, and the whole network runs again on the longer text. A 500-word answer is about 650 tokens."
+  byGuess:
+    once: "You picked *once: it plans, then prints*. Lots of people do. But one run only scores the ==next token==. The pick is appended and the network runs again, once per token: about 650 runs for 500 words."
+    sentences: "You picked *about 25: once per sentence*. Close in spirit, but one run only scores the ==next token==, never a whole sentence. So it runs once per token: about 650 times for a 500-word answer."
+    zero: "You picked *zero: it fetches a stored answer*. Nothing is stored or fetched. Each run scores the ==next token==, one is appended, and the network runs again: about 650 runs for 500 words."
+    idk: "No guess is fine. It runs about 650 times, once per token. Each run scores the ==next token==, one is picked and appended, and the whole network runs again on the longer text."
+  teaser: "One run, one token, picked from the scores. So why does the same question get two different answers?"
+
+items:
+  - id: i1
+    kind: choice
+    level: recall
+    difficulty: 1
+    prompt: The text so far is "The weather today is". What does the model produce in one run?
+    options:
+      - { id: scores, text: "A score for every token in its vocabulary" }
+      - { id: sentence, text: "The next full sentence", misconception: whole-answer }
+      - { id: one-word, text: "The single correct next word", misconception: one-right-word }
+      - { id: query, text: "A search query", misconception: stored-answer }
+    answer: scores
+    why: "One run, one set of scores. Writing more takes more runs."
+  - id: i2
+    kind: numeric
+    level: apply
+    difficulty: 2
+    prompt: "A reply is {n} tokens long. How many times did the network run to write it?"
+    params:
+      vars: { n: [300, 120, 450, 80] }
+      answerExpr: "n"
+    answer: 300
+    tolerance: 0
+    unit: runs
+    onWrong:
+      "1": { misconception: whole-answer, feedback: "One run gives one token. How many tokens are there?" }
+    why: "One run per token."
+  - id: i3
+    kind: order
+    level: recall
+    difficulty: 1
+    prompt: Put one turn of the generation loop in order.
+    items:
+      - "Score every possible next token"
+      - "Pick one token"
+      - "Append it to the text"
+      - "Run the whole network again"
+    answer: [0, 1, 2, 3]
+  - id: i4
+    kind: choice
+    level: apply
+    difficulty: 2
+    prompt: Why do chatbot replies appear a word or so at a time?
+    options:
+      - { id: loop, text: "Each token is computed, then fed back in" }
+      - { id: theatre, text: "An animation, so it feels human", misconception: whole-answer }
+      - { id: download, text: "The stored answer is downloading slowly", misconception: stored-answer }
+    answer: loop
+    why: "You're watching the loop happen live."
+  - id: i5
+    kind: estimate
+    level: transfer
+    difficulty: 3
+    callback: true
+    prompt: "Remember the 500-word answer? Now a {w}-word reply. At about 1.3 tokens per word, roughly how many network runs?"
+    params:
+      vars: { w: [200, 100, 1000, 300] }
+      answerExpr: "w * 1.3"
+    scale: { min: 1, max: 100000, log: true, label: network runs }
+    answer: 260
+    accept: { factor: 1.3 }
+    onWrong:
+      default: { misconception: whole-answer, feedback: "One run per token. Count the tokens first." }
+    why: "Words times 1.3 gives tokens, and each token is one run."
+  - id: i6
+    kind: cloze
+    level: recall
+    difficulty: 2
+    prompt: Fill the gaps.
+    text: "Each run gives every token a {{1}}. One token is picked and {{2}} to the text."
+    blanks:
+      "1": { accept: [score, probability, chance, likelihood], tiles: [score, meaning, rule, answer] }
+      "2": { accept: [appended, added, attached], tiles: [appended, deleted, searched, saved] }
+  - id: i7
+    kind: match
+    level: apply
+    difficulty: 2
+    prompt: Match each run to the text it reads.
+    left: ["Run 1", "Run 2", "Run 3"]
+    right: ["The cat sat on the", "The cat sat on the floor", "The cat sat on the floor,"]
+    answer: [[0, 0], [1, 1], [2, 2]]
+  - id: i8
+    kind: choice
+    level: transfer
+    difficulty: 3
+    prompt: Early in a reply, the model picks an odd word. What happens next?
+    options:
+      - { id: builds, text: "Later tokens build on the odd word" }
+      - { id: deletes, text: "The next run deletes it", misconception: take-backs }
+      - { id: rewrites, text: "It rewrites the reply at the end", misconception: whole-answer }
+    answer: builds
+    why: "Every later run reads the odd word as part of the text."
+  - id: i9
+    kind: explain
+    level: transfer
+    difficulty: 4
+    prompt: "In one sentence: why does training a model to predict the next token push it to learn facts?"
+    keyPoints:
+      - { id: text-has-facts, text: "real text is full of facts", keywords: [facts, "real text", "the internet", knowledge] }
+      - { id: better-guesses, text: "knowing them makes the predictions better", keywords: [predict, "better guesses", "more accurate", "lower loss", "guess right"] }
+    minHits: 2
+    exemplar: "Real text is full of facts, and you can't predict \"The symbol for gold is ___\" well without knowing them."
+    offline:
+      kind: choice
+      prompt: Why does next-token training push a model to pick up facts?
+      options:
+        - { id: helps, text: "Text is full of facts, and knowing them improves predictions" }
+        - { id: database, text: "It copies facts into a database", misconception: stored-answer }
+        - { id: rules, text: "Programmers add a list of facts" }
+      answer: helps
+  - id: i10
+    kind: estimate
+    level: transfer
+    difficulty: 3
+    prompt: "A 10-page report is about 5,000 words. Roughly how many network runs does a model need to write it?"
+    scale: { min: 1, max: 1000000, log: true, label: network runs }
+    answer: 6500
+    accept: { factor: 1.5 }
+    why: "About 1.3 tokens per word: roughly 6,500 tokens, so roughly 6,500 runs."
+  - id: i11
+    kind: numeric
+    level: apply
+    difficulty: 3
+    prompt: "Each run takes {ms} milliseconds. How many seconds does a 600-token reply take?"
+    params:
+      vars: { ms: [50, 20, 100, 30] }
+      answerExpr: "600 * ms / 1000"
+    answer: 30
+    tolerance: 0.5
+    unit: s
+    why: "600 runs, one after another: 600 times the time per run."
+  - id: i12
+    kind: widget
+    level: transfer
+    difficulty: 3
+    prompt: "A sentence you haven't seen: \"I poured milk into my ___\". Put GPT-2's four candidates in order, its favourite first."
+    widget:
+      id: probability-bars
+      v: 1
+      props:
+        context: { $data: "data/next-token.json#/coldOpen/context" }
+        tokens: { $data: "data/next-token.json#/coldOpen/tokens" }
+        task: rank
+        hideTruth: true
+        source: "precomputed:gpt2"
+      goal: { kind: rank, topK: 2, minOverlap: 1 }
+    solution: { ranking: [bowl, coffee, tea, cereal] }
+    fallback:
+      kind: choice
+      prompt: After "I poured milk into my", which of coffee, tea, cereal and bowl does GPT-2 score highest?
+      options:
+        - { id: bowl, text: bowl }
+        - { id: coffee, text: coffee, misconception: one-right-word }
+        - { id: cereal, text: cereal, misconception: one-right-word }
+      answer: bowl
+    why: "Bowl 2.9%, coffee 1.6%, tea 1.2%, cereal 0.4%. Its top pick overall was mouth, at 9%."
+
+flashcards:
+  - { id: c1, kind: qa, front: "What does an LLM output in a single run?", back: "A score (probability) for every token in its vocabulary." }
+  - { id: c2, kind: qa, front: "What happens to the token the model picks?", back: "It's appended to the text, and the whole network runs again." }
+  - { id: c3, kind: qa, front: "How many network runs for a 650-token reply?", back: "About 650: one per token." }
+  - { id: c4, kind: qa, front: "Can a model change a token it already wrote?", back: "No. Each run only adds at the end, so it continues from what's there." }
+  - { id: c5, kind: cloze, front: "A reply is written by the loop score, pick, {{append}}, repeat.", back: "Each picked token joins the input for the next run." }
+
+toy:
+  prompt: "Run the loop as long as you like. Try picking the unlikely tokens."
+  widget:
+    id: probability-bars
+    v: 1
+    props:
+      context: { $data: "data/next-token.json#/catSat/context" }
+      tokens: { $data: "data/next-token.json#/loopStart/tokens" }
+      task: loop
+      loop: { $data: "data/next-token.json#/loop" }
+      source: "precomputed:gpt2"
+
+underTheHood:
+  title: Logits, softmax and the chat costume
+  body: >
+    The network's last layer outputs one number per vocabulary entry, a logit: 50,257 of them for
+    GPT-2. Softmax turns logits into probabilities: exponentiate each one, then divide by the sum,
+    so they're positive and add up to 1. The loop that feeds each pick back in is called
+    autoregressive generation. Real systems cache the work done on earlier tokens (the "KV cache"),
+    so each run only computes the new position, but it is still one run per token.
+
+    A chat is the same loop in costume. Your messages and the replies are joined into one document
+    with special marker tokens, and the model continues the text after the assistant's marker. What
+    makes it answer helpfully instead of rambling is post-training, a planned card beyond the last checkpoint.
+
+    Planning: interpretability work has found models choosing a rhyme word before writing the line
+    that leads to it, so "it only thinks one word ahead" is too strong. The output still arrives one
+    token at a time.
+  sources: [radford-2019, lindsey-2025]
+
+faq:
+  - q: Is it searching the internet when it answers?
+    a: "Not unless a tool is switched on. The scores come from the network's weights, which were set during training."
+  - q: Why "tokens" and not "words"?
+    a: "The vocabulary is made of word pieces. Common words are one token; rare ones are split. That's the first card on this map."
+  - q: Are the GPT-2 numbers what ChatGPT would say?
+    a: "No. GPT-2 is a small 2019 model, used because anyone can run it and check. Bigger models spread their scores differently. The loop is the same."
+
+sources:
+  - { id: radford-2019, title: "Language Models are Unsupervised Multitask Learners", by: "Radford, Wu, Child, Luan, Amodei & Sutskever", year: 2019, url: "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf", note: "GPT-2. Bar values computed with GPT-2 small by scripts/precompute." }
+  - { id: lindsey-2025, title: "On the Biology of a Large Language Model", by: "Lindsey et al. (Anthropic)", year: 2025, url: "https://transformer-circuits.pub/2025/attribution-graphs/biology.html", note: "Planning ahead in rhyming couplets." }
+  - { id: gpt2-model-card, title: "GPT-2 model card", by: "OpenAI", year: 2019, url: "https://github.com/openai/gpt-2/blob/master/model_card.md" }
+
+status: draft

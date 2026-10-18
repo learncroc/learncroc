@@ -1,0 +1,426 @@
+# yaml-language-server: $schema=../../../schemas/node.schema.json
+id: attention
+title: Attention
+tagline: Words looking at words
+estMinutes: 5
+bigIdea: >
+  After the lookup, every token's vector ignores context. Attention fixes that: each token scores
+  how relevant every earlier token is, turns the scores into shares that add up to 100%, and blends
+  in their information by those shares. Relevance decides, not distance, and in a GPT-style model a
+  token can only look back.
+objectives:
+  - Pick the earlier words a token should attend to, and say why
+  - Set attention shares that sum to 100% and predict the blend
+  - Identify which tokens a causal model may attend to
+concepts: [llm.attention]
+
+misconceptions:
+  nearest-word:
+    label: Thinks attention goes to the nearest word
+    hint: "\"the\" sits right next to \"bank\". Does it tell you which bank? Which word does?"
+  context-in-lookup:
+    label: Thinks the embedding lookup already knows the context
+    upstream: embeddings
+    hint: "Same token, same row. Where in the lookup could \"robbed\" have had any effect?"
+  copy-one:
+    label: Thinks a token copies the single most relevant word
+    hint: "The shares add up to 100%. Set two of them to 50%. What does the token become?"
+  peek-ahead:
+    label: Thinks a token can look at words that come after it
+    upstream: next-token
+    hint: "When the model writes token 5, does token 6 exist yet?"
+  hand-written:
+    label: Thinks programmers write the attention rules
+    upstream: embeddings
+    hint: "Nobody placed \"dog\" next to \"cat\" either. What set those numbers?"
+
+hook:
+  blocks:
+    - type: story
+      text: "\"She robbed the bank.\" Here *bank* starts with exactly the same numbers it has in \"river bank\"."
+  interaction:
+    kind: choice
+    id: hook-q
+    prompt: Which word in the sentence should *bank* borrow its meaning from?
+    confidence: true
+    options:
+      - { id: robbed, text: "robbed" }
+      - { id: the, text: "the", misconception: nearest-word }
+      - { id: she, text: "She", misconception: hand-written }
+      - { id: none, text: "None: the lookup already knew", misconception: context-in-lookup }
+    answer: robbed
+  lotsGuess: the
+  style: puzzle
+
+screens:
+  - id: s1-tap
+    newIdea: Each token scores every earlier token for relevance
+    blocks:
+      - type: story
+        text: "Same \"bank\", different sentence. Arcs run back from it to every earlier word."
+    interaction:
+      kind: widget
+      id: s1-q
+      prompt: Tap the word "bank" should listen to most.
+      widget:
+        id: attention-weights
+        v: 1
+        props:
+          tokens: ["She", "sat", "on", "the", "river", "bank"]
+          focus: 5
+          weights: [0.05, 0.09, 0.07, 0.05, 0.62, 0.12]
+          mode: tap
+          hideWeights: true
+          causal: true
+          source: illustrative
+        goal: { kind: tap, correct: [4], match: any }
+      solution: { tapped: [4] }
+      fallback:
+        kind: choice
+        prompt: In "She sat on the river bank", which word matters most to "bank"?
+        options:
+          - { id: river, text: river }
+          - { id: the, text: the, misconception: nearest-word }
+          - { id: sat, text: sat }
+        answer: river
+      feedbackRight: "River. One word settles which bank."
+    reveal:
+      text: >
+        The arcs re-drew with "river" taking the biggest share (weights illustrative). In the other
+        sentence, "robbed" would. The model scores how relevant each earlier token is. Distance
+        doesn't decide: a word twelve tokens back can win.
+      visualState: { props: { hideWeights: false }, note: "illustrative weights" }
+    alts:
+      simpler: "Every word asks: which of the earlier words help me make sense? It pays the most attention to those."
+      example: "\"I deposited cash at the bank\": cash and deposited get the big shares. \"Ducks nested on the bank\": ducks and nested do."
+    src: [vaswani-2017]
+
+  - id: s2-blend
+    newIdea: Shares add up to 100%, and the token becomes a weighted blend
+    blocks:
+      - type: story
+        text: "Attention shares are a budget: they always add up to 100%. Raise one, and the others shrink."
+    interaction:
+      kind: widget
+      id: s2-q
+      prompt: Give "robbed" at least 60% of the budget.
+      widget:
+        id: attention-weights
+        v: 1
+        props:
+          tokens: ["She", "robbed", "the", "bank"]
+          focus: 3
+          mode: edit
+          causal: true
+          source: illustrative
+        goal: { kind: weight, target: 1, minWeight: 0.6 }
+      solution: { weights: [0.1, 0.7, 0.05, 0.15] }
+      fallback:
+        kind: numeric
+        prompt: "\"bank\" gives robbed 70%, She 10% and itself 15%. What share is left for \"the\", in percent?"
+        answer: 5
+        tolerance: 0
+      feedbackRight: "Mostly robbed, a little of the rest: a blend."
+    reveal:
+      text: >
+        With most of the budget on "robbed", bank's new vector became mostly robbed's information
+        with a little of the rest mixed in. Not a copy: a blend. Same row went in; a money-flavoured
+        bank came out.
+      visualState: { note: "new bank = weighted blend" }
+    alts:
+      simpler: "Each word hands \"bank\" some information. The shares say how much of each gets mixed in. They always add up to the whole."
+    src: [vaswani-2017]
+
+  - id: s3-causal
+    newIdea: In a GPT-style model a token can only look back
+    blocks:
+      - type: story
+        text: "The model is working on \"sat\" in \"The cat sat on the mat\". Some tiles are dimmed."
+    interaction:
+      kind: widget
+      id: s3-q
+      prompt: Tap every word "sat" is allowed to look at.
+      widget:
+        id: attention-weights
+        v: 1
+        props:
+          tokens: ["The", "cat", "sat", "on", "the", "mat"]
+          focus: 2
+          mode: tap
+          causal: true
+          source: illustrative
+        goal: { kind: tap, correct: [0, 1, 2], match: exact }
+      solution: { tapped: [0, 1, 2] }
+      fallback:
+        kind: choice
+        prompt: Working on "sat", which words can the model look at?
+        options:
+          - { id: back, text: "The, cat and sat" }
+          - { id: all, text: "All six words", misconception: peek-ahead }
+          - { id: next, text: "Only the next word, on", misconception: peek-ahead }
+        answer: back
+      feedbackRight: "The, cat and itself. The future is dimmed."
+    reveal:
+      text: >
+        Three tiles: The, cat, and sat itself. When writing, the future doesn't exist yet. In
+        training it's hidden on purpose, so the model can't cheat by peeking at the word it must
+        predict. Only "mat" gets to see everything.
+      visualState: { note: "causal mask: look back only" }
+
+close:
+  text: "*robbed*. Attention lets each token score every earlier token and blend in the relevant ones' information. What decides is ==relevance, not distance==: *robbed* says which bank, so *bank* comes out money-flavoured."
+  byGuess:
+    the: "You picked *the*, right beside it. Lots of people do. But attention scores every earlier word for relevance, and *the* says nothing about which bank. *robbed* does, so it gets the biggest share: ==relevance, not distance==."
+    she: "You picked *She*, the subject. Subjects get no special rank, and nobody writes such rules. Attention scores every earlier word for relevance, and *robbed* is what tells *bank* it's about money: ==relevance, not distance==."
+    none: "You picked *none: the lookup already knew*. The lookup gives *bank* the same row in every sentence. Attention then blends in earlier words by relevance, and *robbed* wins: ==relevance, not distance==."
+    idk: "No guess is fine. It's *robbed*. Attention scores every earlier word for relevance and blends in the winners, so *bank* comes out money-flavoured. ==Relevance, not distance== decides."
+  teaser: "That's one attention layer. GPT-2 stacks twelve blocks that look identical. Why bother?"
+
+items:
+  - id: i1
+    kind: choice
+    level: recall
+    difficulty: 1
+    prompt: In "She robbed the bank", which word most changes what "bank" means?
+    options:
+      - { id: robbed, text: robbed }
+      - { id: the, text: the, misconception: nearest-word }
+      - { id: she, text: "She, the subject", misconception: hand-written }
+      - { id: none, text: "None: the lookup settles it", misconception: context-in-lookup }
+    answer: robbed
+  - id: i2
+    kind: choice
+    level: apply
+    difficulty: 3
+    prompt: "\"The trophy didn't fit in the suitcase because it was too big.\" Which word should \"it\" attend to most?"
+    options:
+      - { id: trophy, text: trophy }
+      - { id: suitcase, text: "suitcase, the nearer noun", misconception: nearest-word }
+      - { id: because, text: "because, right beside it", misconception: nearest-word }
+    answer: trophy
+    why: "Only the trophy can be too big to fit, so \"it\" means the trophy. Relevance, not distance."
+  - id: i3
+    kind: widget
+    level: apply
+    difficulty: 2
+    prompt: The model is working on "on" in "The cat sat on the mat". Tap everything "on" may attend to.
+    widget:
+      id: attention-weights
+      v: 1
+      props:
+        tokens: ["The", "cat", "sat", "on", "the", "mat"]
+        focus: 3
+        mode: tap
+        causal: true
+        source: illustrative
+      goal: { kind: tap, correct: [0, 1, 2, 3], match: exact }
+    solution: { tapped: [0, 1, 2, 3] }
+    fallback:
+      kind: numeric
+      prompt: Working on "on" (word 4 of 6), how many words may the model attend to, counting "on" itself?
+      answer: 4
+      tolerance: 0
+    onWrong:
+      default: { misconception: peek-ahead }
+  - id: i4
+    kind: match
+    level: recall
+    difficulty: 3
+    prompt: Inside attention, each token makes three vectors. Match each to its job.
+    left: ["query", "key", "value"]
+    right: ["what I'm looking for", "what I offer to be found by", "what I hand over if picked"]
+    answer: [[0, 0], [1, 1], [2, 2]]
+  - id: i5
+    kind: numeric
+    level: apply
+    difficulty: 2
+    prompt: "A token splits its attention three ways: {a}%, {b}% and the rest. What's the third share, in percent?"
+    params:
+      vars: { a: [50, 20, 35, 60], b: [30, 45, 40, 25] }
+      answerExpr: "100 - a - b"
+    answer: 20
+    tolerance: 0
+    onWrong:
+      default: { misconception: copy-one, feedback: "The shares always total 100%." }
+  - id: i6
+    kind: numeric
+    level: apply
+    difficulty: 4
+    prompt: "\"bank\" gives 0.8 of its attention to \"robbed\" (money score 9) and 0.2 to \"the\" (money score {s}). Its blended money score?"
+    params:
+      vars: { s: [1, 0, 5, 2] }
+      answerExpr: "0.8 * 9 + 0.2 * s"
+    answer: 7.4
+    tolerance: 0.05
+    onWrong:
+      "9": { misconception: copy-one, feedback: "That copies robbed. Blend: 0.8 of one plus 0.2 of the other." }
+    why: "A weighted blend: share times value, added up."
+  - id: i7
+    kind: choice
+    level: transfer
+    difficulty: 3
+    prompt: Why does a model need attention if every token already has an embedding?
+    options:
+      - { id: context, text: "Embeddings ignore context; attention mixes it in" }
+      - { id: rare, text: "Embeddings only cover rare words", misconception: context-in-lookup }
+      - { id: rules, text: "Attention applies the grammar rules", misconception: hand-written }
+    answer: context
+  - id: i8
+    kind: cloze
+    level: recall
+    difficulty: 2
+    prompt: Fill the gaps.
+    text: "A token's attention shares add up to {{1}}, and its new vector is a {{2}} of the earlier tokens' values."
+    blanks:
+      "1": { accept: ["100%", "100", "1", one, "100 percent", "one hundred percent"], tiles: ["100%", "50%", "any number"] }
+      "2": { accept: [blend, mix, "weighted average", "weighted sum", "weighted blend", mixture], tiles: [blend, copy, list] }
+  - id: i9
+    kind: explain
+    level: transfer
+    difficulty: 4
+    prompt: "A user writes about snakes at the zoo, then types \"Python\". In one sentence: what lets the model treat it as the animal?"
+    keyPoints:
+      - { id: same-row, text: "\"Python\" starts from the same row as in code talk", keywords: ["same row", "same vector", "same embedding", "starts the same", lookup] }
+      - { id: attends, text: "attention blends in the earlier words snakes and zoo", keywords: [attention, attends, "looks at", "looks back", snakes, zoo, context, blend] }
+    minHits: 1
+    exemplar: "\"Python\" starts from its usual row, then attention blends in \"snakes\" and \"zoo\", pulling it toward the animal."
+    offline:
+      kind: choice
+      prompt: What lets the model treat "Python" as the snake?
+      options:
+        - { id: attention, text: "Attention blends in the earlier words about snakes and the zoo" }
+        - { id: lookup, text: "The lookup picks the snake row", misconception: context-in-lookup }
+        - { id: next, text: "It reads ahead to the rest of the message", misconception: peek-ahead }
+      answer: attention
+  - id: i10
+    kind: text
+    level: recall
+    difficulty: 2
+    prompt: "One word: hiding later tokens so each token can only look back is called a causal…"
+    accept: [mask, masking]
+  - id: i11
+    kind: order
+    level: apply
+    difficulty: 3
+    prompt: Put attention for one token in order.
+    items:
+      - "Compare its query with every earlier key"
+      - "Turn the match scores into shares that total 100%"
+      - "Blend the earlier tokens' values by those shares"
+      - "Pass the blended vector on to the next layer"
+    answer: [0, 1, 2, 3]
+  - kind: widget
+    id: i12
+    prompt: "In \"The cat sat on the\", the last token looks back before the guess. Tap a word it should lean on to know what comes next."
+    widget:
+      id: attention-weights
+      v: 1
+      props:
+        tokens: [ The, cat, sat, on, the ]
+        focus: 4
+        weights: [ 0.06, 0.34, 0.3, 0.2, 0.1 ]
+        mode: tap
+        hideWeights: true
+        causal: true
+        source: illustrative
+      goal:
+        kind: tap
+        correct: [ 1, 2, 3 ]
+        match: any
+    solution:
+      tapped: [ 2 ]
+    fallback:
+      kind: choice
+      prompt: Which earlier word helps most in guessing what follows "on the"?
+      options:
+        - { id: sat, text: sat }
+        - { id: the, text: The (the first word) }
+        - { id: none, text: "None: the last word decides alone", misconception: nearest-word }
+      answer: sat
+    why: "Cat, sat, on: where does a cat sit? Those words narrow the guess."
+    level: transfer
+    difficulty: 3
+  - id: i13
+    kind: widget
+    level: transfer
+    difficulty: 3
+    prompt: "\"The zoo keeper fed the hungry python\". Snake or programming language? Tap a word \"python\" should lean on to know it's the snake."
+    widget:
+      id: attention-weights
+      v: 1
+      props:
+        tokens: ["The", "zoo", "keeper", "fed", "the", "hungry", "python"]
+        focus: 6
+        weights: [0.04, 0.3, 0.14, 0.16, 0.03, 0.18, 0.15]
+        mode: tap
+        hideWeights: true
+        causal: true
+        source: illustrative
+      goal: { kind: tap, correct: [1, 2, 3, 5], match: any }
+    solution: { tapped: [1] }
+    fallback:
+      kind: choice
+      prompt: Which word best tells the model this python is a snake?
+      options:
+        - { id: zoo, text: zoo }
+        - { id: the, text: the, misconception: nearest-word }
+        - { id: none, text: "None: python has a snake row", misconception: context-in-lookup }
+      answer: zoo
+    onWrong:
+      default: { misconception: nearest-word, feedback: "Not the nearest word: the one that says snake." }
+    why: "Zoo, fed and hungry all say snake, and all come earlier. Weights illustrative."
+
+flashcards:
+  - { id: c1, kind: qa, front: "What does attention let a token do?", back: "Look at earlier tokens and blend in information from the relevant ones." }
+  - { id: c2, kind: qa, front: "Does distance decide attention?", back: "No. Relevance does; a far-back word can get the biggest share." }
+  - { id: c3, kind: qa, front: "A token's attention shares add up to…?", back: "100%. The result is a weighted blend, not a copy." }
+  - { id: c4, kind: qa, front: "What can a token attend to in a GPT-style model?", back: "Only earlier tokens and itself: the causal mask." }
+  - { id: c5, kind: qa, front: "Query, key, value in one line each?", back: "Query: what I'm looking for. Key: what I offer. Value: what I hand over." }
+
+toy:
+  prompt: "Swap \"river\" for another word and watch which way \"bank\" leans."
+  widget:
+    id: attention-weights
+    v: 1
+    props:
+      tokens: ["She", "walked", "along", "the", "river", "bank"]
+      focus: 5
+      weights: [0.05, 0.1, 0.12, 0.05, 0.55, 0.13]
+      mode: view
+      causal: true
+      swap:
+        index: 4
+        options: ["river", "savings", "grassy"]
+        weightsByOption:
+          river: [0.05, 0.1, 0.12, 0.05, 0.55, 0.13]
+          savings: [0.06, 0.08, 0.06, 0.05, 0.6, 0.15]
+          grassy: [0.07, 0.12, 0.12, 0.06, 0.45, 0.18]
+      source: illustrative
+
+underTheHood:
+  title: Queries, keys, values and heads
+  body: >
+    Each token's vector is multiplied by three learned matrices to make a query q, a key k and a
+    value v. Token i's score for token j is q_i · k_j divided by √d (d is the key length). Scores
+    for future positions are set to minus infinity: the causal mask. A softmax turns the rest into
+    shares that sum to 1, and the output is the share-weighted sum of the values:
+    softmax(QKᵀ/√d)V.
+
+    A layer runs several of these "heads" side by side, each with its own matrices; GPT-2 small has
+    12 heads in each of its 12 layers. Heads specialise in different things, from the previous
+    token to matching brackets, but none is programmed to: training finds the matrices. Real heads
+    also park a lot of attention on the first token, an "attention sink" that does little. The
+    weights on this card's beats are illustrative.
+  sources: [vaswani-2017, xiao-2023]
+
+faq:
+  - q: Are these the model's real attention weights?
+    a: "On this card, no: they're illustrative, chosen to show the idea. Real heads are messier, and GPT-2 parks much of its attention on the first token."
+  - q: Is attention the model's focus, like a spotlight?
+    a: "Loosely. It decides how information is mixed between tokens. It isn't a readout of what the model \"thinks about\"."
+
+sources:
+  - { id: vaswani-2017, title: "Attention Is All You Need", by: "Vaswani et al.", year: 2017, url: "https://arxiv.org/abs/1706.03762" }
+  - { id: xiao-2023, title: "Efficient Streaming Language Models with Attention Sinks", by: "Xiao, Tian, Chen, Han & Lewis", year: 2023, url: "https://arxiv.org/abs/2309.17453" }
+
+status: draft

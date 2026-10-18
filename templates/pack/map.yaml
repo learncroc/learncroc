@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=https://learncroc.github.io/schema/v1/map.schema.json
+# Key order is the reading order. A checkpoint closes each section of cards; its pass lights them.
+lines:
+  - { id: basics, title: "Basics", color: 1, outcome: "Find and change percentages in your head" }
+nodes:
+  per-hundred: { requires: [], line: basics }
+  ten-percent: { requires: [per-hundred], line: basics }
+  price-change: { requires: [ten-percent], line: basics }
+  checkpoint-percent: { requires: [price-change], line: basics, kind: checkpoint, title: "Percent check" }

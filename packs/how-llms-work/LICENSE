@@ -1,0 +1,6 @@
+How LLMs work (learncroc pack) by learncroc contributors is licensed under
+Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0).
+https://creativecommons.org/licenses/by-sa/4.0/
+
+Precomputed numbers in data/ were produced with GPT-2 small (OpenAI, released under the MIT licence)
+by scripts/precompute in the learncroc repository.

@@ -1,0 +1,324 @@
+# yaml-language-server: $schema=../../../schemas/node.schema.json
+id: transformer
+title: The transformer stack
+tagline: Attention and MLP, repeated
+estMinutes: 4
+bigIdea: >
+  A transformer is one block repeated many times. Each block has attention, where tokens share
+  information, and an MLP, a neural net that works on each token alone. Each block adds its result
+  onto the token's running vector, so the stack refines every token step by step until the last
+  vector is turned into next-token scores.
+objectives:
+  - Order a model's intermediate guesses from early to late blocks
+  - Say what attention and the MLP each do inside a block
+  - Assign everyday model behaviours to attention, MLP or the output layer
+concepts: [llm.transformer]
+visual:
+  kind: figure
+  asset: assets/img/transformer.svg
+  alt: "A tower of identical blocks. Each block has an attention layer and an MLP layer, with an arrow running up through all of them."
+
+misconceptions:
+  word-per-block:
+    label: Thinks each block handles one word of the sentence
+    hint: "Every block works on every token's vector at once. What changes from one block to the next?"
+  backups:
+    label: Thinks the stacked blocks are redundant copies
+    hint: "The guess changed as it climbed: filler, then food, then jelly. Would copies do that?"
+  single-step:
+    label: Thinks the answer is settled in one step at the start
+    hint: "Halfway up, GPT-2 still guessed \"then\". When did \"jelly\" appear?"
+  mlp-mixes:
+    label: Thinks the MLP is where tokens exchange information
+    upstream: attention
+    hint: "Which layer lets \"bank\" borrow from \"robbed\"? The MLP only ever sees one token at a time."
+
+hook:
+  interaction:
+    kind: choice
+    id: hook-q
+    prompt: GPT-2 pushes every token through 12 blocks that all look alike. What does stacking twelve of them buy?
+    confidence: true
+    options:
+      - { id: one-word, text: "Each block handles one word", misconception: word-per-block }
+      - { id: refine, text: "Each block refines every token a bit more" }
+      - { id: backups, text: "Spares, in case one block fails", misconception: backups }
+      - { id: first, text: "Nothing: block 1 decides, the rest polish", misconception: single-step }
+    answer: refine
+  lotsGuess: one-word
+  style: puzzle
+
+screens:
+  - id: s1-stack
+    newIdea: Each block refines the guess; the answer sharpens with depth
+    blocks:
+      - type: story
+        text: "\"Peanut butter and ___\". We read out GPT-2's best guess at three heights in its 12-block stack."
+    interaction:
+      kind: widget
+      id: s1-q
+      prompt: Rank the three guesses from the lowest block to the top.
+      widget:
+        id: sorter
+        v: 1
+        props:
+          mode: rank
+          rankLabels: ["block 4", "block 12"]
+          cards:
+            - { id: jelly, text: "jelly" }
+            - { id: then, text: "then" }
+            - { id: cheese, text: "cheese" }
+        goal: { kind: rank, order: [then, cheese, jelly] }
+      solution: { order: [then, cheese, jelly] }
+      fallback:
+        kind: order
+        prompt: Order GPT-2's guesses from the lowest block to the top.
+        items: ["then", "cheese", "jelly"]
+        answer: [0, 1, 2]
+      feedbackRight: "Filler, then a food, then the right food."
+    reveal:
+      text: >
+        Block 4 said "then", block 8 "cheese", block 12 "jelly". A filler word, then the right kind
+        of word, then the right word. No block holds the answer; each one nudges every token's
+        vector a little further.
+      visualState: { note: "read out with the logit lens" }
+    src: [nostalgebraist-2020]
+
+  - id: s2-block
+    newIdea: A block is attention (share) plus MLP (think alone), added onto a running vector
+    blocks:
+      - type: story
+        text: "Open one block. Two layers inside, and an arrow that runs past both."
+    interaction:
+      kind: match
+      id: s2-q
+      prompt: Match each part to its job.
+      left: ["attention", "MLP", "the running vector"]
+      right: ["tokens borrow from earlier tokens", "each token is processed on its own", "each layer adds its result onto it"]
+      answer: [[0, 0], [1, 1], [2, 2]]
+      feedbackRight: "Share, think, add. Twelve times."
+      onWrong:
+        default: { misconception: mlp-mixes, feedback: "Only attention looks across tokens. The MLP sees one token at a time." }
+    reveal:
+      text: >
+        Share, then think, then add. Attention lets tokens borrow from each other, the MLP works on
+        each token alone, and both add their results onto the running vector instead of replacing
+        it. Repeat twelve times, then score.
+      visualState: { note: "attention + MLP, ×12" }
+    alts:
+      simpler: "Each block has two steps: tokens look at each other, then each token gets processed by itself. The stack repeats that."
+      analogy: "A committee that meets twelve times. In each meeting everyone hears from the others, then goes off alone to think and updates their notes."
+    src: [vaswani-2017]
+
+  - id: s3-who
+    blocks:
+      - type: story
+        text: "Four things happen while GPT-2 handles a sentence. Which part of the machine does each?"
+    interaction:
+      kind: widget
+      id: s3-q
+      prompt: Sort each job to the part that does it.
+      widget:
+        id: sorter
+        v: 1
+        props:
+          mode: buckets
+          buckets:
+            - { id: attention, label: "Attention" }
+            - { id: mlp, label: "MLP" }
+            - { id: output, label: "Output layer" }
+          cards:
+            - { id: bank, text: "\"bank\" borrows meaning from \"robbed\"" }
+            - { id: it, text: "\"it\" picks up information from \"trophy\"" }
+            - { id: paris, text: "Recalls that Paris is in France" }
+            - { id: scores, text: "Turns the last vector into 50,257 scores" }
+        goal: { kind: buckets, assignment: { bank: attention, it: attention, paris: mlp, scores: output } }
+      solution: { assignment: { bank: attention, it: attention, paris: mlp, scores: output } }
+      fallback:
+        kind: choice
+        prompt: Which part lets "bank" borrow meaning from "robbed"?
+        options:
+          - { id: attention, text: "Attention" }
+          - { id: mlp, text: "The MLP", misconception: mlp-mixes }
+          - { id: output, text: "The output layer", misconception: single-step }
+        answer: attention
+      feedbackRight: "Cross-token jobs go to attention; per-token recall leans on MLPs."
+    reveal:
+      text: >
+        Anything between tokens went to attention. The fact went to the MLP: researchers found
+        evidence that many facts are recalled in MLP layers. The final scores came from the output
+        layer, after the last block.
+      visualState: { note: "share / recall / score" }
+    src: [meng-2022]
+
+close:
+  text: "Each block ==refines every token a bit more==. Attention shares information between tokens, an MLP works on each token alone, and both add onto a running vector. GPT-2's guess for \"Peanut butter and\" went then, cheese, jelly as it climbed."
+  byGuess:
+    one-word: "You picked *each block handles one word*. Lots of people do. But every block works on every token at once. Each one ==refines every token a bit more==: GPT-2's guess climbed from then to cheese to jelly."
+    backups: "You picked *spares, in case one block fails*. They aren't copies. Each block ==refines every token a bit more==, so the guess changes as it climbs: then, cheese, jelly."
+    first: "You picked *nothing: block 1 decides, the rest polish*. Halfway up, GPT-2 still guessed then. Each block ==refines every token a bit more==, and jelly only won near the top."
+    idk: "No guess is fine. Each block ==refines every token a bit more==: attention shares between tokens, an MLP works on each alone. GPT-2's guess climbed from then to cheese to jelly."
+  teaser: "That's the Core: weights, attention, a stack of blocks. Ready to trace new sentences through it?"
+
+items:
+  - id: i1
+    kind: choice
+    level: recall
+    difficulty: 2
+    prompt: What does one transformer block do?
+    options:
+      - { id: both, text: "Attention, then an MLP, on every token" }
+      - { id: word, text: "Processes one word of the input", misconception: word-per-block }
+      - { id: copy, text: "Repeats the previous block as a backup", misconception: backups }
+      - { id: final, text: "Picks the final word", misconception: single-step }
+    answer: both
+  - id: i2
+    kind: numeric
+    level: apply
+    difficulty: 2
+    prompt: "A model has {b} blocks, each with one attention layer and one MLP. How many layers does each token pass through?"
+    params:
+      vars: { b: [12, 24, 48, 32] }
+      answerExpr: "2 * b"
+    answer: 24
+    tolerance: 0
+    onWrong:
+      "12": { misconception: word-per-block, feedback: "Each block has two layers." }
+  - id: i3
+    kind: numeric
+    level: apply
+    difficulty: 2
+    prompt: "A model has {b} blocks, and each block's attention has {h} heads. How many attention heads in total?"
+    params:
+      vars: { b: [12, 24, 32], h: [12, 16, 32] }
+      answerExpr: "b * h"
+    answer: 144
+    tolerance: 0
+  - id: i4
+    kind: order
+    level: recall
+    difficulty: 2
+    prompt: Order the parts a token passes through in GPT-2.
+    items:
+      - "Embedding lookup"
+      - "Block 1: attention, then MLP"
+      - "Blocks 2 to 12"
+      - "Output layer: a score for every token"
+    answer: [0, 1, 2, 3]
+  - id: i5
+    kind: match
+    level: apply
+    difficulty: 3
+    prompt: Match each part to what it reads.
+    left: ["attention", "MLP", "output layer"]
+    right: ["the current token and every earlier one", "only the current token", "the last token's final vector"]
+    answer: [[0, 0], [1, 1], [2, 2]]
+  - id: i6
+    kind: choice
+    level: transfer
+    difficulty: 4
+    prompt: You delete every attention layer but keep the MLPs. What can the model no longer do?
+    options:
+      - { id: context, text: "Use other words as context" }
+      - { id: alone, text: "Process each token on its own", misconception: mlp-mixes }
+      - { id: score, text: "Produce next-token scores", misconception: single-step }
+    answer: context
+    why: "Attention is the only place tokens exchange information."
+  - id: i7
+    kind: text
+    level: recall
+    difficulty: 1
+    prompt: "One word: a stack of blocks built from attention and MLP layers is called a…"
+    accept: [transformer, "transformer stack", transformers]
+  - id: i8
+    kind: cloze
+    level: recall
+    difficulty: 2
+    prompt: Fill the gaps.
+    text: "Each block has an {{1}} layer, where tokens share information, and an {{2}}, which works on each token alone."
+    blanks:
+      "1": { accept: [attention], tiles: [attention, embedding, output] }
+      "2": { accept: [MLP, mlp, "feed-forward", "feed forward", "feedforward", "multilayer perceptron"], tiles: [MLP, tokenizer, sampler] }
+  - id: i9
+    kind: explain
+    level: transfer
+    difficulty: 4
+    prompt: "In one sentence: why stack many blocks instead of using just one?"
+    keyPoints:
+      - { id: refine, text: "each block refines what earlier blocks built", keywords: [refine, refines, builds, "step by step", gradually, "a bit more", improves] }
+      - { id: combine, text: "later blocks can combine information gathered earlier", keywords: [combine, "earlier blocks", layers, "multiple steps", "more complex"] }
+    minHits: 1
+    exemplar: "Each block refines what the earlier ones built, so later blocks can combine those pieces into the right answer."
+    offline:
+      kind: choice
+      prompt: Why stack many blocks?
+      options:
+        - { id: refine, text: "Each block refines what the earlier ones built" }
+        - { id: backup, text: "So a broken block has a spare", misconception: backups }
+        - { id: words, text: "So each word gets its own block", misconception: word-per-block }
+      answer: refine
+  - id: i10
+    kind: choice
+    level: transfer
+    difficulty: 3
+    prompt: "Halfway up, GPT-2's guess after \"Water is made of hydrogen and\" is \"then\"; at the top it's \"oxygen\". What does that show?"
+    options:
+      - { id: refine, text: "Later blocks refined the guess" }
+      - { id: broken, text: "The first six blocks are broken", misconception: backups }
+      - { id: stored, text: "\"oxygen\" was stored in block 12", misconception: single-step }
+    answer: refine
+    why: "Read out with the logit lens: then, then hydrogen at block 10, oxygen at 12."
+  - id: i11
+    kind: numeric
+    level: apply
+    difficulty: 3
+    prompt: "One number in a token's running vector starts at {v}. Block 1's attention adds 0.5, its MLP adds −0.2. What is it after block 1?"
+    params:
+      vars: { v: [1, 0, 2, -1] }
+      answerExpr: "v + 0.5 - 0.2"
+    answer: 1.3
+    tolerance: 0.01
+    why: "Layers add onto the running vector; they don't replace it."
+
+flashcards:
+  - { id: c1, kind: qa, front: "What two layers make up a transformer block?", back: "Attention (tokens share information) and an MLP (each token alone)." }
+  - { id: c2, kind: qa, front: "What is the residual stream?", back: "The running vector each layer adds its result onto." }
+  - { id: c3, kind: qa, front: "How many blocks does GPT-2 small stack?", back: "12, each with 12 attention heads." }
+  - { id: c4, kind: qa, front: "Where do tokens exchange information?", back: "Only in attention. MLPs work on one token at a time." }
+
+toy:
+  prompt: "The top of the stack for the water sentence. Halfway up, GPT-2 still guessed \"then\"."
+  widget:
+    id: probability-bars
+    v: 1
+    props:
+      context: { $data: "data/traces.json#/inputs/3/text" }
+      tokens: { $data: "data/traces.json#/inputs/3/top" }
+      task: view
+      source: "precomputed:gpt2"
+
+underTheHood:
+  title: The residual stream and the logit lens
+  body: >
+    Each layer computes x ← x + Attention(LayerNorm(x)), then x ← x + MLP(LayerNorm(x)). Because
+    every layer adds to x instead of replacing it, x is often called the residual stream. The MLP
+    widens each token's vector four times (768 to 3,072 in GPT-2), applies a nonlinearity, and
+    narrows it back.
+
+    The intermediate guesses on this card come from the "logit lens": take the stream partway up,
+    apply the final layer norm and output layer early, and read off the top token. It's a rough
+    probe, not what the model "thinks" at that depth. Its probabilities are badly calibrated, which
+    is why this card shows only the top word. Work by Geva, Meng and others found evidence that MLP
+    layers act partly as key-value memories for facts.
+  sources: [nostalgebraist-2020, meng-2022, vaswani-2017]
+
+faq:
+  - q: Why "transformer"?
+    a: "The 2017 paper's name for the architecture. Each block transforms every token's vector; nothing more mystical than that."
+
+sources:
+  - { id: vaswani-2017, title: "Attention Is All You Need", by: "Vaswani et al.", year: 2017, url: "https://arxiv.org/abs/1706.03762" }
+  - { id: nostalgebraist-2020, title: "interpreting GPT: the logit lens", by: "nostalgebraist", year: 2020, url: "https://www.lesswrong.com/posts/AcKRB8wDpdaN6v6ru/interpreting-gpt-the-logit-lens", note: "Guesses at blocks 4, 8 and 12 computed with GPT-2 small by scripts/precompute (traces.json, lens)." }
+  - { id: meng-2022, title: "Locating and Editing Factual Associations in GPT", by: "Meng, Bau, Andonian & Belinkov", year: 2022, url: "https://arxiv.org/abs/2202.05262" }
+
+status: draft

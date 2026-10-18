@@ -1,0 +1,356 @@
+# yaml-language-server: $schema=../../../schemas/node.schema.json
+id: pretraining
+title: Predicting the internet
+tagline: Pretraining, and why scale matters
+estMinutes: 4
+bigIdea: >
+  Pretraining runs next-token training on a huge pile of text. To predict that text well, the
+  cheapest route is to pick up phrases, grammar, facts and some reasoning, so the weights absorb
+  them. The text is far bigger than the weights, so it's squeezed, not stored: common facts come out
+  sharp and rare ones blurry. The result is a base model that continues documents.
+objectives:
+  - Say what kind of knowledge each prediction requires
+  - Explain why pretraining compresses rather than stores its text
+  - Use a scaling fit to relate model size to loss
+concepts: [llm.pretraining, llm.scaling]
+
+misconceptions:
+  just-autocomplete:
+    label: Thinks predicting the next word can't teach a model anything real
+    hint: "To put 46% on \"oxygen\", what did the model need to have picked up?"
+  taught-skills:
+    label: Thinks grammar and facts were taught to the model as labelled lessons
+    upstream: training
+    hint: "The only signal in training is the loss on the next token. Where would a labelled lesson come in?"
+  memorize-web:
+    label: Thinks the model stores its training text
+    hint: "40 GB of text, half a gigabyte of weights. Where would the other 39.5 GB go?"
+  hard-not-rare:
+    label: Thinks mistakes come from hard topics rather than rarely seen facts
+    hint: "Sydney beat Canberra for a simple question. Was it hard, or was it a fact the text rarely states?"
+  base-is-assistant:
+    label: Thinks a pretrained-only model already answers like a chatbot
+    upstream: next-token
+    hint: "Pretraining only teaches continuing text. What does a web page usually do after a question?"
+
+hook:
+  interaction:
+    kind: choice
+    id: hook-q
+    prompt: "GPT-2 was only trained to predict web text. Nobody taught it chemistry. Can it finish \"Water is made of hydrogen and ___\"?"
+    confidence: true
+    options:
+      - { id: no, text: "No, it was never taught chemistry", misconception: just-autocomplete }
+      - { id: yes, text: "Mostly: predicting text rewards knowing it" }
+      - { id: exact, text: "Only if it saw that sentence", misconception: memorize-web }
+      - { id: lookup, text: "Yes, by searching the web", misconception: base-is-assistant }
+    answer: yes
+  lotsGuess: no
+  style: surprise
+
+screens:
+  - id: s1-needs
+    newIdea: Predicting varied text rewards many kinds of knowledge
+    blocks:
+      - type: story
+        text: "Five blanks from five web pages. Each one rewards a different kind of knowing."
+    interaction:
+      kind: widget
+      id: s1-q
+      prompt: Sort each blank by what you need to fill it.
+      widget:
+        id: sorter
+        v: 1
+        props:
+          mode: buckets
+          buckets:
+            - { id: phrase, label: "A familiar phrase" }
+            - { id: grammar, label: "Grammar" }
+            - { id: fact, label: "A fact" }
+            - { id: reasoning, label: "Reasoning" }
+          cards:
+            - { id: twinkle, text: "Twinkle, twinkle, little ___" }
+            - { id: went, text: "Yesterday she ___ to the shop" }
+            - { id: water, text: "Water is made of hydrogen and ___" }
+            - { id: tower, text: "The Eiffel Tower is in ___" }
+            - { id: tallest, text: "Ann is taller than Bo, Bo than Cy. The shortest is ___" }
+        goal: { kind: buckets, assignment: { twinkle: phrase, went: grammar, water: fact, tower: fact, tallest: reasoning } }
+      solution: { assignment: { twinkle: phrase, went: grammar, water: fact, tower: fact, tallest: reasoning } }
+      fallback:
+        kind: choice
+        prompt: What do you need to fill "Ann is taller than Bo, Bo than Cy. The shortest is ___"?
+        options:
+          - { id: reasoning, text: "A step of reasoning" }
+          - { id: phrase, text: "A memorised phrase", misconception: memorize-web }
+          - { id: nothing, text: "Nothing: it's just autocomplete", misconception: just-autocomplete }
+        answer: reasoning
+      feedbackRight: "One objective, four kinds of knowing."
+    reveal:
+      text: >
+        Every bucket filled from the same objective. Over billions of tokens, the cheapest way to
+        predict well is to pick up phrases, grammar, facts and some reasoning. Nobody labelled any of
+        it. The loss rewarded it.
+      visualState: { note: "one objective, many skills" }
+    src: [radford-2019]
+
+  - id: s2-squeeze
+    newIdea: Pretraining compresses text into weights, so rare facts come out blurry
+    blocks:
+      - type: story
+        text: "GPT-2 read about 40 GB of web text. Its weights take about half a gigabyte."
+    visual:
+      kind: widget
+      widget:
+        id: probability-bars
+        v: 1
+        props:
+          context: { $data: "data/sampling.json#/australia/context" }
+          tokens: { $data: "data/sampling.json#/australia/tokens" }
+          task: view
+          source: "precomputed:gpt2"
+      alt: "Bars after \"The capital of Australia is the city of\": Sydney 21.6%, Melbourne 8.2%, Perth 4.6%, Canberra 4.4%."
+    interaction:
+      kind: numeric
+      id: s2-q
+      prompt: Roughly how many times bigger is the text than the weights?
+      answer: 80
+      tolerance: 10
+      onWrong:
+        "1": { misconception: memorize-web, feedback: "40 GB of text against 0.5 GB of weights. Divide." }
+      feedbackRight: "About 80 times. It can't all fit."
+    reveal:
+      text: >
+        About 80 times bigger, so it can't be stored, only squeezed. Facts stated thousands of times
+        come out sharp; rarer ones blur toward what's common. The bars show it: Sydney, the city it
+        read most about, gets 22% as Australia's capital; real Canberra 4%.
+      visualState: { note: "compressed, not stored" }
+    alts:
+      analogy: "Like a heavily compressed photo: the big shapes survive, fine details smear into something plausible."
+    src: [radford-2019, chiang-2023]
+
+  - id: s3-scale
+    blocks:
+      - type: story
+        text: "Researchers fitted a curve: bigger models reach lower loss, smoothly. GPT-2 small sits near 2.8."
+    interaction:
+      kind: widget
+      id: s3-q
+      prompt: Slide the model size until the curve's loss reaches 2.0.
+      widget:
+        id: plot
+        v: 1
+        props:
+          kind: function
+          x: { label: "parameters (billions)", min: 0.1, max: 1000, scale: log }
+          y: { label: "loss", min: 1, max: 3.5 }
+          series: [ { id: fit, label: "Kaplan et al. fit", expr: "(88000 / x)^0.076", color: 4 } ]
+          params: [ { name: n, label: "model size (billions)", min: 0.1, max: 200, step: 0.1, value: 0.1 } ]
+          readouts: [ { label: "loss at this size", expr: "(88000 / n)^0.076", digits: 2 } ]
+          dataSource: sources
+        goal: { kind: readout, label: "loss at this size", target: 2, tolerance: 0.05 }
+      solution: { params: { n: 9.6 } }
+      fallback:
+        kind: choice
+        prompt: On the fitted curve, roughly what size gets the loss to 2.0?
+        options:
+          - { id: ten, text: "About 10 billion parameters" }
+          - { id: same, text: "GPT-2 small's 0.12 billion", misconception: just-autocomplete }
+          - { id: trillion, text: "A trillion parameters at least" }
+        answer: ten
+      feedbackRight: "About 10 billion: 80 times GPT-2 small."
+    reveal:
+      text: >
+        About 10 billion parameters, 80 times GPT-2 small, for a drop from 2.8 to 2.0. Smooth,
+        predictable and expensive. Lower loss on real text shows up as sharper facts and better
+        reasoning, which is why labs kept scaling.
+      visualState: { props: { markerAt: 9.6 }, note: "fit from Kaplan et al. 2020" }
+    src: [kaplan-2020]
+
+close:
+  text: "Mostly, yes. It put 46% on \"oxygen\" (and, oddly, 28% on \"helium\"). To predict web text well, the cheapest route is to ==pick up what the text is about==: phrases, grammar, facts, some reasoning. Common facts come out sharp, rare ones blurry."
+  byGuess:
+    no: "You picked *no, it was never taught chemistry*. Lots of people do. Nobody taught it, but predicting web text rewards ==picking up what the text is about==. It put 46% on \"oxygen\" (and, oddly, 28% on \"helium\")."
+    exact: "You picked *only if it saw that sentence*. It doesn't need the exact sentence: predicting billions of words rewards ==picking up what the text is about==. It put 46% on \"oxygen\", and 28% on \"helium\"."
+    lookup: "You picked *yes, by searching the web*. GPT-2 can't search. Predicting web text rewards ==picking up what the text is about==, so the facts live in its weights: 46% on \"oxygen\", and 28% on \"helium\"."
+    idk: "No guess is fine. Mostly, yes: 46% on \"oxygen\" (and, oddly, 28% on \"helium\"). Predicting web text well rewards ==picking up what the text is about==, so facts settle into the weights."
+  teaser: "Rare facts come out blurry. So what does a model write when it doesn't know?"
+
+items:
+  - id: i1
+    kind: choice
+    level: recall
+    difficulty: 1
+    prompt: What does pretraining train a model to do?
+    options:
+      - { id: predict, text: "Predict the next token of huge amounts of text" }
+      - { id: answer, text: "Answer questions politely", misconception: base-is-assistant }
+      - { id: store, text: "Store the web for later lookup", misconception: memorize-web }
+      - { id: lessons, text: "Study labelled grammar and fact lessons", misconception: taught-skills }
+    answer: predict
+  - id: i2
+    kind: numeric
+    level: apply
+    difficulty: 2
+    prompt: "A model trained on {t} GB of text has 0.5 GB of weights. How many times bigger is the text?"
+    params:
+      vars: { t: [40, 100, 20, 300] }
+      answerExpr: "t / 0.5"
+    answer: 80
+    tolerance: 1
+    onWrong:
+      default: { misconception: memorize-web }
+  - id: i3
+    kind: choice
+    level: apply
+    difficulty: 3
+    prompt: Which is a pretrained model most likely to get wrong?
+    options:
+      - { id: rare, text: "The 1950 population of a small town" }
+      - { id: capital, text: "The capital of France", misconception: hard-not-rare }
+      - { id: water, text: "What water is made of", misconception: hard-not-rare }
+    answer: rare
+    why: "Rare facts are blurry in the weights, however simple they are."
+  - id: i4
+    kind: order
+    level: recall
+    difficulty: 2
+    prompt: Put pretraining in order.
+    items:
+      - "Collect a huge pile of text"
+      - "Split it into tokens"
+      - "Train the transformer to predict each next token"
+      - "Release the base model"
+    answer: [0, 1, 2, 3]
+  - id: i5
+    kind: numeric
+    level: apply
+    difficulty: 3
+    prompt: "A rule of thumb from Hoffmann et al.: about 20 training tokens per parameter. A {n}-billion-parameter model wants about how many billion tokens?"
+    params:
+      vars: { n: [7, 70, 1, 13] }
+      answerExpr: "20 * n"
+    answer: 140
+    tolerance: 0
+    unit: billion tokens
+  - id: i6
+    kind: cloze
+    level: recall
+    difficulty: 1
+    prompt: Fill the gaps.
+    text: "Pretraining teaches a model to predict the {{1}} token of huge amounts of {{2}}."
+    blanks:
+      "1": { accept: [next], tiles: [next, first, longest] }
+      "2": { accept: [text, "web text", "internet text", writing, data], tiles: [text, labelled lessons, rules] }
+  - id: i7
+    kind: text
+    level: recall
+    difficulty: 2
+    prompt: "One word: a model straight out of pretraining, before any chat tuning, is called a ___ model."
+    accept: [base, pretrained, "pre-trained", foundation]
+  - id: i8
+    kind: choice
+    level: transfer
+    difficulty: 3
+    prompt: "You give raw GPT-2 \"Q: What is the capital of France? A:\". What does it do?"
+    options:
+      - { id: document, text: "Answers, then writes another Q: line itself" }
+      - { id: chat, text: "Answers, then asks how else it can help", misconception: base-is-assistant }
+      - { id: refuses, text: "Says it can't browse the web", misconception: base-is-assistant }
+    answer: document
+    why: "It continued the Q&A document: \"The capital of France is Paris.\" then a new \"Q:\" line."
+  - id: i12
+    kind: choice
+    level: transfer
+    difficulty: 3
+    prompt: "You give a base model, pretrained only, the start of an email: \"Dear customer, we regret to inform you\". What does it do?"
+    options:
+      - { id: continue, text: "Writes the rest of a plausible email" }
+      - { id: helper, text: "Asks what you'd like help with", misconception: base-is-assistant }
+      - { id: lookup, text: "Finds the real email it came from", misconception: memorize-web }
+    answer: continue
+    why: "A base model continues documents. Turning it into an assistant takes post-training."
+  - id: i9
+    kind: explain
+    level: transfer
+    difficulty: 4
+    prompt: "A friend says, \"It just predicts the next word, so it can't know anything.\" Reply in one sentence."
+    keyPoints:
+      - { id: text-has-knowledge, text: "the text it learns to predict is full of facts and reasoning", keywords: [facts, knowledge, reasoning, "the text", "written by people", internet] }
+      - { id: predicting-requires, text: "predicting it well requires picking those up", keywords: ["predict well", "to predict", requires, needs, rewards, "lower loss"] }
+    minHits: 2
+    exemplar: "Predicting real text well requires knowing what it's about, so training on trillions of words pushes facts and reasoning into the weights."
+    offline:
+      kind: choice
+      prompt: What's wrong with "it just predicts the next word, so it can't know anything"?
+      options:
+        - { id: requires, text: "Predicting real text well requires the knowledge in it" }
+        - { id: right, text: "Nothing: prediction can't involve knowledge", misconception: just-autocomplete }
+        - { id: taught, text: "It was taught facts separately", misconception: taught-skills }
+      answer: requires
+  - id: i10
+    kind: estimate
+    level: apply
+    difficulty: 3
+    prompt: GPT-2's training text was about 40 GB. At roughly 4 bytes of text per token, about how many tokens is that?
+    scale: { min: 1000000, max: 10000000000000, log: true, label: tokens }
+    answer: 10000000000
+    accept: { factor: 3 }
+    why: "40 billion bytes ÷ 4 ≈ 10 billion tokens."
+  - id: i11
+    kind: match
+    level: recall
+    difficulty: 2
+    prompt: Match each scaling ingredient to what it measures.
+    left: ["parameters", "data", "compute", "loss"]
+    right: ["how many weights", "how many training tokens", "total arithmetic spent training", "how surprised it is by real text"]
+    answer: [[0, 0], [1, 1], [2, 2], [3, 3]]
+
+flashcards:
+  - { id: c1, kind: qa, front: "What is pretraining?", back: "Next-token training on a huge pile of text, producing a base model." }
+  - { id: c2, kind: qa, front: "Why does next-token prediction teach facts?", back: "Real text is full of them, and predicting it well requires them." }
+  - { id: c3, kind: qa, front: "Does a model store its training text?", back: "No. It's squeezed into far smaller weights; rare facts come out blurry." }
+  - { id: c4, kind: qa, front: "What does a base model do with a question?", back: "Continues the document, which may or may not mean answering it." }
+
+toy:
+  prompt: "Slide the model size and watch the predicted loss fall, slower and slower."
+  widget:
+    id: plot
+    v: 1
+    props:
+      kind: function
+      x: { label: "parameters (billions)", min: 0.1, max: 1000, scale: log }
+      y: { label: "loss", min: 1, max: 3.5 }
+      series: [ { id: fit, label: "Kaplan et al. fit", expr: "(88000 / x)^0.076", color: 4 } ]
+      params: [ { name: n, label: "model size (billions)", min: 0.1, max: 1000, step: 0.1, value: 0.1 } ]
+      readouts: [ { label: "loss at this size", expr: "(88000 / n)^0.076", digits: 2 } ]
+      dataSource: sources
+
+underTheHood:
+  title: Scaling laws, and what "squeezed" means
+  body: >
+    Kaplan and colleagues (2020) found test loss falling as a power law in parameters N, data and
+    compute: with enough data, L(N) ≈ (N_c / N)^0.076 with N_c ≈ 8.8 × 10¹³. The curve on this card
+    uses that fit with N in billions; it's a fit to their models, so read it as a trend, not a
+    promise. Hoffmann and colleagues (2022) later showed that for a fixed compute budget, models
+    should see about 20 tokens per parameter.
+
+    "Squeezed, not stored" has a caveat: text repeated many times in training can be reproduced
+    word for word, and researchers have extracted memorised passages from GPT-2. Most text, seen
+    once, leaves only a statistical trace. GPT-2 trained on WebText: about 40 GB from 8 million web
+    pages linked from Reddit.
+  sources: [kaplan-2020, hoffmann-2022, carlini-2021, radford-2019]
+
+faq:
+  - q: Why does GPT-2 say helium?
+    a: "It's a small 2019 model. \"hydrogen and helium\" is a very common pair in web text, about stars and the universe. Frequency, not chemistry."
+  - q: Is a base model useful on its own?
+    a: "For continuing text, yes. Turning it into a helpful assistant takes post-training, a planned card beyond the last checkpoint."
+
+sources:
+  - { id: radford-2019, title: "Language Models are Unsupervised Multitask Learners", by: "Radford et al.", year: 2019, url: "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf", note: "WebText size as reported. Probabilities and the Q&A continuation computed with GPT-2 small by scripts/precompute." }
+  - { id: kaplan-2020, title: "Scaling Laws for Neural Language Models", by: "Kaplan et al.", year: 2020, url: "https://arxiv.org/abs/2001.08361" }
+  - { id: hoffmann-2022, title: "Training Compute-Optimal Large Language Models", by: "Hoffmann et al.", year: 2022, url: "https://arxiv.org/abs/2203.15556" }
+  - { id: carlini-2021, title: "Extracting Training Data from Large Language Models", by: "Carlini et al.", year: 2021, url: "https://arxiv.org/abs/2012.07805" }
+  - { id: chiang-2023, title: "ChatGPT Is a Blurry JPEG of the Web", by: "Ted Chiang", year: 2023, url: "https://www.newyorker.com/tech/annals-of-technology/chatgpt-is-a-blurry-jpeg-of-the-web" }
+
+status: draft

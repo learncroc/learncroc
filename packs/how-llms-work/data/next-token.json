@@ -1,0 +1,219 @@
+{
+  "meta": {
+    "about": "Next-token distributions for the next-token card (catSat, the loop) and its milk question (coldOpen).",
+    "model": "gpt2",
+    "modelName": "GPT-2 small",
+    "modelRevision": "607a30d783dfa663caf39e06633721c8d4cfcd7e",
+    "parameters": 124439808,
+    "vocabSize": 50257,
+    "contextLength": 1024,
+    "script": "scripts/precompute@1",
+    "seed": 20261020,
+    "libraries": {
+      "python": "3.12.13",
+      "torch": "2.14.1",
+      "transformers": "5.20.2"
+    },
+    "generatedAt": "2026-10-19T23:14:43Z",
+    "note": "Probabilities are GPT-2's softmax over its whole vocabulary, rounded to 4 decimals. Lists show a few tokens; the rest of the probability is 'everything else'."
+  },
+  "coldOpen": {
+    "context": "I poured milk into my",
+    "tokens": [
+      {
+        "text": "coffee",
+        "p": 0.0162
+      },
+      {
+        "text": "tea",
+        "p": 0.0123
+      },
+      {
+        "text": "cereal",
+        "p": 0.0044
+      },
+      {
+        "text": "bowl",
+        "p": 0.029
+      }
+    ],
+    "probs": [0.0162, 0.0123, 0.0044, 0.029],
+    "top": [
+      {
+        "text": "mouth",
+        "p": 0.0896
+      },
+      {
+        "text": "bowl",
+        "p": 0.029
+      },
+      {
+        "text": "glass",
+        "p": 0.0256
+      },
+      {
+        "text": "cup",
+        "p": 0.0238
+      },
+      {
+        "text": "milk",
+        "p": 0.0214
+      }
+    ]
+  },
+  "catSat": {
+    "context": "The cat sat on the",
+    "tokens": [
+      {
+        "text": "floor",
+        "p": 0.0764
+      },
+      {
+        "text": "bed",
+        "p": 0.0653
+      },
+      {
+        "text": "couch",
+        "p": 0.0541
+      },
+      {
+        "text": "mat",
+        "p": 0.004
+      },
+      {
+        "text": "moon",
+        "p": 0.0007
+      }
+    ],
+    "ranking": ["floor", "bed", "couch", "mat", "moon"],
+    "top": [
+      {
+        "text": "floor",
+        "p": 0.0764
+      },
+      {
+        "text": "bed",
+        "p": 0.0653
+      },
+      {
+        "text": "couch",
+        "p": 0.0541
+      },
+      {
+        "text": "ground",
+        "p": 0.0521
+      },
+      {
+        "text": "edge",
+        "p": 0.0478
+      }
+    ]
+  },
+  "loopStart": {
+    "context": "The cat sat on the",
+    "tokens": [
+      {
+        "text": "floor",
+        "p": 0.0764
+      },
+      {
+        "text": "bed",
+        "p": 0.0653
+      },
+      {
+        "text": "couch",
+        "p": 0.0541
+      },
+      {
+        "text": "ground",
+        "p": 0.0521
+      },
+      {
+        "text": "edge",
+        "p": 0.0478
+      }
+    ]
+  },
+  "loop": {
+    "steps": [
+      {
+        "context": "The cat sat on the floor",
+        "tokens": [
+          {
+            "text": ",",
+            "p": 0.2614
+          },
+          {
+            "text": "and",
+            "p": 0.1218
+          },
+          {
+            "text": "of",
+            "p": 0.0865
+          },
+          {
+            "text": ".",
+            "p": 0.0692
+          },
+          {
+            "text": "with",
+            "p": 0.0644
+          }
+        ]
+      },
+      {
+        "context": "The cat sat on the floor,",
+        "tokens": [
+          {
+            "text": "and",
+            "p": 0.0478
+          },
+          {
+            "text": "his",
+            "p": 0.042
+          },
+          {
+            "text": "her",
+            "p": 0.037
+          },
+          {
+            "text": "its",
+            "p": 0.0365
+          },
+          {
+            "text": "staring",
+            "p": 0.0343
+          }
+        ]
+      },
+      {
+        "context": "The cat sat on the floor, and",
+        "tokens": [
+          {
+            "text": "the",
+            "p": 0.1277
+          },
+          {
+            "text": "he",
+            "p": 0.0467
+          },
+          {
+            "text": "his",
+            "p": 0.0446
+          },
+          {
+            "text": "I",
+            "p": 0.0444
+          },
+          {
+            "text": "she",
+            "p": 0.0364
+          }
+        ]
+      }
+    ]
+  },
+  "replyLengths": {
+    "note": "Rule of thumb, not model output: about 1.3 GPT-style tokens per English word."
+  }
+}

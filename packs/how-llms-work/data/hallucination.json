@@ -1,0 +1,214 @@
+{
+  "meta": {
+    "about": "Greedy (temperature 0) continuations: same input, same output, true or not.",
+    "model": "gpt2",
+    "modelName": "GPT-2 small",
+    "modelRevision": "607a30d783dfa663caf39e06633721c8d4cfcd7e",
+    "parameters": 124439808,
+    "vocabSize": 50257,
+    "contextLength": 1024,
+    "script": "scripts/precompute@1",
+    "seed": 20261020,
+    "libraries": {
+      "python": "3.12.13",
+      "torch": "2.14.1",
+      "transformers": "5.20.2"
+    },
+    "generatedAt": "2026-10-19T22:55:21Z",
+    "note": "Probabilities are GPT-2's softmax over its whole vocabulary, rounded to 4 decimals. Lists show a few tokens; the rest of the probability is 'everything else'."
+  },
+  "greedy": [
+    {
+      "context": "The tallest mountain in Africa is Mount",
+      "continuation": "Everest, which is about 1"
+    },
+    {
+      "context": "Albert Einstein was born in the year",
+      "continuation": "1776, and his father"
+    },
+    {
+      "context": "The capital of Australia is the city of",
+      "continuation": "Sydney, and the capital of"
+    }
+  ],
+  "everest": {
+    "context": "The tallest mountain in Africa is Mount",
+    "tokens": [
+      {
+        "text": "Everest",
+        "p": 0.074
+      },
+      {
+        "text": "Kil",
+        "p": 0.0678
+      },
+      {
+        "text": "K",
+        "p": 0.061
+      },
+      {
+        "text": "Gamb",
+        "p": 0.0327
+      },
+      {
+        "text": "Et",
+        "p": 0.0304
+      }
+    ]
+  },
+  "citation": {
+    "steps": [
+      {
+        "context": "As the court held in",
+        "tokens": [
+          {
+            "text": "the",
+            "p": 0.0796
+          },
+          {
+            "text": "its",
+            "p": 0.0342
+          },
+          {
+            "text": "a",
+            "p": 0.0214
+          },
+          {
+            "text": "his",
+            "p": 0.0124
+          },
+          {
+            "text": "this",
+            "p": 0.0108
+          }
+        ]
+      },
+      {
+        "context": "As the court held in the",
+        "tokens": [
+          {
+            "text": "case",
+            "p": 0.2321
+          },
+          {
+            "text": "first",
+            "p": 0.0316
+          },
+          {
+            "text": "trial",
+            "p": 0.0153
+          },
+          {
+            "text": "original",
+            "p": 0.0135
+          },
+          {
+            "text": "second",
+            "p": 0.0122
+          }
+        ]
+      },
+      {
+        "context": "As the court held in the case",
+        "tokens": [
+          {
+            "text": ",",
+            "p": 0.608
+          },
+          {
+            "text": "of",
+            "p": 0.0949
+          },
+          {
+            "text": "that",
+            "p": 0.0665
+          },
+          {
+            "text": ":",
+            "p": 0.0185
+          },
+          {
+            "text": "against",
+            "p": 0.0163
+          }
+        ]
+      },
+      {
+        "context": "As the court held in the case,",
+        "tokens": [
+          {
+            "text": "the",
+            "p": 0.2512
+          },
+          {
+            "text": "it",
+            "p": 0.0567
+          },
+          {
+            "text": "\"",
+            "p": 0.0391
+          },
+          {
+            "text": "a",
+            "p": 0.0314
+          },
+          {
+            "text": "there",
+            "p": 0.0273
+          }
+        ]
+      },
+      {
+        "context": "As the court held in the case, the",
+        "tokens": [
+          {
+            "text": "government",
+            "p": 0.03
+          },
+          {
+            "text": "state",
+            "p": 0.0266
+          },
+          {
+            "text": "court",
+            "p": 0.0251
+          },
+          {
+            "text": "defendant",
+            "p": 0.0144
+          },
+          {
+            "text": "plaintiffs",
+            "p": 0.013
+          }
+        ]
+      },
+      {
+        "context": "As the court held in the case, the government",
+        "tokens": [
+          {
+            "text": "had",
+            "p": 0.1348
+          },
+          {
+            "text": "'s",
+            "p": 0.0919
+          },
+          {
+            "text": "could",
+            "p": 0.0677
+          },
+          {
+            "text": "was",
+            "p": 0.0555
+          },
+          {
+            "text": "did",
+            "p": 0.0534
+          }
+        ]
+      }
+    ]
+  },
+  "citationText": "As the court held in the case, the government had"
+}

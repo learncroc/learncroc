@@ -1,0 +1,238 @@
+{
+  "meta": {
+    "about": "Temperature reshaping and seeded samples for the sampling and hallucination nodes.",
+    "model": "gpt2",
+    "modelName": "GPT-2 small",
+    "modelRevision": "607a30d783dfa663caf39e06633721c8d4cfcd7e",
+    "parameters": 124439808,
+    "vocabSize": 50257,
+    "contextLength": 1024,
+    "script": "scripts/precompute@1",
+    "seed": 20261020,
+    "libraries": {
+      "python": "3.12.13",
+      "torch": "2.14.1",
+      "transformers": "5.20.2"
+    },
+    "generatedAt": "2026-10-19T22:55:20Z",
+    "note": "Probabilities are GPT-2's softmax over its whole vocabulary, rounded to 4 decimals. Lists show a few tokens; the rest of the probability is 'everything else'."
+  },
+  "colour": {
+    "context": "My favourite colour is",
+    "tokens": [
+      {
+        "text": "the",
+        "p": 0.1055
+      },
+      {
+        "text": "blue",
+        "p": 0.0514
+      },
+      {
+        "text": "black",
+        "p": 0.0368
+      },
+      {
+        "text": "red",
+        "p": 0.0364
+      },
+      {
+        "text": "a",
+        "p": 0.0328
+      },
+      {
+        "text": "pink",
+        "p": 0.0312
+      }
+    ],
+    "byTemperature": {
+      "0.1": [
+        {
+          "text": "the",
+          "p": 0.9992
+        },
+        {
+          "text": "blue",
+          "p": 0.0008
+        },
+        {
+          "text": "black",
+          "p": 0.0
+        },
+        {
+          "text": "red",
+          "p": 0.0
+        },
+        {
+          "text": "a",
+          "p": 0.0
+        },
+        {
+          "text": "pink",
+          "p": 0.0
+        }
+      ],
+      "0.5": [
+        {
+          "text": "the",
+          "p": 0.5025
+        },
+        {
+          "text": "blue",
+          "p": 0.1193
+        },
+        {
+          "text": "black",
+          "p": 0.0613
+        },
+        {
+          "text": "red",
+          "p": 0.0599
+        },
+        {
+          "text": "a",
+          "p": 0.0486
+        },
+        {
+          "text": "pink",
+          "p": 0.044
+        }
+      ],
+      "1.0": [
+        {
+          "text": "the",
+          "p": 0.1055
+        },
+        {
+          "text": "blue",
+          "p": 0.0514
+        },
+        {
+          "text": "black",
+          "p": 0.0368
+        },
+        {
+          "text": "red",
+          "p": 0.0364
+        },
+        {
+          "text": "a",
+          "p": 0.0328
+        },
+        {
+          "text": "pink",
+          "p": 0.0312
+        }
+      ],
+      "1.5": [
+        {
+          "text": "the",
+          "p": 0.0177
+        },
+        {
+          "text": "blue",
+          "p": 0.0109
+        },
+        {
+          "text": "black",
+          "p": 0.0088
+        },
+        {
+          "text": "red",
+          "p": 0.0087
+        },
+        {
+          "text": "a",
+          "p": 0.0081
+        },
+        {
+          "text": "pink",
+          "p": 0.0078
+        }
+      ]
+    },
+    "samples": [
+      {
+        "temperature": 0.1,
+        "outputs": ["the", "the", "the", "the", "the", "the", "the", "the", "the", "the"]
+      },
+      {
+        "temperature": 0.5,
+        "outputs": ["white", "the", "red", "pink", "the", "blue", "a", "blue", "a", "the"]
+      },
+      {
+        "temperature": 1.0,
+        "outputs": ["then", "blue", "grape", "spotted", "pineapple", "probably", "water", "cheered", "Grey", "go"]
+      },
+      {
+        "temperature": 1.5,
+        "outputs": ["Cor", "ale", "evapor", "vacuum", "Vi", "Ruby", "over", "orange", "coffee", "Krist"]
+      }
+    ]
+  },
+  "australia": {
+    "context": "The capital of Australia is the city of",
+    "tokens": [
+      {
+        "text": "Sydney",
+        "p": 0.216
+      },
+      {
+        "text": "Canberra",
+        "p": 0.0436
+      },
+      {
+        "text": "Melbourne",
+        "p": 0.0821
+      },
+      {
+        "text": "Perth",
+        "p": 0.0457
+      }
+    ],
+    "top": [
+      {
+        "text": "Sydney",
+        "p": 0.216
+      },
+      {
+        "text": "Melbourne",
+        "p": 0.0821
+      },
+      {
+        "text": "Brisbane",
+        "p": 0.0567
+      },
+      {
+        "text": "Perth",
+        "p": 0.0457
+      },
+      {
+        "text": "Canberra",
+        "p": 0.0436
+      }
+    ],
+    "greedy": "Sydney",
+    "samples": [
+      {
+        "temperature": 0.1,
+        "outputs": ["Sydney", "Sydney", "Sydney", "Sydney", "Sydney", "Sydney", "Sydney", "Sydney", "Sydney", "Sydney"]
+      },
+      {
+        "temperature": 1.0,
+        "outputs": [
+          "Him",
+          "Melbourne",
+          "Canberra",
+          "Adelaide",
+          "Carlton",
+          "Sydney",
+          "Sydney",
+          "Hels",
+          "Adelaide",
+          "south"
+        ]
+      }
+    ]
+  }
+}

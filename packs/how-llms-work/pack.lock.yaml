@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=../../schemas/lock.schema.json
+# Provenance only. Human review sign-offs (`reviews`) are added by the reviewers themselves.
+provenance:
+  pack.yaml: { feature: build, prompt: "agent-authored@2", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  map.yaml: { feature: build, prompt: "agent-authored@2", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  nodes/next-token.yaml: { feature: build, prompt: "agent-authored@2", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  nodes/tokens.yaml: { feature: build, prompt: "agent-authored@2", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  nodes/neural-nets.yaml: { feature: build, prompt: "agent-authored@2", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  nodes/sampling.yaml: { feature: build, prompt: "agent-authored@2", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  nodes/embeddings.yaml: { feature: build, prompt: "agent-authored@2", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  nodes/attention.yaml: { feature: build, prompt: "agent-authored@2", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  nodes/context-window.yaml: { feature: build, prompt: "agent-authored@2", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  nodes/transformer.yaml: { feature: build, prompt: "agent-authored@2", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  nodes/training.yaml: { feature: build, prompt: "agent-authored@2", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  nodes/pretraining.yaml: { feature: build, prompt: "agent-authored@2", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  nodes/hallucination.yaml: { feature: build, prompt: "agent-authored@2", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  assets/img/resend.svg: { feature: build, prompt: "agent-authored@2", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  data/next-token.json: { feature: precompute, prompt: "scripts/precompute@1", provider: script, model: gpt2, at: "2026-10-20" }
+  data/sampling.json: { feature: precompute, prompt: "scripts/precompute@1", provider: script, model: gpt2, at: "2026-10-20" }
+  data/hallucination.json: { feature: precompute, prompt: "scripts/precompute@1", provider: script, model: gpt2, at: "2026-10-20" }
+  data/pretraining.json: { feature: precompute, prompt: "scripts/precompute@1", provider: script, model: gpt2, at: "2026-10-20" }
+  data/embeddings.json: { feature: precompute, prompt: "scripts/precompute@1", provider: script, model: gpt2, at: "2026-10-20" }
+  data/traces.json: { feature: precompute, prompt: "scripts/precompute@1", provider: script, model: gpt2, at: "2026-10-20" }
+reviews: []

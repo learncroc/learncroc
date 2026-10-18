@@ -1,0 +1,210 @@
+{
+  "meta": {
+    "about": "GPT-2 input-embedding (wte) rows for 25 words, drawn as a flat t-SNE map.",
+    "model": "gpt2",
+    "modelName": "GPT-2 small",
+    "modelRevision": "607a30d783dfa663caf39e06633721c8d4cfcd7e",
+    "parameters": 124439808,
+    "vocabSize": 50257,
+    "contextLength": 1024,
+    "script": "scripts/precompute@1",
+    "seed": 20261020,
+    "libraries": {
+      "python": "3.12.13",
+      "torch": "2.14.1",
+      "transformers": "5.20.2"
+    },
+    "generatedAt": "2026-10-19T22:55:24Z",
+    "note": "Probabilities are GPT-2's softmax over its whole vocabulary, rounded to 4 decimals. Lists show a few tokens; the rest of the probability is 'everything else'."
+  },
+  "projection": {
+    "method": "t-SNE (perplexity 5) over cosine distance between the 25 rows",
+    "seed": 2,
+    "nearestNeighbourAgreement": "24/25",
+    "analogyHoldsOnMap": true,
+    "note": "Seed picked from 0-9 to best keep each word's nearest neighbour and the king - man + woman result from the full 768 dimensions. Distances on the map are not to scale."
+  },
+  "points": [
+    {
+      "id": "cat",
+      "label": "cat",
+      "xy": [0.2724, 0.4803],
+      "cluster": "animals"
+    },
+    {
+      "id": "dog",
+      "label": "dog",
+      "xy": [0.3196, 0.4496],
+      "cluster": "animals"
+    },
+    {
+      "id": "horse",
+      "label": "horse",
+      "xy": [0.3777, 0.401],
+      "cluster": "animals"
+    },
+    {
+      "id": "cow",
+      "label": "cow",
+      "xy": [0.4124, 0.357],
+      "cluster": "animals"
+    },
+    {
+      "id": "lion",
+      "label": "lion",
+      "xy": [0.5159, 0.2403],
+      "cluster": "animals"
+    },
+    {
+      "id": "bread",
+      "label": "bread",
+      "xy": [0.3987, 0.7796],
+      "cluster": "food"
+    },
+    {
+      "id": "cheese",
+      "label": "cheese",
+      "xy": [0.4059, 0.8733],
+      "cluster": "food"
+    },
+    {
+      "id": "pizza",
+      "label": "pizza",
+      "xy": [0.3566, 0.8449],
+      "cluster": "food"
+    },
+    {
+      "id": "soup",
+      "label": "soup",
+      "xy": [0.2867, 0.7781],
+      "cluster": "food"
+    },
+    {
+      "id": "rice",
+      "label": "rice",
+      "xy": [0.3537, 0.73],
+      "cluster": "food"
+    },
+    {
+      "id": "money",
+      "label": "money",
+      "xy": [0.743, 0.8407],
+      "cluster": "money"
+    },
+    {
+      "id": "cash",
+      "label": "cash",
+      "xy": [0.7965, 0.8475],
+      "cluster": "money"
+    },
+    {
+      "id": "loan",
+      "label": "loan",
+      "xy": [0.92, 0.8097],
+      "cluster": "money"
+    },
+    {
+      "id": "bank",
+      "label": "bank",
+      "xy": [0.8683, 0.7775],
+      "cluster": "money"
+    },
+    {
+      "id": "profit",
+      "label": "profit",
+      "xy": [0.7604, 0.92],
+      "cluster": "money"
+    },
+    {
+      "id": "river",
+      "label": "river",
+      "xy": [0.1504, 0.1957],
+      "cluster": "water"
+    },
+    {
+      "id": "lake",
+      "label": "lake",
+      "xy": [0.1698, 0.1465],
+      "cluster": "water"
+    },
+    {
+      "id": "ocean",
+      "label": "ocean",
+      "xy": [0.08, 0.1636],
+      "cluster": "water"
+    },
+    {
+      "id": "water",
+      "label": "water",
+      "xy": [0.0919, 0.2479],
+      "cluster": "water"
+    },
+    {
+      "id": "shore",
+      "label": "shore",
+      "xy": [0.1165, 0.08],
+      "cluster": "water"
+    },
+    {
+      "id": "king",
+      "label": "king",
+      "xy": [0.6464, 0.2409],
+      "cluster": "people"
+    },
+    {
+      "id": "queen",
+      "label": "queen",
+      "xy": [0.7024, 0.2571],
+      "cluster": "people"
+    },
+    {
+      "id": "man",
+      "label": "man",
+      "xy": [0.6497, 0.4906],
+      "cluster": "people"
+    },
+    {
+      "id": "woman",
+      "label": "woman",
+      "xy": [0.6803, 0.4513],
+      "cluster": "people"
+    },
+    {
+      "id": "prince",
+      "label": "prince",
+      "xy": [0.5951, 0.2749],
+      "cluster": "people"
+    }
+  ],
+  "nearest": {
+    "cat": ["dog", "lion", "horse"],
+    "bank": ["loan", "cash", "river"],
+    "river": ["lake", "ocean", "water"],
+    "money": ["cash", "profit", "bank"],
+    "queen": ["king", "prince", "woman"],
+    "pizza": ["cheese", "bread", "soup"]
+  },
+  "catCompare": {
+    "dog": 0.5498,
+    "car": 0.3815,
+    "cap": 0.2583,
+    "catalog": 0.2259
+  },
+  "analogy": {
+    "expr": "king - man + woman",
+    "ranked": [["queen", 0.7085], ["prince", 0.4771], ["lion", 0.3832], ["river", 0.3269], ["lake", 0.3243]]
+  },
+  "bank": {
+    "sentences": ["She sat on the river bank", "She robbed the bank"],
+    "sameTokenId": 3331,
+    "cosineTableRow": 1.0,
+    "cosineAfterLayer": {
+      "1": 0.9354,
+      "3": 0.8833,
+      "6": 0.7893,
+      "9": 0.7831,
+      "12": 0.9908
+    },
+    "note": "GPT-2's final-layer states share a few huge dimensions, so cosine there is close to 1 for almost any pair; the middle layers show the contextual drift."
+  }
+}

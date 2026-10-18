@@ -1,0 +1,383 @@
+# yaml-language-server: $schema=../../../schemas/node.schema.json
+id: tokens
+title: Tokens
+tagline: What actually goes into the model
+estMinutes: 4
+bigIdea: >
+  Before a model reads anything, a tokenizer chops the text into pieces from a fixed vocabulary
+  and swaps each piece for a number. Common words are one piece; rare words, long numbers and
+  many non-English scripts split into several. The model only ever receives the numbers, never
+  the letters, which is why letter-level questions trip it up.
+objectives:
+  - Explain why a model can stumble on letter-level questions
+  - Predict roughly how many tokens a word or text becomes
+  - Estimate tokens from words for English text
+concepts: [llm.tokens]
+
+misconceptions:
+  letters:
+    label: Thinks the model reads text letter by letter
+    hint: "Look at what arrives: a few chunks, each swapped for a number. Where would the letters be?"
+  one-word-one-token:
+    label: Thinks every word is exactly one token
+    hint: "Common words get their own slot in the vocabulary. What happens to a word that's rare?"
+  meaning-split:
+    label: Thinks words are split by meaning or syllables
+    hint: "\"unbelievable\" became un, belie, vable. Is \"belie\" a meaning? The pieces follow how often strings appear."
+  equal-languages:
+    label: Thinks the same message costs the same tokens in every language
+    hint: "The vocabulary was built mostly from English text. Which strings earned their own slots?"
+  typos:
+    label: Thinks letter mistakes come from misspellings in the training text
+    hint: "The training text spells strawberry correctly millions of times. Is the problem in the text, or in what the model receives?"
+
+hook:
+  interaction:
+    kind: choice
+    id: hook-q
+    prompt: ChatGPT can write a sonnet but miscounts the r's in *strawberry*. Why?
+    confidence: true
+    options:
+      - { id: pieces, text: "It gets word chunks, not letters" }
+      - { id: careless, text: "It reads every letter, but carelessly", misconception: letters }
+      - { id: whole, text: "It sees the word as one symbol", misconception: one-word-one-token }
+      - { id: bad-data, text: "Its training text misspells it", misconception: typos }
+    answer: pieces
+  lotsGuess: careless
+  style: puzzle
+
+screens:
+  - id: s1-split
+    newIdea: Text arrives as numbered chunks from a fixed vocabulary
+    blocks:
+      - type: story
+        text: "Before the model sees anything, a tokenizer cuts the text into pieces from a fixed list. This is GPT-4's."
+    interaction:
+      kind: widget
+      id: s1-q
+      prompt: Where does it cut *strawberry*? Press the gaps to place your cuts, then check.
+      widget:
+        id: token-splitter
+        v: 1
+        props: { text: "strawberry", editable: false, showIds: true, encoding: cl100k_base }
+        goal: { kind: split, text: "strawberry" }
+      solution: { boundaries: [3, 5] }
+      fallback:
+        kind: choice
+        prompt: Where does GPT-4's tokenizer cut "strawberry"?
+        options:
+          - { id: real, text: "str | aw | berry" }
+          - { id: meaning, text: "straw | berry", misconception: meaning-split }
+          - { id: letters, text: "one cut between every letter", misconception: letters }
+          - { id: whole, text: "no cuts: one piece", misconception: one-word-one-token }
+        answer: real
+      feedbackRight: "str, aw, berry. You read it like the tokenizer does."
+      onWrong:
+        default: { misconception: meaning-split, feedback: "Not at the syllables. The cuts follow how often strings show up in text." }
+    reveal:
+      text: >
+        The real cuts: str | aw | berry, sent as ids 496, 675 and 15717. Those three numbers are all
+        the model gets. The r's are inside the chunks, so counting them means remembering how each
+        chunk is spelled.
+      visualState: { note: "the model gets 496, 675, 15717" }
+    alts:
+      simpler: "The model never sees s-t-r-a-w-b-e-r-r-y. It sees three numbers, one for each chunk."
+      analogy: "Like being handed three sealed envelopes labelled 496, 675 and 15717 and asked how many r's are written inside."
+    src: [cl100k]
+
+  - id: s2-shatter
+    newIdea: Common strings get one token; rare ones shatter into many
+    blocks:
+      - type: story
+        text: "\"the\" is one token. \"cat\" is one token. Now make the chopper work."
+    interaction:
+      kind: widget
+      id: s2-q
+      prompt: Type at most 3 words that come out as at least 8 tokens.
+      widget:
+        id: token-splitter
+        v: 1
+        props: { text: "the cat", editable: true, showIds: true, encoding: cl100k_base }
+        goal: { kind: craft, minTokens: 8, maxWords: 3 }
+      solution: { text: "floccinaucinihilipilification" }
+      fallback:
+        kind: choice
+        prompt: Which of these becomes the most tokens?
+        options:
+          - { id: rare, text: "floccinaucinihilipilification" }
+          - { id: common, text: "the cat sat", misconception: one-word-one-token }
+          - { id: hello, text: "Hello world", misconception: one-word-one-token }
+        answer: rare
+      feedbackRight: "Rare strings never earned their own slot, so they shatter."
+    reveal:
+      text: >
+        Your words shattered while "the" stayed whole. The vocabulary, about 100,000 pieces, was
+        built by frequency: strings that show up constantly earned their own slot, and rare ones
+        get spelled out from smaller chunks.
+      visualState: { note: "frequent = one piece" }
+    alts:
+      simpler: "Words the tokenizer saw a lot get one token. Odd words get built from several smaller pieces."
+      analogy: "Like a keyboard with whole-word keys for common words. Anything else, you type out of smaller keys."
+    src: [sennrich-2016]
+
+  - id: s3-space
+    newIdea: In a sentence, a common word with its space is often one token
+    blocks:
+      - type: story
+        text: "In a real question the word comes after a space: \"How many r's are in strawberry?\""
+    interaction:
+      kind: widget
+      id: s3-q
+      prompt: With its space in front, how many tokens is " strawberry"? Predict, then look.
+      widget:
+        id: token-splitter
+        v: 1
+        props: { text: " strawberry", editable: false, showIds: true, encoding: cl100k_base }
+        goal: { kind: count, text: " strawberry", tolerance: 0 }
+      solution: { count: 1 }
+      fallback:
+        kind: numeric
+        prompt: GPT-4's tokenizer has a single entry for " strawberry" with its leading space. How many tokens is it?
+        answer: 1
+        tolerance: 0
+      feedbackRight: "One. The whole word is a single number."
+      onWrong:
+        "3": { misconception: meaning-split, feedback: "That's the bare word. With a space in front it's a different, more common string." }
+        "10": { misconception: letters, feedback: "That's the letter count. The model gets chunks." }
+    reveal:
+      text: >
+        One token, id 73700. " strawberry" with its space is common enough to own a slot. So in the
+        usual question the model gets one number for the whole word, and not a single letter to count.
+    src: [cl100k]
+
+close:
+  text: "Because the model never gets letters. A tokenizer hands it ==numbered chunks==: str, aw and berry, or in a sentence one number for the whole word. The r's are hidden inside, so counting them means recalling how each chunk is spelled."
+  byGuess:
+    careless: "You picked *it reads every letter, but carelessly*. Lots of people do. But it reads no letters at all, because a tokenizer hands it ==numbered chunks==: str, aw, berry, or one number for the whole word. The r's are hidden inside."
+    whole: "You picked *it sees the word as one symbol*. In a sentence, that's nearly right. But it fails because the symbol is a ==numbered chunk==, never letters: one number for \" strawberry\", or str, aw, berry. The r's are hidden inside."
+    bad-data: "You picked *its training text misspells it*. The text was fine. It slips because a tokenizer turns *strawberry* into ==numbered chunks== before the model sees it: str, aw, berry, or a single number. The letters never arrive."
+    idk: "No guess is fine. It slips because the model never gets letters. A tokenizer hands it ==numbered chunks==: str, aw and berry, or one number for the whole word. The r's are hidden inside."
+  teaser: "So the model gets chunk numbers. How can a number know a cat is like a dog?"
+
+items:
+  - id: i1
+    kind: choice
+    level: recall
+    difficulty: 1
+    prompt: You type "unbelievable". What does the model actually receive?
+    options:
+      - { id: ids, text: "A short list of token ids" }
+      - { id: letters, text: "Twelve letters, one by one", misconception: letters }
+      - { id: one, text: "One symbol for the whole word", misconception: one-word-one-token }
+      - { id: meaning, text: "Its dictionary meaning", misconception: meaning-split }
+    answer: ids
+    why: "It gets three ids: un, belie, vable."
+  - id: i2
+    kind: numeric
+    level: apply
+    difficulty: 2
+    prompt: Roughly how many tokens is "incomprehensibilities" in GPT-4's tokenizer?
+    answer: 5
+    tolerance: 2
+    onWrong:
+      "21": { misconception: letters, feedback: "That's the letter count. The model gets chunks." }
+      "1": { misconception: one-word-one-token, feedback: "A word this rare never earned its own slot." }
+    why: "in, com, preh, ens, ibilities: five pieces."
+  - id: i3
+    kind: estimate
+    level: apply
+    difficulty: 3
+    prompt: "A novel has about {w} English words. Roughly how many tokens?"
+    params:
+      vars: { w: [90000, 60000, 120000, 30000] }
+      answerExpr: "w * 1.3"
+    scale: { min: 1000, max: 10000000, log: true, label: tokens }
+    answer: 117000
+    accept: { factor: 1.5 }
+    onWrong:
+      default: { misconception: one-word-one-token }
+    why: "English averages about 1.3 tokens per word."
+  - id: i4
+    kind: choice
+    level: transfer
+    difficulty: 3
+    callback: true
+    prompt: "Remember the strawberry question? Asked to spell \"lollipop\" backwards, a chatbot slips. What's the likeliest reason?"
+    options:
+      - { id: chunks, text: "It gets chunks like l and ollipop, not letters" }
+      - { id: careless, text: "It reads the letters but loses track", misconception: letters }
+      - { id: syllables, text: "It splits words into syllables first", misconception: meaning-split }
+      - { id: typos, text: "Its training text spells it backwards", misconception: typos }
+    answer: chunks
+    why: "\"lollipop\" arrives as l | ollipop. Reversing it means knowing how a chunk is spelled."
+  - id: i5
+    kind: text
+    level: recall
+    difficulty: 2
+    prompt: "One word: the fixed list of every token a model knows is its…"
+    accept: [vocabulary, vocab, "token vocabulary", lexicon]
+  - id: i6
+    kind: order
+    level: apply
+    difficulty: 3
+    prompt: Order these from fewest tokens to most, in GPT-4's tokenizer.
+    items:
+      - "cat"
+      - "unbelievable"
+      - "antidisestablishmentarianism"
+      - "hippopotomonstrosesquippedaliophobia"
+    answer: [0, 1, 2, 3]
+    why: "1, 3, 6 and 11 tokens. Rarer strings shatter more."
+  - id: i7
+    kind: choice
+    level: transfer
+    difficulty: 4
+    prompt: "\"Thank you very much\" and the same thanks in Hindi. Which costs more tokens in GPT-4's tokenizer?"
+    options:
+      - { id: hindi, text: "Hindi, by a wide margin" }
+      - { id: english, text: "English", misconception: letters }
+      - { id: same, text: "About the same", misconception: equal-languages }
+    answer: hindi
+    why: "4 tokens in English, 19 in Hindi. The vocabulary favours what it saw most."
+  - id: i8
+    kind: match
+    level: apply
+    difficulty: 2
+    prompt: Match each word to how GPT-4's tokenizer splits it.
+    left: ["unbelievable", "strawberry", "ChatGPT"]
+    right: ["un | belie | vable", "str | aw | berry", "Chat | G | PT"]
+    answer: [[0, 0], [1, 1], [2, 2]]
+  - id: i9
+    kind: explain
+    level: transfer
+    difficulty: 4
+    prompt: "In one sentence: why might a model add two 9-digit numbers less reliably than two 2-digit ones?"
+    keyPoints:
+      - { id: chunks, text: "long numbers are split into multi-digit chunks", keywords: [chunks, split, pieces, tokens, "three digits"] }
+      - { id: misaligned, text: "the chunks don't line up with place value", keywords: ["line up", "place value", align, carry, columns, boundaries] }
+    minHits: 1
+    exemplar: "Long numbers arrive as chunks like 123 and 456 that don't line up with the columns you'd add in."
+    offline:
+      kind: choice
+      prompt: Why are long sums harder for a model than short ones?
+      options:
+        - { id: chunks, text: "Long numbers arrive as uneven multi-digit chunks" }
+        - { id: digits, text: "It reads every digit but gets tired", misconception: letters }
+        - { id: words, text: "Numbers are always one token each", misconception: one-word-one-token }
+      answer: chunks
+  - id: i10
+    kind: numeric
+    level: apply
+    difficulty: 2
+    prompt: "An API charges by the token. At about 1.3 tokens per word, roughly how many tokens is a {w}-word email?"
+    params:
+      vars: { w: [200, 100, 400, 50] }
+      answerExpr: "w * 1.3"
+    answer: 260
+    tolerance: 15
+    unit: tokens
+    why: "Words times about 1.3, for English."
+  - id: i11
+    kind: cloze
+    level: recall
+    difficulty: 2
+    prompt: Fill the gaps.
+    text: "A tokenizer turns text into a list of {{1}}, each one an entry in a fixed {{2}}."
+    blanks:
+      "1": { accept: [ids, numbers, "token ids", tokens, integers], tiles: [ids, letters, sentences, meanings] }
+      "2": { accept: [vocabulary, vocab], tiles: [vocabulary, dictionary of meanings, grammar, alphabet] }
+  - id: i12
+    kind: widget
+    level: transfer
+    difficulty: 3
+    prompt: How many tokens is "The cat sat on the"? Predict, then look.
+    widget:
+      id: token-splitter
+      v: 1
+      props: { text: "The cat sat on the", editable: false, showIds: true, encoding: cl100k_base }
+      goal: { kind: count, text: "The cat sat on the", tolerance: 0 }
+    solution: { count: 5 }
+    fallback: { kind: numeric, prompt: "In GPT-4's tokenizer, each of these common words is one token. How many tokens is \"The cat sat on the\"?", answer: 5, tolerance: 0 }
+    why: "Five common words, five tokens: each space travels with the word after it."
+  - id: i13
+    kind: widget
+    level: transfer
+    difficulty: 3
+    prompt: A word you haven't split yet. How many tokens is "hippopotamus" in GPT-4's tokenizer? Predict, then look.
+    widget:
+      id: token-splitter
+      v: 1
+      props: { text: "hippopotamus", editable: false, showIds: true, encoding: cl100k_base }
+      goal: { kind: count, text: "hippopotamus", tolerance: 1 }
+    solution: { count: 4 }
+    fallback:
+      kind: numeric
+      prompt: GPT-4's tokenizer splits "hippopotamus" into hip, pop, ot and amus. How many tokens is that?
+      answer: 4
+      tolerance: 0
+    onWrong:
+      default: { misconception: one-word-one-token, feedback: "A rare word never earned its own slot. Count the chunks, not the letters." }
+    why: "hip | pop | ot | amus: four chunks, and the letters stay hidden inside them."
+  - id: i14
+    kind: widget
+    level: transfer
+    difficulty: 3
+    prompt: Numbers go through the same chopper. How many tokens is the price 1234567? Predict, then look.
+    widget:
+      id: token-splitter
+      v: 1
+      props: { text: "1234567", editable: false, showIds: true, encoding: cl100k_base }
+      goal: { kind: count, text: "1234567", tolerance: 0 }
+    solution: { count: 3 }
+    fallback:
+      kind: numeric
+      prompt: The tokenizer splits 1234567 into 123, 456 and 7. How many tokens?
+      answer: 3
+      tolerance: 0
+    onWrong:
+      "7": { misconception: letters, feedback: "That's one per digit. This tokenizer groups digits." }
+      "1": { misconception: one-word-one-token, feedback: "Long numbers are rare strings. They split." }
+    why: "123 | 456 | 7: chunks that don't line up with thousands, one reason arithmetic is awkward."
+
+flashcards:
+  - { id: c1, kind: qa, front: "What does a language model receive instead of letters?", back: "Token ids: numbered chunks from a fixed vocabulary." }
+  - { id: c2, kind: qa, front: "Why do models miscount the r's in strawberry?", back: "The letters are hidden inside chunks like str, aw, berry; the model gets their numbers." }
+  - { id: c3, kind: qa, front: "Why is a common word usually one token?", back: "The vocabulary was built by frequency, so frequent strings earned their own slot." }
+  - { id: c4, kind: qa, front: "Roughly how many tokens per English word?", back: "About 1.3 on average. Rare words and other scripts cost more." }
+
+toy:
+  prompt: "Type anything: your name, a long number, another language. Watch it split."
+  widget:
+    id: token-splitter
+    v: 1
+    props: { text: "Type anything here", editable: true, showIds: true, encoding: cl100k_base }
+
+underTheHood:
+  title: Byte-pair encoding, briefly
+  body: >
+    Most tokenizers use byte-pair encoding (BPE). Start from bytes, then repeatedly merge the most
+    frequent adjacent pair in a big text sample into a new vocabulary entry, until the vocabulary
+    hits a target size: 50,257 entries for GPT-2, about 100,000 for GPT-4's cl100k_base. Encoding
+    applies the learned merges, so the same text always gets the same ids.
+
+    Because merges follow frequency in the training sample, English prose packs tightly (about 1.3
+    tokens per word) while scripts that were rarer in the sample, like Hindi, cost several times
+    more. Digits in cl100k_base are grouped in runs of up to three. Newer models can often count
+    the r's in strawberry: they learned each chunk's spelling, or reason it out step by step. The
+    chunks are still what arrives.
+  sources: [sennrich-2016, cl100k, petrov-2023]
+
+faq:
+  - q: Do all models use the same tokenizer?
+    a: "No. Each model family ships its own. GPT-2 and GPT-4 split many words differently, which is why counts here say \"GPT-4's tokenizer\"."
+  - q: Is a token a syllable?
+    a: "Sometimes by coincidence. The pieces come from frequency statistics, not from grammar or meaning."
+  - q: Do newer models still miscount strawberry?
+    a: "Many now get it right, by learning how chunks are spelled or by spelling the word out first. The input is still chunks, so letter games stay harder than they look."
+
+sources:
+  - { id: sennrich-2016, title: "Neural Machine Translation of Rare Words with Subword Units", by: "Sennrich, Haddow & Birch", year: 2016, url: "https://arxiv.org/abs/1508.07909" }
+  - { id: cl100k, title: "tiktoken (cl100k_base encoding)", by: "OpenAI", year: 2023, url: "https://github.com/openai/tiktoken", note: "Splits and counts on this card come from cl100k_base, via the gpt-tokenizer package." }
+  - { id: petrov-2023, title: "Language Model Tokenizers Introduce Unfairness Between Languages", by: "Petrov, La Malfa, Torr & Bibi", year: 2023, url: "https://arxiv.org/abs/2305.15425" }
+
+status: draft

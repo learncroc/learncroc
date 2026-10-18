@@ -1,0 +1,154 @@
+# yaml-language-server: $schema=https://learncroc.github.io/schema/v1/node.schema.json
+id: ten-percent
+title: Start from ten per cent
+tagline: Divide by ten, then build
+estMinutes: 3
+bigIdea: >
+  10% of an amount is that amount divided by 10. Other percentages are built from it: 5% is half
+  of 10%, 20% is double, and 25% is a quarter of the whole.
+objectives:
+  - Find 10% of an amount by dividing by 10
+  - Build 5%, 20% and 25% from 10% or from simple fractions
+visual:
+  kind: figure
+  asset: assets/img/hundred-grid.svg
+  alt: "A ten by ten grid of squares with the top two rows shaded."
+
+misconceptions:
+  subtract-ten:
+    label: Thinks finding 10% means taking 10 away
+    upstream: per-hundred
+    hint: "10% is a tenth of the amount. What is a tenth of 80?"
+  percent-as-pounds:
+    label: Reads the percentage as an amount of money
+    upstream: per-hundred
+    hint: "10% is not £10. It is 10 of every 100 parts of the bill."
+
+hook:
+  blocks:
+    - type: story
+      text: "Lunch costs £36. You want to leave a 10% tip."
+  interaction:
+    kind: choice
+    id: hook-q
+    prompt: What tip do you leave?
+    confidence: true
+    options:
+      - { id: twenty-six, text: "£26", misconception: subtract-ten }
+      - { id: three-sixty, text: "£3.60" }
+      - { id: ten, text: "£10", misconception: percent-as-pounds }
+    answer: three-sixty
+  lotsGuess: ten
+
+screens:
+  - id: s1-tenth
+    newIdea: 10% is the amount divided by 10
+    blocks:
+      - type: story
+        text: "A jacket costs £80."
+    interaction:
+      kind: numeric
+      id: s1-q
+      prompt: What is 10% of £80?
+      answer: 8
+      tolerance: 0
+      unit: "£"
+      onWrong:
+        "70": { misconception: subtract-ten, feedback: "That takes 10 away. 10% is a tenth." }
+    reveal:
+      text: "£8: one tenth of £80. Ten of those make the whole price."
+
+  - id: s2-build
+    newIdea: Build other percentages from 10%
+    blocks:
+      - type: story
+        text: "With 10% in hand, the rest is easy. 5% is half of it, 20% is double, and 15% is the two added."
+    interaction:
+      kind: numeric
+      id: s2-q
+      prompt: What is 5% of £80?
+      answer: 4
+      tolerance: 0
+      unit: "£"
+    reveal:
+      text: "Half of £8 is £4. Halving and doubling 10% covers most receipts."
+
+  - id: s3-transfer
+    blocks:
+      - type: story
+        text: "A £60 bill. Service is 15%."
+    interaction:
+      kind: numeric
+      id: s3-q
+      prompt: How much is the service charge?
+      answer: 9
+      tolerance: 0
+      unit: "£"
+      onWrong:
+        "45": { misconception: subtract-ten, feedback: "That takes 15 away. Find 10% and 5% of £60, then add them." }
+    reveal:
+      text: "10% is £6, 5% is £3, together £9."
+
+close:
+  text: "£3.60. Ten per cent is one tenth: divide by 10, which ==moves the decimal point one place==. Build every other tip from that tenth."
+  byGuess:
+    twenty-six: "You picked *£26*. That takes 10 away. 10% is a tenth of the bill: £3.60."
+    ten: "You picked *£10*. Lots of people do: 10% sounds like £10. It's a tenth of £36, which is £3.60."
+    idk: "No guess is fine. 10% is a tenth, so divide £36 by 10: £3.60."
+  teaser: "A coat goes up 20%, then down 20%. Is it back where it started?"
+
+items:
+  - id: i1
+    kind: numeric
+    level: recall
+    difficulty: 1
+    prompt: "What is 10% of {n}?"
+    params:
+      vars: { n: [50, 120, 300, 90] }
+      answerExpr: "n / 10"
+    answer: 5
+    tolerance: 0
+  - id: i2
+    kind: numeric
+    level: apply
+    difficulty: 2
+    prompt: "What is 20% of 45?"
+    answer: 9
+    tolerance: 0
+  - id: i3
+    kind: order
+    level: transfer
+    difficulty: 3
+    prompt: "Put these from smallest to largest."
+    items: ["5% of 200", "10% of 150", "25% of 80", "20% of 120"]
+    answer: [0, 1, 2, 3]
+    why: "10, 15, 20 and 24."
+  - id: i4
+    kind: numeric
+    level: transfer
+    difficulty: 3
+    prompt: "A £240 phone is 15% off. How many pounds come off?"
+    answer: 36
+    tolerance: 0
+    why: "10% is £24 and 5% is £12, so £36 comes off."
+  - id: i5
+    kind: numeric
+    level: transfer
+    difficulty: 3
+    prompt: "A recipe needs 25% of a 2 kg bag of flour. How many grams is that?"
+    answer: 500
+    tolerance: 0
+    unit: g
+    why: "25% is a quarter, and a quarter of 2000 g is 500 g."
+  - id: i6
+    kind: numeric
+    level: apply
+    difficulty: 2
+    prompt: "What is 5% of 70?"
+    answer: 3.5
+    tolerance: 0.001
+
+sources:
+  - { id: bbc-bitesize, title: "Percentages", by: "BBC Bitesize", url: "https://www.bbc.co.uk/bitesize/topics/zgdx6sg" }
+
+status: draft

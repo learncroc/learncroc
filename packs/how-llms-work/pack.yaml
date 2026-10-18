@@ -1,0 +1,55 @@
+# yaml-language-server: $schema=../../schemas/pack.schema.json
+schema: 2
+id: how-llms-work
+version: 0.2.0
+title: How LLMs work
+subtitle: Next-token prediction, attention, training, and why models make things up
+tagline: Why ChatGPT miscounts the r's in strawberry, and ten more puzzles about the machine.
+publisher: learncroc
+authors: [ { name: learncroc contributors } ]
+reviewers: []            # filled when a recruited ML practitioner signs off (must match pack.lock.yaml)
+license: CC-BY-SA-4.0
+lang: en
+level: beginner
+estMinutes: 50
+tags: [llm, ai, machine-learning, transformers, gpt]
+category: tech-ai
+engine: ">=0.1.0 <1.0.0"
+widgets:
+  probability-bars: 1
+  token-splitter: 1
+  attention-weights: 1
+  embedding-plane: 1
+  plot: 1
+  sorter: 1
+profile: curated
+theme:
+  renderer: circuit
+  world: The Machine
+  mode: dark
+  direction: lr
+  ground: "#0E1A1F"
+  texture: pcb
+  lines: ["#5CC8FF", "#B79CFF", "#FF85B3", "#A6E36B", "#E6E1D3"]
+  token: electron
+  gateName: Power check
+  backdrop: circuit-board
+  fieldNoteStyle: spec-sheet
+  landmarks:
+    cp-text-in: { name: Input bus, glyph: chip }
+    cp-loop: { name: Output stage, glyph: chip }
+    cp-core: { name: The Core, glyph: core }
+    cp-learned: { name: Power-on test, glyph: furnace }
+entry: { suggestedStart: tokens }
+outcomes:
+  - Explain why a model miscounts letters, and what it reads instead
+  - Say what a language model computes at every step, and why replies stream in
+  - Trace a sentence through tokens, embeddings, attention and the transformer stack
+  - Say why a fluent model can state false things, and what actually helps
+ai:
+  tutorNotes: >
+    Numbers marked "computed with GPT-2" come from scripts/precompute (GPT-2 small, 124M parameters).
+    Attention weights on the cards are illustrative. Don't claim models never plan ahead
+    (interpretability work shows some lookahead), that they "know nothing", or that temperature 0
+    prevents mistakes. Prefer "scores" and "probabilities" over "thinks" and "wants".
+status: draft

@@ -1,0 +1,345 @@
+# yaml-language-server: $schema=../../../schemas/node.schema.json
+id: neural-nets
+title: Inside the model file
+tagline: Neurons, weights and layers
+estMinutes: 4
+bigIdea: >
+  A neural network is arithmetic with adjustable numbers called weights. Each neuron multiplies
+  its inputs by weights, adds them up and squashes the total; layers of neurons feed each other.
+  Everything a model does lives in the settings of its weights: no rules are written down, and
+  no text is stored.
+objectives:
+  - Compute a neuron's output from inputs and weights
+  - Explain why a model's behaviour lives in its weights rather than rules or stored text
+  - Relate a model's file size to its parameter count
+concepts: [ml.neural-network, ml.weights]
+visual:
+  kind: figure
+  asset: assets/img/dials.svg
+  alt: "A wall of small dials wired in three layers, with inputs on the left and one output on the right."
+
+misconceptions:
+  rules:
+    label: Thinks engineers wrote rules for what the model says
+    hint: "You turned two dials and the behaviour changed. Where in that neuron is a rule written?"
+  stored-text:
+    label: Thinks the model file contains a copy of the text it learned from
+    hint: "Count the bytes: parameters times bytes each. Is any room left for the web?"
+  smart-neuron:
+    label: Thinks each neuron holds one word or one fact
+    hint: "One neuron made a ramp. It took two to make a bump. What does that suggest about bigger ideas?"
+
+hook:
+  interaction:
+    kind: choice
+    id: hook-q
+    prompt: GPT-2, a small model from 2019, downloads as one file of about half a gigabyte. What fills most of it?
+    confidence: true
+    options:
+      - { id: rules, text: "Rules written by engineers", misconception: rules }
+      - { id: text, text: "A compressed copy of web pages", misconception: stored-text }
+      - { id: numbers, text: "Millions of plain numbers" }
+      - { id: dictionary, text: "A dictionary of words and meanings", misconception: smart-neuron }
+    answer: numbers
+  lotsGuess: text
+  style: surprise
+
+screens:
+  - id: s1-neuron
+    newIdea: A neuron is a weighted sum, squashed
+    blocks:
+      - type: story
+        text: "One neuron. Input: how often a message says \"refund\". Output: its guess that the message is a complaint."
+      - type: math
+        tex: "\\text{out} = \\sigma(w \\cdot x + b)"
+    interaction:
+      kind: widget
+      id: s1-q
+      prompt: Turn the two dials until 3 mentions of "refund" gives a 90% complaint guess.
+      widget:
+        id: plot
+        v: 1
+        props:
+          kind: function
+          x: { label: "mentions of refund", min: 0, max: 6 }
+          y: { label: "complaint guess", min: 0, max: 1 }
+          series: [ { id: neuron, label: "neuron output", expr: "1 / (1 + exp(-(w * x + b)))", color: 3 } ]
+          params:
+            - { name: w, label: "weight", min: -2, max: 3, step: 0.1, value: 0.2 }
+            - { name: b, label: "bias", min: -5, max: 5, step: 0.1, value: 0 }
+          readouts: [ { label: "guess at 3 mentions", expr: "1 / (1 + exp(-(w * 3 + b)))", digits: 2 } ]
+          dataSource: formula
+        goal: { kind: readout, label: "guess at 3 mentions", target: 0.9, tolerance: 0.03 }
+      solution: { params: { w: 1, b: -0.8 } }
+      fallback:
+        kind: choice
+        prompt: To make the neuron react more strongly to "refund", which number do you change?
+        options:
+          - { id: weight, text: "Its weight" }
+          - { id: rule, text: "Its rule", misconception: rules }
+          - { id: text, text: "Its stored examples", misconception: stored-text }
+        answer: weight
+      feedbackRight: "Two numbers, and the neuron's whole personality changed."
+    reveal:
+      text: >
+        The curve swung as you turned two numbers, and the neuron's behaviour changed with it. No
+        rule anywhere, no stored example. A whole model is this dial, repeated an enormous number of
+        times, and everything it does lives in the settings.
+      visualState: { props: { markerAt: 3 }, note: "behaviour = dial settings" }
+    alts:
+      simpler: "A neuron multiplies its input by a weight, adds a bias, and squashes the result between 0 and 1. Change the numbers and you change what it does."
+    src: [nielsen-2015]
+
+  - id: s2-bump
+    newIdea: Neurons combine; layers build complex shapes from simple ones
+    blocks:
+      - type: story
+        text: "Two neurons now: one steps up at 2, the other steps down at your dial. Together they make a bump."
+    interaction:
+      kind: widget
+      id: s2-q
+      prompt: Slide the second neuron's edge so the bump covers 6.
+      widget:
+        id: plot
+        v: 1
+        props:
+          kind: function
+          x: { label: "input", min: 0, max: 10 }
+          y: { label: "output", min: -0.1, max: 1.1 }
+          series:
+            - { id: bump, label: "two neurons combined", expr: "1 / (1 + exp(-10 * (x - 2))) - 1 / (1 + exp(-10 * (x - r)))", color: 3 }
+          params: [ { name: r, label: "second edge", min: 2, max: 10, step: 0.5, value: 4 } ]
+          readouts: [ { label: "output at 6", expr: "1 / (1 + exp(-10 * (6 - 2))) - 1 / (1 + exp(-10 * (6 - r)))", digits: 2 } ]
+          dataSource: formula
+        goal: { kind: readout, label: "output at 6", target: 1, tolerance: 0.05 }
+      solution: { params: { r: 8 } }
+      fallback:
+        kind: numeric
+        prompt: The bump runs from 2 up to the second edge. What is the smallest whole-number edge that covers 6?
+        answer: 7
+        tolerance: 0
+      feedbackRight: "Two simple ramps, one useful shape."
+    reveal:
+      text: >
+        One neuron only made a ramp; two made a bump you could move. Stack thousands per layer and
+        dozens of layers, and the network can sketch nearly any shape. No single neuron holds a
+        word. Meaning is spread across many.
+      visualState: { props: { markerAt: 6 }, note: "two ramps = one bump" }
+    src: [nielsen-2015]
+
+  - id: s3-file
+    newIdea: The model file is the weights, end to end
+    blocks:
+      - type: story
+        text: "Back to GPT-2's download: about half a gigabyte, call it 500 million bytes. Each dial is stored as one number, and each number takes 4 bytes."
+    interaction:
+      kind: numeric
+      id: s3-q
+      prompt: How many million numbers fill the file?
+      answer: 125
+      tolerance: 5
+      unit: million
+      onWrong:
+        "500": { feedback: "That's the byte count. Each number takes four of them." }
+        "2000": { feedback: "Divide, don't multiply: 500 million bytes, 4 bytes per number." }
+      feedbackRight: "About 125 million. Bytes divided by 4."
+    reveal:
+      text: >
+        The exact count is 124,439,808: at 4 bytes each, nearly the whole file. Open it and you'd
+        find no words, no rules, no pages, just one long list of dial settings. That list is the
+        model.
+      visualState: { note: "124,439,808 × 4 bytes ≈ 498 MB" }
+    src: [radford-2019]
+
+close:
+  text: "About 124 million numbers called ==weights==: 124,439,808 of them, and nothing else that matters. No rules, no stored pages. Each neuron multiplies its inputs by weights and adds them up, so everything the model does lives in those settings."
+  byGuess:
+    rules: "You picked *rules written by engineers*. Nobody wrote any. The file is 124,439,808 ==weights==, plain numbers, and the behaviour lives in their settings. Turn two of them, as you did, and a neuron changes what it does."
+    text: "You picked *a compressed copy of web pages*. Lots of people do. But the bytes are all spoken for: 124,439,808 numbers, ==weights==, at 4 bytes each. There's no room for pages. What it learned survives as dial settings."
+    dictionary: "You picked *a dictionary of words and meanings*. There's no dictionary, and no neuron holds a word. The file is 124,439,808 ==weights==, plain numbers, and meaning is spread across many of them."
+    idk: "No guess is fine. The file is about 124 million numbers called ==weights==: 124,439,808 of them. No rules, no stored text. Everything the model does lives in their settings."
+  teaser: "Numbers, multiplied and added. So how does *bank* know whether it means money or a river?"
+
+items:
+  - id: i1
+    kind: choice
+    level: recall
+    difficulty: 1
+    prompt: What's mostly inside a trained model's weights file?
+    options:
+      - { id: numbers, text: "Millions or billions of numbers" }
+      - { id: rules, text: "If-then rules", misconception: rules }
+      - { id: pages, text: "Copies of its training pages", misconception: stored-text }
+      - { id: facts, text: "One fact per neuron", misconception: smart-neuron }
+    answer: numbers
+  - id: i2
+    kind: numeric
+    level: apply
+    difficulty: 2
+    prompt: "A neuron gets inputs {a} and 2, with weights 3 and −1. What's its weighted sum (before squashing)?"
+    params:
+      vars: { a: [4, 1, 2, 5] }
+      answerExpr: "3 * a - 2"
+    answer: 10
+    tolerance: 0
+    why: "Multiply each input by its weight, then add."
+  - id: i3
+    kind: numeric
+    level: apply
+    difficulty: 2
+    callback: true
+    prompt: "Remember the half-gigabyte GPT-2 file? A model with {b} billion weights, stored at 2 bytes each, is how many gigabytes?"
+    params:
+      vars: { b: [7, 3, 70, 1] }
+      answerExpr: "b * 2"
+    answer: 14
+    tolerance: 0.1
+    unit: GB
+  - id: i4
+    kind: choice
+    level: apply
+    difficulty: 3
+    prompt: An engineer wants a model to stop using one phrase. Can they open the file and delete the rule for it?
+    options:
+      - { id: spread, text: "No, the behaviour is spread across many weights" }
+      - { id: rule, text: "Yes, every phrase has a rule", misconception: rules }
+      - { id: text, text: "Yes, delete it from the stored text", misconception: stored-text }
+    answer: spread
+    why: "There's no rule to find. Changing behaviour means retraining the weights."
+  - id: i5
+    kind: text
+    level: recall
+    difficulty: 1
+    prompt: "One word: the adjustable numbers inside a neural network are its…"
+    accept: [weights, parameters, params, dials]
+  - id: i6
+    kind: order
+    level: recall
+    difficulty: 2
+    prompt: Put one neuron's work in order.
+    items:
+      - "Multiply each input by its weight"
+      - "Add them up, plus a bias"
+      - "Squash the total"
+      - "Pass the result to the next layer"
+    answer: [0, 1, 2, 3]
+  - id: i7
+    kind: match
+    level: recall
+    difficulty: 2
+    prompt: Match each term to its job.
+    left: ["weight", "bias", "layer", "parameter count"]
+    right: ["how much an input matters", "a nudge added to the sum", "many neurons side by side", "how many numbers the model has"]
+    answer: [[0, 0], [1, 1], [2, 2], [3, 3]]
+  - id: i8
+    kind: choice
+    level: transfer
+    difficulty: 3
+    prompt: Two models run the exact same code, but load different weight files. What follows?
+    options:
+      - { id: differ, text: "They can behave completely differently" }
+      - { id: same, text: "Same code, so same behaviour", misconception: rules }
+      - { id: bigger, text: "The bigger file stores more pages", misconception: stored-text }
+    answer: differ
+    why: "The code is the wiring. The weights are the behaviour."
+  - id: i9
+    kind: explain
+    level: transfer
+    difficulty: 4
+    prompt: "Someone says, \"A chatbot is just a big database of answers.\" Reply in one sentence."
+    keyPoints:
+      - { id: numbers, text: "the model is weights, numbers, not stored answers", keywords: [weights, numbers, parameters, dials, "no database"] }
+      - { id: computes, text: "each answer is computed fresh, so it can answer things it never saw", keywords: [computes, calculated, generates, "new questions", "never seen", fresh] }
+    minHits: 1
+    exemplar: "There's no table of answers: the file is billions of weights, and each reply is computed fresh from them."
+    offline:
+      kind: choice
+      prompt: What's wrong with "a chatbot is a big database of answers"?
+      options:
+        - { id: computed, text: "Replies are computed from weights, not looked up" }
+        - { id: nothing, text: "Nothing, it retrieves the closest stored answer", misconception: stored-text }
+        - { id: rules, text: "It's rules, not a database", misconception: rules }
+      answer: computed
+  - id: i10
+    kind: estimate
+    level: recall
+    difficulty: 3
+    prompt: Roughly how many parameters does GPT-2 small have?
+    scale: { min: 1000, max: 1000000000000, log: true, label: parameters }
+    answer: 124000000
+    accept: { factor: 2 }
+    why: "124,439,808, counted by the precompute script."
+  - id: i11
+    kind: numeric
+    level: apply
+    difficulty: 3
+    prompt: "A neuron uses ReLU: negative sums become 0, anything else passes through. Its sum is {s}. What does it output?"
+    params:
+      vars: { s: [-3, 2, 5, -1] }
+      answerExpr: "max(s, 0)"
+    answer: 0
+    tolerance: 0
+    why: "Below zero, ReLU outputs 0."
+  - id: i12
+    kind: numeric
+    level: transfer
+    difficulty: 3
+    prompt: "A spam-filter neuron weighs \"free\" at {w} and \"meeting\" at −2, with bias −1. An email says \"free\" 3 times and \"meeting\" once. Its weighted sum, before squashing?"
+    params:
+      vars: { w: [2, 1, 3, 0.5] }
+      answerExpr: "3 * w - 2 - 1"
+    answer: 3
+    tolerance: 0.01
+    onWrong:
+      default: { misconception: rules, feedback: "No rule decides it. Multiply each count by its weight, add them, then add the bias." }
+    why: "Count times weight for each word, plus the bias. The same arithmetic runs inside GPT-2."
+
+flashcards:
+  - { id: c1, kind: qa, front: "What does one artificial neuron compute?", back: "A weighted sum of its inputs plus a bias, then a squash." }
+  - { id: c2, kind: qa, front: "Where does a model's behaviour live?", back: "In the settings of its weights. There are no hand-written rules." }
+  - { id: c3, kind: qa, front: "How big is a 7B model stored at 2 bytes per weight?", back: "About 14 GB." }
+  - { id: c4, kind: qa, front: "Does one neuron store one word or fact?", back: "No. Concepts are spread across many neurons and weights." }
+
+toy:
+  prompt: "Move the second edge and watch two simple ramps make a bump."
+  widget:
+    id: plot
+    v: 1
+    props:
+      kind: function
+      x: { label: "input", min: 0, max: 10 }
+      y: { label: "output", min: -0.1, max: 1.1 }
+      series:
+        - { id: bump, label: "two neurons combined", expr: "1 / (1 + exp(-k * (x - l))) - 1 / (1 + exp(-k * (x - r)))", color: 3 }
+      params:
+        - { name: l, label: "first edge", min: 0, max: 10, step: 0.5, value: 2 }
+        - { name: r, label: "second edge", min: 0, max: 10, step: 0.5, value: 6 }
+        - { name: k, label: "steepness", min: 0.5, max: 20, step: 0.5, value: 10 }
+      dataSource: formula
+
+underTheHood:
+  title: Why stacking works
+  body: >
+    A layer computes many weighted sums at once, which is a matrix multiplication, then applies a
+    nonlinearity such as ReLU or GELU to each result. Without the nonlinearity, any stack of layers
+    would collapse into one big weighted sum. With it, pairs of neurons can build steps and bumps,
+    and enough bumps can approximate almost any smooth function. That's the universal approximation
+    result, illustrated well in Nielsen's free book.
+
+    GPT-2 small has 124,439,808 parameters: the token and position tables, plus twelve transformer
+    blocks of attention and feed-forward layers. At 4 bytes each that's about 500 MB. Nothing in the
+    file is labelled "grammar" or "Paris". Interpretability research tries to find out after the
+    fact which directions in these numbers stand for what.
+  sources: [nielsen-2015, radford-2019]
+
+faq:
+  - q: Is this how brains work?
+    a: "Loosely inspired by them, and very different in detail. An artificial neuron is a weighted sum and a squash, nothing more."
+  - q: Who chooses the weight values?
+    a: "Nobody, by hand. Training nudges them automatically to reduce prediction errors. That's the Training card."
+
+sources:
+  - { id: nielsen-2015, title: "Neural Networks and Deep Learning", by: "Michael Nielsen", year: 2015, url: "http://neuralnetworksanddeeplearning.com/chap4.html", note: "Chapter 4: a visual proof that neural nets can compute any function." }
+  - { id: radford-2019, title: "Language Models are Unsupervised Multitask Learners", by: "Radford et al.", year: 2019, url: "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf", note: "Parameter count computed from the released GPT-2 small weights by scripts/precompute." }
+
+status: draft

@@ -1,0 +1,58 @@
+{
+  "meta": {
+    "about": "What a base (pretrained-only) model knows and how it behaves: facts as next-token odds, and a Q&A prompt continued as a document.",
+    "model": "gpt2",
+    "modelName": "GPT-2 small",
+    "modelRevision": "607a30d783dfa663caf39e06633721c8d4cfcd7e",
+    "parameters": 124439808,
+    "vocabSize": 50257,
+    "contextLength": 1024,
+    "script": "scripts/precompute@1",
+    "seed": 20261020,
+    "libraries": {
+      "python": "3.12.13",
+      "torch": "2.14.1",
+      "transformers": "5.20.2"
+    },
+    "generatedAt": "2026-10-19T22:55:22Z",
+    "note": "Probabilities are GPT-2's softmax over its whole vocabulary, rounded to 4 decimals. Lists show a few tokens; the rest of the probability is 'everything else'."
+  },
+  "water": {
+    "context": "Water is made of hydrogen and",
+    "tokens": [
+      {
+        "text": "oxygen",
+        "p": 0.4641
+      },
+      {
+        "text": "helium",
+        "p": 0.2792
+      },
+      {
+        "text": "carbon",
+        "p": 0.0345
+      },
+      {
+        "text": "methane",
+        "p": 0.0195
+      },
+      {
+        "text": "is",
+        "p": 0.0105
+      }
+    ]
+  },
+  "qa": {
+    "prompt": "Q: What is the capital of France?\nA:",
+    "continuation": " The capital of France is Paris.\nQ: What is the capital of France?\nA:"
+  },
+  "weights": {
+    "parameters": 124439808,
+    "bytesFloat32": 497759232
+  },
+  "webText": {
+    "gigabytes": 40,
+    "documents": 8000000,
+    "source": "Radford et al. 2019 (reported, not computed)"
+  }
+}

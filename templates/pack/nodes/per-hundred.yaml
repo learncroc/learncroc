@@ -1,0 +1,151 @@
+# yaml-language-server: $schema=https://learncroc.github.io/schema/v1/node.schema.json
+id: per-hundred
+title: Per cent means per hundred
+tagline: A percentage is a part of a hundred
+estMinutes: 3
+bigIdea: >
+  A percentage is a number of parts out of 100. 40% means 40 of every 100, so it is the same
+  share as 4 out of 10 or 0.4 of the whole.
+objectives:
+  - Read a percentage as parts per hundred
+  - Match a percentage to the same share written as a fraction
+visual:
+  kind: figure
+  asset: assets/img/hundred-grid.svg
+  alt: "A ten by ten grid of squares with the top two rows shaded."
+
+misconceptions:
+  percent-is-count:
+    label: Thinks a percentage is a count of things rather than a share of a whole
+    hint: "Count the shaded squares, then count all the squares. What share is shaded?"
+
+hook:
+  blocks:
+    - type: story
+      text: "A shop sign says 20% of the shelf is on sale. The shelf holds 50 tins."
+  interaction:
+    kind: choice
+    id: hook-q
+    prompt: How many tins are on sale?
+    confidence: true
+    options:
+      - { id: twenty, text: "20 tins", misconception: percent-is-count }
+      - { id: ten, text: "10 tins" }
+      - { id: fifty, text: "50 tins", misconception: percent-is-count }
+    answer: ten
+  lotsGuess: twenty
+
+screens:
+  - id: s1-grid
+    newIdea: A percentage is a share of 100
+    blocks:
+      - type: story
+        text: "The grid has 100 squares. The top two rows are shaded."
+    interaction:
+      kind: numeric
+      id: s1-q
+      prompt: What percentage of the grid is shaded?
+      answer: 20
+      tolerance: 0
+      unit: "%"
+      onWrong:
+        "2": { misconception: percent-is-count, feedback: "That's the rows. Count the squares in them." }
+        default: { feedback: "Each row has 10 squares, and there are 100 in all." }
+    reveal:
+      text: "20 squares of 100: 20%. The same share as 10 tins of 50."
+
+  - id: s2-match
+    blocks:
+      - type: story
+        text: "The same share can wear different clothes."
+    interaction:
+      kind: match
+      id: s2-q
+      prompt: Match each percentage to the same share.
+      left: ["50%", "25%", "10%"]
+      right: ["1 out of 10", "1 out of 2", "1 out of 4"]
+      answer: [[0, 1], [1, 2], [2, 0]]
+    reveal:
+      text: "Half, a quarter, a tenth. Each one is a slice of the same hundred."
+
+  - id: s3-transfer
+    blocks:
+      - type: story
+        text: "A class of 30 says 50% walked to school."
+    interaction:
+      kind: numeric
+      id: s3-q
+      prompt: How many pupils walked?
+      answer: 15
+      tolerance: 0
+      onWrong:
+        "50": { misconception: percent-is-count, feedback: "50% is half the class, not 50 pupils." }
+    reveal:
+      text: "Half of 30 is 15. The percentage told you the share; the class told you the size."
+
+close:
+  text: "10 tins. 20% is a share, not a count: ==20 of every 100==, so 10 of every 50. The size of the shelf decides how many tins that is."
+  byGuess:
+    twenty: "You picked *20 tins*. Lots of people do: the 20 looks like a count. It's a share, 20 of every 100, so 10 of these 50."
+    fifty: "You picked *50 tins*. That's the whole shelf. 20% is a fifth of it: 10 tins."
+    idk: "No guess is fine. 20% means 20 of every 100, so on a shelf of 50 it's 10 tins."
+  teaser: "If 10% is one tenth, what tip do you leave on a £36 lunch?"
+
+items:
+  - id: i1
+    kind: numeric
+    level: recall
+    difficulty: 1
+    prompt: "In a grid of 100 squares, 35 are shaded. What percentage is that?"
+    answer: 35
+    tolerance: 0
+  - id: i2
+    kind: numeric
+    level: apply
+    difficulty: 2
+    prompt: "What is {p}% of 200?"
+    params:
+      vars: { p: [10, 20, 30, 40] }
+      answerExpr: "p * 2"
+    answer: 20
+    tolerance: 0
+  - id: i3
+    kind: choice
+    level: transfer
+    difficulty: 3
+    prompt: "A test has 40 questions. Which score is better: 30 right, or 70%?"
+    options:
+      - { id: thirty, text: "30 right" }
+      - { id: seventy, text: "70%", misconception: percent-is-count }
+      - { id: same, text: "They're the same", misconception: percent-is-count }
+    answer: thirty
+    why: "30 of 40 is 75%, which beats 70%."
+  - id: i4
+    kind: numeric
+    level: transfer
+    difficulty: 3
+    prompt: "A bus holds 60 people and is 75% full. How many people are on it?"
+    answer: 45
+    tolerance: 0
+    why: "75% is three quarters, and three quarters of 60 is 45."
+  - id: i5
+    kind: order
+    level: transfer
+    difficulty: 3
+    prompt: "Put these shares from smallest to largest."
+    items: ["5%", "1 out of 10", "a quarter", "40 of 100"]
+    answer: [0, 1, 2, 3]
+    why: "5%, 10%, 25% and 40%."
+  - id: i6
+    kind: numeric
+    level: apply
+    difficulty: 2
+    prompt: "What percentage is 3 out of 4?"
+    answer: 75
+    tolerance: 0
+    unit: "%"
+
+sources:
+  - { id: oed-percent, title: "per cent, adv. and n.", by: "Oxford English Dictionary" }
+
+status: draft

@@ -1,0 +1,314 @@
+# yaml-language-server: $schema=../../../schemas/node.schema.json
+id: context-window
+title: The context window
+tagline: What a model can see while it writes
+estMinutes: 4
+bigIdea: >
+  A model can only read a fixed number of tokens at once: its context window. Everything it knows
+  about your conversation must be inside that window, because the model keeps nothing between
+  runs. Chat apps re-send the transcript every time, and when it no longer fits, the oldest tokens
+  are dropped.
+objectives:
+  - Decide which parts of a conversation still fit in a window
+  - Explain why a model has no memory between messages
+  - Estimate whether a document fits a given window
+concepts: [llm.context-window]
+visual:
+  kind: figure
+  asset: assets/img/context-window.svg
+  alt: "A conveyor belt of tokens passing under a fixed-width frame. Tokens behind the frame fall off the end."
+
+misconceptions:
+  remembers-all:
+    label: Thinks the model remembers everything said earlier in a chat
+    hint: "The window is a fixed size. When the chat grows past it, what happens to the oldest messages?"
+  between-chats:
+    label: Thinks the model learns from or remembers past chats by itself
+    hint: "Between messages, nothing in the model changes. Who sends the earlier conversation back in?"
+  search-history:
+    label: Thinks the model searches back through the chat history when it needs something
+    hint: "The model only reads what's in the window. Is there any step where it goes looking elsewhere?"
+  reply-free:
+    label: Thinks the model's own reply doesn't use up window space
+    upstream: next-token
+    hint: "Each new token is appended to the text before the next run. Where does that text live?"
+
+hook:
+  interaction:
+    kind: choice
+    id: hook-q
+    prompt: You're 300 pages into a chat with a model whose window holds 8,000 tokens. You ask about page 1. What happens?
+    confidence: true
+    options:
+      - { id: remembers, text: "It remembers: it was there", misconception: remembers-all }
+      - { id: gone, text: "Page 1 is no longer in view" }
+      - { id: searches, text: "It searches back to page 1", misconception: search-history }
+      - { id: learned, text: "It learned it, so it knows", misconception: between-chats }
+    answer: gone
+  lotsGuess: remembers
+  style: what-would-you-do
+
+screens:
+  - id: s1-window
+    newIdea: The window holds the newest tokens; older ones drop off
+    blocks:
+      - type: story
+        text: "A tiny model with an 18-token window. Like every real model, it reads only what fits. Five messages, oldest first: 6, 8, 7, 5 and 6 tokens."
+    interaction:
+      kind: widget
+      id: s1-q
+      prompt: Sort each message into still in view or fallen off.
+      widget:
+        id: sorter
+        v: 1
+        props:
+          mode: buckets
+          buckets:
+            - { id: in, label: "In the window" }
+            - { id: out, label: "Fallen off" }
+          cards:
+            - { id: m1, text: "Hi, I'm Ana. (6)" }
+            - { id: m2, text: "My dog is called Biscuit. (8)" }
+            - { id: m3, text: "Suggest a film for tonight. (7)" }
+            - { id: m4, text: "Something funny, please. (5)" }
+            - { id: m5, text: "What's my dog called? (6)" }
+        goal: { kind: buckets, assignment: { m1: out, m2: out, m3: in, m4: in, m5: in } }
+      solution: { assignment: { m1: out, m2: out, m3: in, m4: in, m5: in } }
+      fallback:
+        kind: choice
+        prompt: "Window: 18 tokens. Newest first: 6, 5, 7, then the 8-token message about Biscuit. Is Biscuit still in view?"
+        options:
+          - { id: gone, text: "It fell off: no room left" }
+          - { id: kept, text: "It stays: chats are kept whole", misconception: remembers-all }
+          - { id: name, text: "Only the dog's name is kept", misconception: search-history }
+        answer: gone
+      feedbackRight: "6 + 5 + 7 = 18. Full. Biscuit is gone."
+    reveal:
+      text: >
+        The newest three filled all 18 slots. "My dog is called Biscuit" fell off the back. Asked
+        for the dog's name, the model can only guess. It isn't being forgetful: the answer simply
+        isn't in its world any more.
+      visualState: { note: "6 + 5 + 7 = 18" }
+    src: [radford-2019]
+
+  - id: s2-resend
+    newIdea: The app re-sends the whole conversation every turn
+    blocks:
+      - type: story
+        text: "Between your messages, nothing inside the model changes. So how does it know what you said before?"
+    visual:
+      kind: figure
+      asset: assets/img/resend.svg
+      alt: "Three chat turns. Each turn the app packs the whole transcript so far, growing every time, and sends it to a model that keeps nothing between turns."
+    interaction:
+      kind: order
+      id: s2-q
+      prompt: Put one chat turn in order.
+      items:
+        - "The app joins the whole chat into one text"
+        - "The text is trimmed to fit the window"
+        - "The model runs the loop to write a reply"
+        - "The reply is added to the transcript"
+      answer: [0, 1, 2, 3]
+      feedbackRight: "Every turn starts from a fresh copy of the transcript."
+    reveal:
+      text: >
+        Every turn starts from scratch: the app re-sent the whole transcript, trimmed to fit.
+        The model keeps nothing between turns. "Memory" features work the same way: saved notes get
+        pasted back into the window.
+      visualState: { note: "re-sent every turn" }
+    alts:
+      simpler: "The model doesn't remember your chat. The app shows it the whole chat again each time you send a message."
+      analogy: "Like briefing a brilliant temp every morning. They know a lot, but about your project they only know today's briefing."
+
+  - id: s3-contract
+    blocks:
+      - type: story
+        text: "You paste a 9,000-word contract into a model with an 8,000-token window. English runs about 1.3 tokens per word."
+    interaction:
+      kind: numeric
+      id: s3-q
+      prompt: Roughly how many tokens won't fit?
+      answer: 3700
+      tolerance: 200
+      unit: tokens
+      onWrong:
+        "1000": { feedback: "That compares words with tokens. Convert the words first." }
+        "0": { misconception: remembers-all, feedback: "9,000 words is about 11,700 tokens. Does that fit in 8,000?" }
+      feedbackRight: "About 3,700 tokens left outside, before the reply even starts."
+    reveal:
+      text: >
+        About 11,700 tokens against 8,000 slots: roughly 3,700 never make it in, and the reply
+        needs room too. The model won't warn you; it just answers from whatever fit.
+      visualState: { note: "11,700 > 8,000" }
+
+close:
+  text: "Page 1 is gone from view. A model reads only what fits in its ==context window==, here the newest 8,000 tokens, and keeps nothing between turns. The app re-sends the chat each time; page 1 no longer fits, so the model can only guess."
+  byGuess:
+    remembers: "You picked *it remembers: it was there*. Lots of people do. But the model keeps nothing between turns; it reads only what fits in its ==context window==. Page 1 fell out of the newest 8,000 tokens long ago, so it can only guess."
+    searches: "You picked *it searches back to page 1*. There's no search step. The model reads only what fits in its ==context window==, the newest 8,000 tokens. Page 1 isn't in there, so it answers from whatever is."
+    learned: "You picked *it learned it, so it knows*. Chatting never changes the weights. The model reads only what fits in its ==context window==, the newest 8,000 tokens, and page 1 dropped out long ago."
+    idk: "No guess is fine. Page 1 is gone from view. The model reads only what fits in its ==context window==, the newest 8,000 tokens, and keeps nothing between turns, so it can only guess."
+  teaser: "That's the loop: score, roll, append, inside a window. Ready to run it on sentences you haven't seen?"
+
+items:
+  - id: i1
+    kind: choice
+    level: recall
+    difficulty: 1
+    prompt: A chat is longer than the model's window. What can the model see while it writes?
+    options:
+      - { id: window, text: "Only the most recent tokens that fit" }
+      - { id: all, text: "Everything ever said in the chat", misconception: remembers-all }
+      - { id: search, text: "Whatever it searches for in the history", misconception: search-history }
+    answer: window
+  - id: i2
+    kind: estimate
+    level: apply
+    difficulty: 2
+    prompt: "A window holds {w} tokens. At about 1.3 tokens per word, roughly how many English words fit?"
+    params:
+      vars: { w: [1024, 8000, 128000, 4096] }
+      answerExpr: "w / 1.3"
+    scale: { min: 100, max: 1000000, log: true, label: words }
+    answer: 787.6923076923077
+    accept: { factor: 1.2 }
+    why: "Tokens divided by about 1.3."
+  - id: i3
+    kind: numeric
+    level: apply
+    difficulty: 2
+    prompt: "A chat is {c} tokens long and the window holds 1,024. How many of the oldest tokens are out of view?"
+    params:
+      vars: { c: [1300, 1100, 2048, 1500] }
+      answerExpr: "c - 1024"
+    answer: 276
+    tolerance: 0
+    unit: tokens
+    onWrong:
+      "0": { misconception: remembers-all }
+  - id: i4
+    kind: choice
+    level: apply
+    difficulty: 2
+    prompt: You open a new chat and ask, "What did we talk about yesterday?" With no memory feature, what can the model use?
+    options:
+      - { id: nothing, text: "Nothing from yesterday" }
+      - { id: weights, text: "Yesterday's chat, stored in its weights", misconception: between-chats }
+      - { id: search, text: "A search of your old chats", misconception: search-history }
+    answer: nothing
+    why: "A new chat starts with an empty window."
+  - id: i5
+    kind: order
+    level: recall
+    difficulty: 2
+    prompt: Put one chat turn in order.
+    items:
+      - "Join the chat so far into one text"
+      - "Trim it to fit the window"
+      - "Run the loop to write a reply"
+      - "Add the reply to the transcript"
+    answer: [0, 1, 2, 3]
+  - id: i6
+    kind: text
+    level: recall
+    difficulty: 1
+    prompt: "The most tokens a model can read at once is the size of its context…"
+    accept: [window, "window size", length]
+  - id: i7
+    kind: numeric
+    level: transfer
+    difficulty: 3
+    prompt: "A 1,024-token window already holds a {p}-token prompt. How many tokens can the reply grow to before the prompt starts sliding out?"
+    params:
+      vars: { p: [1000, 900, 1020, 600] }
+      answerExpr: "1024 - p"
+    answer: 24
+    tolerance: 0
+    unit: tokens
+    onWrong:
+      default: { misconception: reply-free, feedback: "The reply is appended to the same text, so it shares the window." }
+  - id: i8
+    kind: match
+    level: apply
+    difficulty: 2
+    prompt: Match each situation to what it does to the window.
+    left: ["Pasting a long document", "Starting a new chat", "A memory feature"]
+    right: ["fills it up", "empties it", "pastes saved notes back in"]
+    answer: [[0, 0], [1, 1], [2, 2]]
+  - id: i9
+    kind: explain
+    level: transfer
+    difficulty: 3
+    prompt: "In one sentence: why might a chatbot \"forget\" your name in a very long conversation?"
+    keyPoints:
+      - { id: fixed, text: "the window holds a fixed number of tokens", keywords: [window, limit, "fixed size", "only so many", "context"] }
+      - { id: dropped, text: "older tokens drop out, and nothing is remembered outside the window", keywords: ["drop", "fell off", "falls out", oldest, "no memory", "not remembered", "pushed out"] }
+    minHits: 1
+    exemplar: "The window only holds so many tokens, so once the chat grows, the message with your name drops out and it's simply gone."
+    offline:
+      kind: choice
+      prompt: Why can a chatbot "forget" your name in a long chat?
+      options:
+        - { id: window, text: "The early messages no longer fit in its window" }
+        - { id: decides, text: "It decides your name isn't important", misconception: search-history }
+        - { id: weights, text: "Its weights overwrite old facts", misconception: between-chats }
+      answer: window
+  - id: i10
+    kind: cloze
+    level: recall
+    difficulty: 2
+    prompt: Fill the gaps.
+    text: "The model only sees tokens inside its {{1}}. Anything older has {{2}}."
+    blanks:
+      "1": { accept: [window, "context window", context], tiles: [window, weights, database] }
+      "2": { accept: ["fallen off", "dropped out", "dropped", "fallen out", gone, "been dropped"], tiles: [fallen off, been saved, been learned] }
+  - id: i11
+    kind: estimate
+    level: transfer
+    difficulty: 3
+    prompt: A one-hour meeting transcript is about 9,000 words. How many of GPT-2's 1,024-token windows would it fill?
+    scale: { min: 0.1, max: 1000, log: true, label: windows }
+    answer: 11.4
+    accept: { factor: 1.5 }
+    why: "9,000 × 1.3 ≈ 11,700 tokens, about 11 windows."
+
+flashcards:
+  - { id: c1, kind: qa, front: "What is a context window?", back: "The fixed number of tokens a model can read at once." }
+  - { id: c2, kind: qa, front: "Does a model remember your chat between messages?", back: "No. The app re-sends the transcript every turn, trimmed to fit." }
+  - { id: c3, kind: qa, front: "What happens when a chat outgrows the window?", back: "The oldest tokens are dropped. The model can't see them." }
+  - { id: c4, kind: qa, front: "Does the model's own reply use window space?", back: "Yes. Each new token joins the same text." }
+
+toy:
+  prompt: "Paste anything to see how much of a window it would use."
+  widget:
+    id: token-splitter
+    v: 1
+    props: { text: "Paste a paragraph here and count the tokens.", editable: true, showIds: false, encoding: cl100k_base }
+
+underTheHood:
+  title: Why windows have limits
+  body: >
+    GPT-2 was trained with a window of 1,024 tokens; its position table simply has no rows beyond
+    that. Newer models handle far longer windows, but every window is finite, and attention's cost
+    grows with the square of the length in a basic transformer: twice the tokens, about four times
+    the attention work.
+
+    Long windows also aren't read evenly. Studies of long-context models found that facts buried in
+    the middle of a long input are used less reliably than facts at the start or the end. Apps work
+    around limits by trimming, summarising older turns, or retrieving only the relevant passages
+    (grounding, a planned card). Chat "memory" features store notes outside the model and paste them
+    back into the window.
+  sources: [radford-2019, liu-2023]
+
+faq:
+  - q: Do the chat app's hidden instructions use the window too?
+    a: "Yes. System instructions, tool descriptions and pasted files all share the same window with your messages."
+  - q: Does a model learn from my chats?
+    a: "Not while you chat: the weights don't change. Some companies may use chats to train future models, which is a separate policy question."
+
+sources:
+  - { id: radford-2019, title: "Language Models are Unsupervised Multitask Learners", by: "Radford et al.", year: 2019, url: "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf", note: "GPT-2's 1,024-token context. Message token counts on this card use GPT-4's tokenizer (cl100k_base) on the message text alone." }
+  - { id: liu-2023, title: "Lost in the Middle: How Language Models Use Long Contexts", by: "Liu et al.", year: 2023, url: "https://arxiv.org/abs/2307.03172" }
+
+status: draft

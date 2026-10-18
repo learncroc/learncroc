@@ -1,0 +1,350 @@
+# yaml-language-server: $schema=../../../schemas/node.schema.json
+id: training
+title: Training
+tagline: Loss and gradient descent
+estMinutes: 4
+bigIdea: >
+  Weights start random. Training shows the model real text, measures how surprised it was by each
+  true next token (the loss), and nudges every weight a little in the direction that lowers the
+  loss. Repeated over billions of tokens, these small downhill steps set the weights. Nobody tunes
+  them by hand and no text is stored.
+objectives:
+  - Step a weight downhill using the slope of the loss
+  - Rank predictions by their loss
+  - Choose a learning rate that converges
+concepts: [ml.training, ml.gradient-descent]
+visual:
+  kind: figure
+  asset: assets/img/loss-valley.svg
+  alt: "A ball on the side of a curved valley labelled loss, with an arrow pointing downhill toward the bottom."
+
+misconceptions:
+  hand-tuned:
+    label: Thinks engineers set the weights by hand
+    hint: "You didn't need to know the answer: the slope told you which way to step. Who could do that a billion times?"
+  memorize:
+    label: Thinks training stores the text inside the model
+    upstream: neural-nets
+    hint: "Training only nudges numbers. Does the file get any bigger as it reads more text?"
+  right-or-wrong:
+    label: Thinks the loss only counts right or wrong, not how much probability the true token got
+    hint: "\"mat\" at 0.4% and \"floor\" at 7.6% were both not the top pick. Were they equally surprising?"
+  bigger-steps:
+    label: Thinks bigger learning steps always mean faster learning
+    hint: "Watch the ball at a step size of 1.2. Is it getting closer to the bottom, or further?"
+
+hook:
+  interaction:
+    kind: choice
+    id: hook-q
+    prompt: Nobody sets GPT-2's 124 million weights by hand. So where do their values come from?
+    confidence: true
+    options:
+      - { id: engineers, text: "Engineers tune them over years", misconception: hand-tuned }
+      - { id: copied, text: "They're copied from the training text", misconception: memorize }
+      - { id: nudged, text: "Random, then nudged to cut prediction errors" }
+      - { id: rules, text: "Grammar rules are compiled into them", misconception: hand-tuned }
+    answer: nudged
+  lotsGuess: engineers
+  style: puzzle
+
+screens:
+  - id: s1-downhill
+    newIdea: Gradient descent steps a weight downhill on the loss
+    blocks:
+      - type: story
+        text: "One weight, one loss curve. You can't see the bottom, only the slope where you stand."
+    interaction:
+      kind: widget
+      id: s1-q
+      prompt: Step the weight against the slope until the slope reads about 0.
+      widget:
+        id: plot
+        v: 1
+        props:
+          kind: function
+          x: { label: "weight", min: -2, max: 8 }
+          y: { label: "loss", min: 0, max: 30 }
+          series: [ { id: loss, label: "loss", expr: "(x - 3)^2 + 1", color: 4 } ]
+          params: [ { name: w, label: "weight", min: -2, max: 8, step: 0.5, value: -1 } ]
+          readouts:
+            - { label: "slope here", expr: "2 * (w - 3)", digits: 1 }
+            - { label: "loss here", expr: "(w - 3)^2 + 1", digits: 1 }
+          dataSource: illustrative
+        goal: { kind: readout, label: "slope here", target: 0, tolerance: 0.5 }
+      solution: { params: { w: 3 } }
+      fallback:
+        kind: choice
+        prompt: The slope of the loss here is −8. Which way should the weight move?
+        options:
+          - { id: up, text: "Up: step against the slope" }
+          - { id: down, text: "Down: follow the slope", misconception: bigger-steps }
+          - { id: ask, text: "Ask an engineer", misconception: hand-tuned }
+        answer: up
+      feedbackRight: "Slope zero: the bottom of the valley."
+    reveal:
+      text: >
+        You walked the ball to the bottom without ever seeing the whole curve: slope negative, step
+        right; slope positive, step left. That's gradient descent. Training does it for all 124
+        million weights at once, billions of times.
+      visualState: { props: { markerAt: 3 }, note: "slope = 0: lowest loss" }
+    alts:
+      simpler: "Feel which way the ground tilts, take a small step downhill, repeat. You'll reach the bottom without a map."
+    src: [rumelhart-1986]
+
+  - id: s2-surprise
+    newIdea: The loss measures surprise at the true next token
+    blocks:
+      - type: story
+        text: "The loss scores each prediction by the probability it gave the word that actually came next."
+    interaction:
+      kind: widget
+      id: s2-q
+      prompt: Rank these predictions from smallest loss to biggest.
+      widget:
+        id: sorter
+        v: 1
+        props:
+          mode: rank
+          rankLabels: ["smallest loss", "biggest loss"]
+          cards:
+            - { id: p76, text: "True word \"floor\" got 7.6%" }
+            - { id: p004, text: "True word \"mat\" got 0.4%" }
+            - { id: p46, text: "True word \"oxygen\" got 46%" }
+            - { id: p0007, text: "True word \"moon\" got 0.07%" }
+        goal: { kind: rank, order: [p46, p76, p004, p0007] }
+      solution: { order: [p46, p76, p004, p0007] }
+      fallback:
+        kind: order
+        prompt: Order from smallest loss to biggest.
+        items: ["true word got 46%", "true word got 7.6%", "true word got 0.4%", "true word got 0.07%"]
+        answer: [0, 1, 2, 3]
+      feedbackRight: "Less probability on the truth, more loss."
+      onWrong:
+        default: { misconception: right-or-wrong, feedback: "Count how much probability the real word got, not just whether it won." }
+    reveal:
+      text: >
+        The less probability GPT-2 put on the word that really came next, the bigger the loss. If
+        training text said "mat", GPT-2's 0.4% earns a large loss, and the nudge shifts weights to
+        make "mat" likelier next time.
+      visualState: { note: "loss = −log(p of true word)" }
+    src: [radford-2019]
+
+  - id: s3-rate
+    blocks:
+      - type: story
+        text: "Same valley, start at 0. Now you choose the step size, called the learning rate. The ball takes five steps."
+    interaction:
+      kind: widget
+      id: s3-q
+      prompt: Pick a learning rate that gets the loss to about 1 within five steps.
+      widget:
+        id: plot
+        v: 1
+        props:
+          kind: function
+          x: { label: "weight", min: -2, max: 8 }
+          y: { label: "loss", min: 0, max: 30 }
+          series: [ { id: loss, label: "loss", expr: "(x - 3)^2 + 1", color: 4 } ]
+          params: [ { name: lr, label: "learning rate", min: 0.05, max: 1.2, step: 0.05, value: 0.05 } ]
+          readouts: [ { label: "loss after 5 steps", expr: "(3 * (1 - 2 * lr)^5)^2 + 1", digits: 2 } ]
+          dataSource: illustrative
+        goal: { kind: readout, label: "loss after 5 steps", target: 1, tolerance: 0.05 }
+      solution: { params: { lr: 0.5 } }
+      fallback:
+        kind: choice
+        prompt: Which learning rate settles fastest without overshooting?
+        options:
+          - { id: mid, text: "0.4" }
+          - { id: tiny, text: "0.05" }
+          - { id: huge, text: "1.2", misconception: bigger-steps }
+        answer: mid
+      feedbackRight: "Big enough to move, small enough not to overshoot."
+    reveal:
+      text: >
+        Tiny rates crawled; past 1 the ball overshot and flew up the far wall. In between it settled
+        in five steps. Real training tunes this learning rate with care, and usually shrinks it as
+        training goes on.
+      visualState: { note: "too small crawls, too big flies" }
+
+close:
+  text: "They start random, then get ==nudged downhill==. Training shows the model real text, measures its surprise at each true next token (the loss), and moves every weight a little in the direction that lowers it. Billions of small steps set all 124 million."
+  byGuess:
+    engineers: "You picked *engineers tune them over years*. Lots of people do. Nobody could turn 124 million dials by hand. They start random and get ==nudged downhill==: each step moves every weight a little to make the true next token likelier."
+    copied: "You picked *they're copied from the training text*. Nothing is copied. Weights start random and get ==nudged downhill==: each training step moves every one a little to lower the loss on real text."
+    rules: "You picked *grammar rules are compiled into them*. No rules go in. Weights start random and get ==nudged downhill==, billions of small steps that make true next tokens likelier. Grammar falls out of that."
+    idk: "No guess is fine. Weights start random and get ==nudged downhill==: training measures the model's surprise at each true next token and moves every weight a little to lower it, billions of times."
+  teaser: "Nudges only teach it to predict the next word. Can that teach it any chemistry?"
+
+items:
+  - id: i1
+    kind: choice
+    level: recall
+    difficulty: 1
+    prompt: How do a model's weights get their values?
+    options:
+      - { id: descent, text: "Start random, then nudged to reduce prediction errors" }
+      - { id: hand, text: "Engineers set them by hand", misconception: hand-tuned }
+      - { id: copy, text: "Training copies text into them", misconception: memorize }
+    answer: descent
+  - id: i2
+    kind: numeric
+    level: apply
+    difficulty: 2
+    callback: true
+    prompt: "Remember who sets the weights? No one: the slope does. A weight is {w}, the slope there is 2, the learning rate 0.1. The weight after one step?"
+    params:
+      vars: { w: [5, 1, 3, 0] }
+      answerExpr: "w - 0.1 * 2"
+    answer: 4.8
+    tolerance: 0.001
+    onWrong:
+      "5.2": { misconception: bigger-steps, feedback: "That follows the slope uphill. Step against it." }
+    why: "New weight = old weight − learning rate × slope."
+  - id: i3
+    kind: order
+    level: recall
+    difficulty: 2
+    prompt: Put one training step in order.
+    items:
+      - "Show the model a chunk of real text"
+      - "It predicts every next token"
+      - "Measure the loss: how surprised it was"
+      - "Nudge every weight slightly to lower the loss"
+    answer: [0, 1, 2, 3]
+  - id: i4
+    kind: choice
+    level: apply
+    difficulty: 2
+    prompt: Training text says "The cat sat on the mat". GPT-2 gave "mat" 0.4%. What does the training step do?
+    options:
+      - { id: nudge, text: "Nudge weights so \"mat\" gets more probability" }
+      - { id: store, text: "Store the sentence for next time", misconception: memorize }
+      - { id: nothing, text: "Nothing: it wasn't the top pick anyway", misconception: right-or-wrong }
+    answer: nudge
+  - id: i5
+    kind: numeric
+    level: apply
+    difficulty: 3
+    prompt: "The loss for one prediction is −ln(p), where p is the probability given to the true word. What is the loss when p = {p}? (Two decimals.)"
+    params:
+      vars: { p: [0.5, 0.1, 0.9, 0.25] }
+      answerExpr: "-ln(p)"
+    answer: 0.6931471805599453
+    tolerance: 0.01
+    why: "Certain and right (p = 1) gives 0. Smaller p, bigger loss."
+  - id: i6
+    kind: cloze
+    level: recall
+    difficulty: 2
+    prompt: Fill the gaps.
+    text: "Training nudges each weight a little {{1}} the slope, to make the {{2}} smaller."
+    blanks:
+      "1": { accept: [against, "opposite to", "opposite", downhill, "away from"], tiles: [against, along, toward] }
+      "2": { accept: [loss, error, "loss value", errors], tiles: [loss, file, vocabulary] }
+  - id: i7
+    kind: text
+    level: recall
+    difficulty: 1
+    prompt: "Stepping weights downhill on the loss is called gradient…"
+    accept: [descent]
+  - id: i8
+    kind: choice
+    level: transfer
+    difficulty: 3
+    prompt: Someone sets the learning rate far too high. What's likely to happen?
+    options:
+      - { id: overshoot, text: "Steps overshoot and the loss jumps around or grows" }
+      - { id: faster, text: "It learns faster, so it's better", misconception: bigger-steps }
+      - { id: memorize, text: "It memorises the text word for word", misconception: memorize }
+    answer: overshoot
+  - id: i9
+    kind: explain
+    level: transfer
+    difficulty: 4
+    prompt: "In one sentence: how do tiny weight nudges add up to a model that writes fluent text?"
+    keyPoints:
+      - { id: lower-loss, text: "each nudge makes the true next tokens a bit more likely", keywords: ["lower loss", "less wrong", "more likely", "better predictions", "fewer mistakes", reduces] }
+      - { id: repeated, text: "repeated over billions of tokens", keywords: [billions, millions, "over and over", repeated, "many times", "lots of text"] }
+    minHits: 2
+    exemplar: "Each nudge makes the real next words a bit more likely, and billions of nudges over huge amounts of text add up to fluency."
+    offline:
+      kind: choice
+      prompt: How do tiny nudges add up to fluent text?
+      options:
+        - { id: accumulate, text: "Each makes true next tokens slightly likelier, over billions of examples" }
+        - { id: store, text: "Each stores another sentence", misconception: memorize }
+        - { id: rules, text: "Each adds a grammar rule", misconception: hand-tuned }
+      answer: accumulate
+  - id: i10
+    kind: estimate
+    level: transfer
+    difficulty: 3
+    prompt: "A training run reads {r} million tokens per second. Roughly how many days to read 300 billion tokens?"
+    params:
+      vars: { r: [1, 2, 5, 0.5] }
+      answerExpr: "300000 / r / 86400"
+    scale: { min: 0.1, max: 1000, log: true, unit: days, label: days }
+    answer: 3.4722222222222223
+    accept: { factor: 1.5 }
+    why: "300 billion ÷ (r million per second) seconds, then ÷ 86,400 seconds per day."
+  - id: i11
+    kind: match
+    level: recall
+    difficulty: 2
+    prompt: Match each training term to its meaning.
+    left: ["loss", "gradient", "learning rate", "training data"]
+    right: ["how wrong the predictions were", "which way each weight should move", "how big each step is", "the text it learns to predict"]
+    answer: [[0, 0], [1, 1], [2, 2], [3, 3]]
+
+flashcards:
+  - { id: c1, kind: qa, front: "What does the training loss measure for a language model?", back: "How little probability the model gave the true next token: its surprise." }
+  - { id: c2, kind: qa, front: "Which way does gradient descent move a weight?", back: "Against the slope of the loss: downhill." }
+  - { id: c3, kind: qa, front: "What goes wrong if the learning rate is too high?", back: "Steps overshoot, and the loss bounces or blows up." }
+  - { id: c4, kind: qa, front: "Does training store the text it reads?", back: "Not as a copy. It nudges weights and the file never grows, though much-repeated passages can be memorised." }
+
+toy:
+  prompt: "Pick a start and a step size. Can you make the ball fly off?"
+  widget:
+    id: plot
+    v: 1
+    props:
+      kind: function
+      x: { label: "weight", min: -2, max: 8 }
+      y: { label: "loss", min: 0, max: 30 }
+      series: [ { id: loss, label: "loss", expr: "(x - 3)^2 + 1", color: 4 } ]
+      params:
+        - { name: w0, label: "start", min: -2, max: 8, step: 0.5, value: 0 }
+        - { name: lr, label: "learning rate", min: 0.05, max: 1.2, step: 0.05, value: 0.2 }
+      readouts:
+        - { label: "weight after 5 steps", expr: "3 + (w0 - 3) * (1 - 2 * lr)^5", digits: 2 }
+        - { label: "loss after 5 steps", expr: "((w0 - 3) * (1 - 2 * lr)^5)^2 + 1", digits: 2 }
+      dataSource: illustrative
+
+underTheHood:
+  title: Cross-entropy and backpropagation
+  body: >
+    The loss for language models is cross-entropy: the average of −ln p(true next token) over every
+    position in a batch of text. A perfect, certain prediction scores 0; giving the true token 1%
+    scores about 4.6.
+
+    The slope of that loss with respect to each of millions of weights is computed in one backward
+    pass through the network, using the chain rule: backpropagation. Optimisers such as Adam then
+    take a step for every weight, with momentum and a per-weight scale, and the learning rate
+    usually warms up and then decays. The valley on this card has one weight and one bottom; the
+    real landscape has billions of dimensions, and training finds a good low region rather than the
+    single best point. The curves here are illustrative.
+  sources: [rumelhart-1986, kingma-2015]
+
+faq:
+  - q: Does the model keep learning while I chat with it?
+    a: "No. Training happens before release. During a chat the weights are frozen; only the text in the window changes."
+  - q: Why start from random weights instead of zeros?
+    a: "If every weight started equal, every neuron in a layer would get the same nudge forever. Randomness breaks the tie."
+
+sources:
+  - { id: rumelhart-1986, title: "Learning representations by back-propagating errors", by: "Rumelhart, Hinton & Williams", year: 1986, note: "Nature 323" }
+  - { id: kingma-2015, title: "Adam: A Method for Stochastic Optimization", by: "Kingma & Ba", year: 2015, url: "https://arxiv.org/abs/1412.6980" }
+  - { id: radford-2019, title: "Language Models are Unsupervised Multitask Learners", by: "Radford et al.", year: 2019, url: "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf", note: "The 7.6%, 0.4%, 0.07% and 46% figures are GPT-2 small probabilities computed by scripts/precompute." }
+
+status: draft

@@ -1,0 +1,401 @@
+# yaml-language-server: $schema=../../../schemas/node.schema.json
+id: embeddings
+title: Embeddings
+tagline: How a number can carry meaning
+estMinutes: 4
+bigIdea: >
+  Each token id picks out one row of a big table: a list of numbers (768 in GPT-2) that places
+  the token as a point in a space. Training moves the rows so tokens used in similar ways end up
+  near each other, and some directions in the space line up with meanings. The lookup ignores
+  context: one token, one row.
+objectives:
+  - Place words on a meaning map and compare with the real (projected) positions
+  - Use a direction in the space to complete an analogy
+  - Explain why a word with two meanings gets a single row
+concepts: [llm.embeddings]
+
+misconceptions:
+  spelling:
+    label: Thinks words with similar spelling sit close together
+    hint: "\"cat\" and \"cap\" share two letters. Did they land side by side, or did \"dog\"?"
+  hand-placed:
+    label: Thinks people placed the words by hand
+    hint: "Fifty thousand rows, 768 numbers each. Who could place those? What moved them?"
+  context-in-lookup:
+    label: Thinks the table lookup already knows which meaning is intended
+    hint: "The lookup only gets the token id. Is the id for \"bank\" different in the two sentences?"
+  is-tokenizer:
+    label: Confuses the embedding row with the token id itself
+    upstream: tokens
+    hint: "The id is one number that says which row. The row is the long list of numbers."
+  close-ids:
+    label: Thinks token ids are numbered by meaning, so similar words get nearby ids
+    upstream: tokens
+    hint: "Ids come from the tokenizer, which counts how often strings appear. Did it know anything about meaning?"
+
+hook:
+  interaction:
+    kind: choice
+    id: hook-q
+    prompt: To the model, *cat* and *dog* are just two token numbers. So how can it tell they're alike?
+    confidence: true
+    options:
+      - { id: rows, text: "Each points to a learned position" }
+      - { id: close-ids, text: "Similar words get nearby id numbers", misconception: close-ids }
+      - { id: dictionary, text: "It looks them up in a dictionary", misconception: hand-placed }
+      - { id: spelling, text: "It compares their letters", misconception: spelling }
+    answer: rows
+  lotsGuess: close-ids
+  style: puzzle
+
+screens:
+  - id: s1-place
+    newIdea: Each token is a point; similar uses end up nearby
+    blocks:
+      - type: story
+        text: "This map flattens GPT-2's rows into two dimensions. Four words fell off. Put them back."
+    interaction:
+      kind: widget
+      id: s1-q
+      prompt: Drag dog, queen, cheese and lake to where you think they live.
+      widget:
+        id: embedding-plane
+        v: 1
+        props:
+          points: { $data: "data/embeddings.json#/points" }
+          clusters:
+            - { id: animals, label: animals, color: 1 }
+            - { id: food, label: food, color: 2 }
+            - { id: money, label: money, color: 3 }
+            - { id: water, label: water, color: 4 }
+            - { id: people, label: people, color: 5 }
+          placeable: [dog, queen, cheese, lake]
+          source: "precomputed:gpt2"
+        goal: { kind: place, ids: [dog, queen, cheese, lake], maxDist: 0.25 }
+      solution:
+        placed:
+          dog: { $data: "data/embeddings.json#/points/1/xy" }
+          queen: { $data: "data/embeddings.json#/points/21/xy" }
+          cheese: { $data: "data/embeddings.json#/points/6/xy" }
+          lake: { $data: "data/embeddings.json#/points/16/xy" }
+      fallback:
+        kind: choice
+        prompt: On GPT-2's meaning map, which word sits right next to "cat"?
+        options:
+          - { id: dog, text: dog }
+          - { id: cap, text: cap, misconception: spelling }
+          - { id: cash, text: cash }
+        answer: dog
+      feedbackRight: "Close. Similar words cluster."
+    reveal:
+      text: >
+        Your words slid to GPT-2's real spots: dog beside cat, queen near king, cheese with the
+        food, lake with the water. Nobody placed them. Training nudged the rows until words used
+        in similar places sat together.
+      visualState: { props: { showNeighbors: 3 }, note: "t-SNE sketch of GPT-2's rows" }
+    src: [radford-2019]
+
+  - id: s2-analogy
+    newIdea: Directions in the space can carry meaning
+    blocks:
+      - type: story
+        text: "Positions aren't the only signal. Start at king, step away from man, step toward woman."
+      - type: math
+        tex: "\\text{king} - \\text{man} + \\text{woman} \\approx ?"
+    interaction:
+      kind: widget
+      id: s2-q
+      prompt: Where does the arrow land? Tap the nearest word.
+      widget:
+        id: embedding-plane
+        v: 1
+        props:
+          points: { $data: "data/embeddings.json#/points" }
+          clusters:
+            - { id: animals, label: animals, color: 1 }
+            - { id: food, label: food, color: 2 }
+            - { id: money, label: money, color: 3 }
+            - { id: water, label: water, color: 4 }
+            - { id: people, label: people, color: 5 }
+          analogy: { a: king, b: man, c: woman, answer: queen }
+          source: "precomputed:gpt2"
+        goal: { kind: analogy }
+      solution: { picked: queen }
+      fallback:
+        kind: choice
+        prompt: In GPT-2's table, king − man + woman lands closest to which word?
+        options:
+          - { id: queen, text: queen }
+          - { id: prince, text: prince }
+          - { id: lion, text: lion }
+        answer: queen
+      feedbackRight: "Queen. The man-to-woman step also turns king into queen."
+    reveal:
+      text: >
+        The arrow landed on queen, cosine 0.71, well ahead of prince at 0.48. In the full 768
+        numbers, the step from man to woman points roughly the same way as king to queen. Some
+        directions carry meaning.
+      visualState: { note: "computed in all 768 dimensions" }
+    alts:
+      simpler: "Moving in one direction changes one thing about a word, like from male to female. Apply the same move to king and you reach queen."
+    src: [mikolov-2013]
+
+  - id: s3-bank
+    blocks:
+      - type: story
+        text: "\"bank\" has one id, so it has one row, whichever bank you mean."
+    interaction:
+      kind: widget
+      id: s3-q
+      prompt: Tap the word whose row is nearest to "bank".
+      widget:
+        id: embedding-plane
+        v: 1
+        props:
+          points: { $data: "data/embeddings.json#/points" }
+          clusters:
+            - { id: animals, label: animals, color: 1 }
+            - { id: food, label: food, color: 2 }
+            - { id: money, label: money, color: 3 }
+            - { id: water, label: water, color: 4 }
+            - { id: people, label: people, color: 5 }
+          showNeighbors: 3
+          source: "precomputed:gpt2"
+        goal: { kind: nearest, of: bank, answer: loan }
+      solution: { picked: loan }
+      fallback:
+        kind: choice
+        prompt: Of these words, whose GPT-2 row is nearest to the row for "bank"?
+        options:
+          - { id: loan, text: loan }
+          - { id: shore, text: shore, misconception: context-in-lookup }
+          - { id: cat, text: cat }
+        answer: loan
+      feedbackRight: "Loan. Then cash, then river."
+    reveal:
+      text: >
+        Loan lit up. Of the words here, the nearest rows run loan, cash, then river: mostly money,
+        with a pull toward water. One row serves every "bank". Working out which bank you mean takes
+        context, and that's attention's job.
+      visualState: { note: "one row, two meanings" }
+
+close:
+  text: "Each token number fetches its own ==row of 768 numbers==, a point in a space, and training moved the rows so words used in similar sentences sit close. That's how it tells: in GPT-2, *cat*'s row has cosine similarity 0.55 with *dog*, against 0.26 for *cap*."
+  byGuess:
+    close-ids: "You picked *similar words get nearby id numbers*. Lots of people do. But ids only say which row to fetch. The ==row of 768 numbers== is what carries meaning: training moved *cat*'s row close to *dog*'s (cosine 0.55), far from *cap* (0.26)."
+    dictionary: "You picked *it looks them up in a dictionary*. There's no dictionary inside. Each token fetches a ==row of 768 numbers==, and training moved rows for words used alike close together: *cat* sits by *dog* (cosine 0.55), not *cap* (0.26)."
+    spelling: "You picked *it compares their letters*. It never gets letters, only chunk numbers. Each fetches a ==row of 768 numbers==, placed by training, not spelling: *cat*'s row is near *dog* (cosine 0.55) and far from *cap* (0.26)."
+    idk: "No guess is fine. Each token number fetches a ==row of 768 numbers==, a point in a space. Training moved words used alike close together: in GPT-2, *cat* sits near *dog* (cosine 0.55), far from *cap* (0.26)."
+  teaser: "That's text in: chunks, then rows. Ready to split and place words you've never seen?"
+
+items:
+  - id: i1
+    kind: choice
+    level: recall
+    difficulty: 2
+    prompt: A token id enters the model. What happens to it first?
+    options:
+      - { id: row, text: "It picks out a row of numbers from a table" }
+      - { id: definition, text: "The model reads its dictionary definition", misconception: hand-placed }
+      - { id: context, text: "It's matched to the meaning that fits the sentence", misconception: context-in-lookup }
+      - { id: itself, text: "The id itself is fed in as the meaning", misconception: is-tokenizer }
+    answer: row
+  - id: i2
+    kind: numeric
+    level: apply
+    difficulty: 3
+    prompt: "A GPT-2 model has 50,257 tokens and {d} numbers per row. How many million numbers are in its embedding table? (One decimal.)"
+    params:
+      vars: { d: [768, 1024, 1600] }
+      answerExpr: "50257 * d / 1000000"
+    answer: 38.597376
+    tolerance: 0.1
+    why: "Rows times numbers per row."
+  - id: i3
+    kind: choice
+    level: apply
+    difficulty: 2
+    prompt: "\"cat\" and \"cap\" differ by one letter. Are their rows close?"
+    options:
+      - { id: no, text: "Not especially: use, not spelling, decides" }
+      - { id: yes, text: "Yes, spelling decides position", misconception: spelling }
+      - { id: same, text: "They share a row", misconception: is-tokenizer }
+    answer: no
+    why: "GPT-2's cat row is much nearer dog (0.55) than cap (0.26)."
+  - id: i4
+    kind: choice
+    level: transfer
+    difficulty: 3
+    prompt: "\"She sat on the river bank\" and \"She robbed the bank\". Right after the table lookup, the two \"bank\" vectors are…"
+    options:
+      - { id: identical, text: "identical" }
+      - { id: different, text: "different: one watery, one financial", misconception: context-in-lookup }
+      - { id: none, text: "not there until the sentence is read", misconception: context-in-lookup }
+    answer: identical
+    why: "Same token, same row. Context arrives later."
+  - id: i5
+    kind: text
+    level: recall
+    difficulty: 1
+    prompt: "One word: the row of numbers a token is turned into is its…"
+    accept: [embedding, vector, "embedding vector", embeddings]
+  - id: i6
+    kind: match
+    level: apply
+    difficulty: 3
+    prompt: Complete the classic word-vector analogies.
+    left: ["Paris − France + Italy ≈", "king − man + woman ≈", "walked − walk + swim ≈"]
+    right: ["Rome", "queen", "swam"]
+    answer: [[0, 0], [1, 1], [2, 2]]
+  - id: i7
+    kind: order
+    level: recall
+    difficulty: 2
+    prompt: Put the path from text to vectors in order.
+    items:
+      - "The text is split into tokens"
+      - "Each token becomes an id"
+      - "The id picks a row of the embedding table"
+      - "The row's numbers flow into the network"
+    answer: [0, 1, 2, 3]
+  - id: i8
+    kind: estimate
+    level: recall
+    difficulty: 3
+    prompt: How many numbers does GPT-2 small use to describe one token?
+    scale: { min: 1, max: 100000, log: true, label: numbers per token }
+    answer: 768
+    accept: { factor: 1.5 }
+  - id: i9
+    kind: explain
+    level: transfer
+    difficulty: 4
+    prompt: "In one sentence: why do \"dog\" and \"puppy\" end up close, though nobody placed them?"
+    keyPoints:
+      - { id: similar-contexts, text: "they appear in similar contexts", keywords: [context, contexts, "similar sentences", "same places", "used the same", "similar ways"] }
+      - { id: training-moves, text: "training adjusts the rows to make predictions better", keywords: [training, trained, learned, adjusted, nudged, predictions] }
+    minHits: 1
+    exemplar: "They show up in similar sentences, so training nudged their rows together to make predictions easier."
+    offline:
+      kind: choice
+      prompt: Why do "dog" and "puppy" end up close together?
+      options:
+        - { id: contexts, text: "They appear in similar contexts, and training moves their rows together" }
+        - { id: hand, text: "Engineers group synonyms by hand", misconception: hand-placed }
+        - { id: letters, text: "They share letters", misconception: spelling }
+      answer: contexts
+  - id: i10
+    kind: widget
+    level: apply
+    difficulty: 2
+    prompt: Tap the word nearest to "pizza" on GPT-2's map.
+    widget:
+      id: embedding-plane
+      v: 1
+      props:
+        points: { $data: "data/embeddings.json#/points" }
+        clusters:
+          - { id: animals, label: animals, color: 1 }
+          - { id: food, label: food, color: 2 }
+          - { id: money, label: money, color: 3 }
+          - { id: water, label: water, color: 4 }
+          - { id: people, label: people, color: 5 }
+        showNeighbors: 3
+        source: "precomputed:gpt2"
+      goal: { kind: nearest, of: pizza, answer: cheese }
+    solution: { picked: cheese }
+    fallback:
+      kind: choice
+      prompt: Of these words, whose GPT-2 row is nearest to "pizza"?
+      options:
+        - { id: cheese, text: cheese }
+        - { id: profit, text: profit }
+        - { id: lion, text: lion }
+      answer: cheese
+  - id: i11
+    kind: cloze
+    level: recall
+    difficulty: 2
+    prompt: Fill the gaps.
+    text: "Words used in similar {{1}} end up with nearby {{2}}."
+    blanks:
+      "1": { accept: [contexts, context, sentences, places, ways], tiles: [contexts, fonts, alphabets] }
+      "2": { accept: [rows, vectors, embeddings, points, positions], tiles: [rows, ids, spellings] }
+  - kind: widget
+    id: st2-embedding
+    prompt: On GPT-2's meaning map, which word sits nearest to "cat"? Tap it.
+    widget:
+      id: embedding-plane
+      v: 1
+      props:
+        points: { $data: data/embeddings.json#/points }
+        clusters:
+          - { id: animals, label: animals, color: 1 }
+          - { id: food, label: food, color: 2 }
+          - { id: money, label: money, color: 3 }
+          - { id: water, label: water, color: 4 }
+          - { id: people, label: people, color: 5 }
+        source: precomputed:gpt2
+      goal: { kind: nearest, of: cat, answer: dog }
+    solution: { picked: dog }
+    fallback:
+      kind: choice
+      prompt: Whose row is most like the row for "cat" in GPT-2?
+      options:
+        - { id: dog, text: dog }
+        - { id: cap, text: cap, misconception: spelling }
+        - { id: catalog, text: catalog, misconception: spelling }
+      answer: dog
+    why: "Dog: it turns up in the same kinds of sentences as cat."
+    level: transfer
+    difficulty: 3
+
+flashcards:
+  - { id: c1, kind: qa, front: "What is an embedding?", back: "The row of numbers a token id looks up: a point in meaning space." }
+  - { id: c2, kind: qa, front: "Who decides where each word's point goes?", back: "Training. Words used in similar contexts drift together." }
+  - { id: c3, kind: qa, front: "What does king − man + woman land near in GPT-2's table?", back: "queen: some directions in the space carry meaning." }
+  - { id: c4, kind: qa, front: "Does the lookup know which \"bank\" you mean?", back: "No. One token, one row, whatever the context." }
+
+toy:
+  prompt: "Tap any word to see its three nearest neighbours in GPT-2's table."
+  widget:
+    id: embedding-plane
+    v: 1
+    props:
+      points: { $data: "data/embeddings.json#/points" }
+      clusters:
+        - { id: animals, label: animals, color: 1 }
+        - { id: food, label: food, color: 2 }
+        - { id: money, label: money, color: 3 }
+        - { id: water, label: water, color: 4 }
+        - { id: people, label: people, color: 5 }
+      showNeighbors: 3
+      source: "precomputed:gpt2"
+
+underTheHood:
+  title: What the flat map hides
+  body: >
+    GPT-2's embedding table has 50,257 rows of 768 numbers. The map on this card is a t-SNE sketch
+    of just the 25 rows shown: it squeezes 768 dimensions into two while trying to keep each word
+    near its true neighbours (24 of 25 nearest neighbours survived). Distances between clusters
+    aren't to scale. The similarity numbers quoted here were computed with cosine similarity in all
+    768 dimensions.
+
+    Analogy arithmetic was made famous by word2vec (Mikolov and colleagues, 2013). It works for
+    some relations and fails for many, so treat it as a striking hint that directions carry meaning,
+    not a law. GPT-2 also adds a learned position vector to each token's row, so the network knows
+    word order.
+  sources: [mikolov-2013, radford-2019, maaten-2008]
+
+faq:
+  - q: Is 768 numbers special?
+    a: "No, it's a design choice. GPT-2 small uses 768; larger models use several thousand."
+  - q: Is the flat map exact?
+    a: "No. It's a sketch of 768 dimensions in two. Neighbours are mostly kept; the gaps between clusters are not to scale."
+
+sources:
+  - { id: radford-2019, title: "Language Models are Unsupervised Multitask Learners", by: "Radford et al.", year: 2019, url: "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf", note: "Map: GPT-2 small input embeddings, t-SNE over the 25 words shown, computed by scripts/precompute." }
+  - { id: maaten-2008, title: "Visualizing Data using t-SNE", by: "van der Maaten & Hinton", year: 2008, url: "https://www.jmlr.org/papers/v9/vandermaaten08a.html" }
+  - { id: mikolov-2013, title: "Efficient Estimation of Word Representations in Vector Space", by: "Mikolov, Chen, Corrado & Dean", year: 2013, url: "https://arxiv.org/abs/1301.3781" }
+
+status: draft

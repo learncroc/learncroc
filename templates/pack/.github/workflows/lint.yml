@@ -1,0 +1,13 @@
+name: lint
+on:
+  pull_request:
+  push:
+    branches: [main]
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: learncroc/learncroc/actions/lint@v0
+        with:
+          path: .

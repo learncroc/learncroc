@@ -1,0 +1,372 @@
+# yaml-language-server: $schema=../../../schemas/node.schema.json
+id: hallucination
+title: Confident and wrong
+tagline: Why models make things up
+estMinutes: 5
+bigIdea: >
+  A model writes the likely continuation, and likely and true overlap a lot but not always. Rare
+  facts are blurry in the weights, so the loop fills them with whatever such facts usually look
+  like, and nothing in the loop checks the result against reality. Scoring that rewards guessing
+  keeps it confident. Temperature changes variety, not truth; grounding in real sources helps.
+objectives:
+  - Produce a fluent false statement by always picking the likely token
+  - Predict which facts a model is most likely to get wrong
+  - Compute why guess-rewarding scores discourage "I don't know"
+  - Match each failure to the fix that addresses it
+concepts: [llm.hallucination]
+visual:
+  kind: figure
+  asset: assets/img/quiz-rules.svg
+  alt: "A quiz-show scoreboard with two rule cards. Rule A: right +1, wrong 0, pass 0. Rule B: right +1, wrong −1, pass 0."
+
+misconceptions:
+  lookup:
+    label: Thinks the model looked the answer up and its source was wrong
+    upstream: next-token
+    hint: "With no tools switched on, where do the scores come from?"
+  intent:
+    label: Thinks the model lies on purpose
+    hint: "Under Rule A, what would you do on a question you don't know? Is that lying, or scoring?"
+  copied:
+    label: Thinks the model copied a fake it read online
+    upstream: pretraining
+    hint: "Trillions of words, a fixed number of weights. Stored verbatim, or squeezed?"
+  temp-zero:
+    label: Thinks temperature 0 makes a model factual
+    upstream: sampling
+    hint: "What exactly does temperature change about the bars? Is the top bar always true?"
+  bug-patch:
+    label: Thinks hallucination is a separate bug that can simply be patched out
+    hint: "Is the step that writes true answers different from the one that writes false ones?"
+  cited-is-checked:
+    label: Thinks a citation in the output means the claim was checked
+    hint: "Was the source pasted in, or generated like every other token?"
+
+hook:
+  interaction:
+    kind: choice
+    id: hook-q
+    prompt: In 2023 ChatGPT gave a lawyer six court cases. None existed. Why did it invent them instead of saying it didn't know?
+    confidence: true
+    options:
+      - { id: database, text: "Its legal database had bad entries", misconception: lookup }
+      - { id: lied, text: "It lied to please the lawyer", misconception: intent }
+      - { id: plausible, text: "Likely-looking text, and nothing checked it" }
+      - { id: copied, text: "It copied fake cases posted online", misconception: copied }
+    answer: plausible
+  lotsGuess: lied
+  style: surprise
+
+screens:
+  - id: s1-be-the-model
+    newIdea: Always picking likely tokens can produce a fluent falsehood
+    blocks:
+      - type: story
+        text: "You're the model now. Your only rule: take the top-scoring token."
+    interaction:
+      kind: widget
+      id: s1-q
+      prompt: Finish "The tallest mountain in Africa is Mount ___" with GPT-2's top pick.
+      widget:
+        id: probability-bars
+        v: 1
+        props:
+          context: { $data: "data/hallucination.json#/everest/context" }
+          tokens: { $data: "data/hallucination.json#/everest/tokens" }
+          task: pick
+          source: "precomputed:gpt2"
+        goal: { kind: pick, token: "Everest" }
+      solution: { picked: "Everest" }
+      fallback:
+        kind: choice
+        prompt: GPT-2 scores Everest 7.4% and Kil (the start of Kilimanjaro) 6.8%. Which does "take the top token" pick?
+        options:
+          - { id: everest, text: "Everest" }
+          - { id: kil, text: "Kil", misconception: bug-patch }
+        answer: everest
+      feedbackRight: "Everest: top score, wrong continent."
+    reveal:
+      text: >
+        You wrote "Mount Everest", which is in Asia. "Kil", the start of Kilimanjaro, sat just
+        behind at 6.8%. Every pick was likely given the text so far, and that's the only test the
+        loop ever applies. Nothing checked a map.
+      visualState: { note: "likely ≠ true" }
+    src: [radford-2019]
+
+  - id: s2-blurry
+    newIdea: Rare facts are blurry in the weights, and the loop fills them in anyway
+    blocks:
+      - type: story
+        text: "Pretraining squeezed the web into weights. Some facts appeared millions of times, some once."
+    interaction:
+      kind: widget
+      id: s2-q
+      prompt: Rank these from "the model nails it" to "the model is guessing".
+      widget:
+        id: sorter
+        v: 1
+        props:
+          mode: rank
+          rankLabels: ["nails it", "guessing"]
+          cards:
+            - { id: paris, text: "The capital of France" }
+            - { id: einstein, text: "Einstein's birth year" }
+            - { id: town, text: "A small town's population in 1950" }
+            - { id: author, text: "The third author of an obscure 2009 paper" }
+            - { id: dentist, text: "Your dentist's name" }
+        goal: { kind: rank, order: [paris, einstein, town, author, dentist], minKendall: 0.6 }
+      solution: { order: [paris, einstein, town, author, dentist] }
+      fallback:
+        kind: order
+        prompt: Order from "the model nails it" to "the model is guessing".
+        items: ["The capital of France", "Einstein's birth year", "A small town's 1950 population", "Your dentist's name"]
+        answer: [0, 1, 2, 3]
+      feedbackRight: "The rarer the fact in its text, the blurrier."
+      onWrong:
+        default: { misconception: bug-patch, feedback: "Think about how often each fact appears on the web, not how hard it sounds." }
+    reveal:
+      text: >
+        Common facts came out sharp; rare ones blur, and the loop still writes something that looks
+        right: a plausible name, a believable year. GPT-2 even blurs Einstein: asked his birth year,
+        it writes 1776. Rare, not hard, is the danger.
+      visualState: { note: "rarity, not difficulty" }
+    src: [radford-2019]
+
+  - id: s3-scoring
+    newIdea: Scoring that rewards guessing teaches confident guesses
+    blocks:
+      - type: story
+        text: "Ten quiz questions, and you're 20% sure of each. Rule A: right +1, wrong 0, \"I don't know\" 0."
+    interaction:
+      kind: numeric
+      id: s3-q
+      prompt: Under Rule A, what's your expected score if you guess on all ten?
+      answer: 2
+      tolerance: 0
+      onWrong:
+        "0": { misconception: intent, feedback: "That's the score for passing. Guessing earns 0.2 per question on average." }
+      feedbackRight: "2, against 0 for honesty."
+    reveal:
+      text: >
+        Guessing scores 2; honesty scores 0. Many benchmarks grade like Rule A, and training chases
+        good scores, so a confident guess pays. No intent, just incentives. Make wrong answers cost
+        a point, Rule B, and "I'm not sure" starts to win.
+      visualState: { note: "guess: 2, pass: 0" }
+    alts:
+      simpler: "If a wrong answer costs nothing, guessing always beats saying \"I don't know\". Models learn the same lesson."
+    src: [kalai-2025]
+
+close:
+  text: "Because a model writes the ==likely continuation==, and nothing in the loop checks it against reality. Real citations follow a pattern, so the pattern came out: names, courts, quotes. Rare facts are blurry in the weights, and scoring that rewards guessing keeps it confident."
+  byGuess:
+    database: "You picked *its legal database had bad entries*. There was no database. It invented them because a model writes the ==likely continuation==, and case citations have a very likely shape. Nothing in the loop checks the result."
+    lied: "You picked *it lied to please the lawyer*. Lots of people do. But there's no intent. It invented them because a model writes the ==likely continuation==, citations included, and nothing in the loop checks it against reality."
+    copied: "You picked *it copied fake cases posted online*. It didn't need to. It invented them because a model writes the ==likely continuation==, and nothing checks it. Rare facts are blurry, so a plausible case fills the gap."
+    idk: "No guess is fine. It invented them because a model writes the ==likely continuation==, and citations have a likely shape. Nothing in the loop checks the result, and scoring that rewards guessing keeps it confident."
+  teaser: "That's how the machine learned, and why it bluffs. Ready to switch the whole thing on?"
+
+items:
+  - id: i1
+    kind: choice
+    level: recall
+    difficulty: 2
+    prompt: Why can a model cite a paper that doesn't exist?
+    options:
+      - { id: plausible, text: "It writes likely-looking text, and nothing checks it" }
+      - { id: database, text: "Its paper database is out of date", misconception: lookup }
+      - { id: lies, text: "It's lying to sound clever", misconception: intent }
+      - { id: copied, text: "Someone posted the fake online", misconception: copied }
+    answer: plausible
+  - id: i2
+    kind: numeric
+    level: apply
+    difficulty: 2
+    prompt: "Rule A: right +1, wrong 0, pass 0. You're {p}% sure on each of 10 questions. Expected score if you guess all ten?"
+    params:
+      vars: { p: [20, 50, 10, 30] }
+      answerExpr: "p / 10"
+    answer: 2
+    tolerance: 0.01
+    why: "Ten tries times your chance of being right."
+  - id: i3
+    kind: numeric
+    level: apply
+    difficulty: 3
+    prompt: "Rule B: right +1, wrong −1, pass 0. You're {p}% sure on each of 10 questions. Expected score if you guess all ten?"
+    params:
+      vars: { p: [20, 50, 70, 10] }
+      answerExpr: "10 * (p / 100) - 10 * (1 - p / 100)"
+    answer: -6
+    tolerance: 0.01
+    why: "Below 50% sure, Rule B makes passing (0) the better choice."
+  - id: i4
+    kind: choice
+    level: apply
+    difficulty: 2
+    prompt: You set temperature to 0. What happens to a fact the model gets wrong?
+    options:
+      - { id: repeats, text: "It repeats it every time" }
+      - { id: fixed, text: "It disappears", misconception: temp-zero }
+      - { id: flagged, text: "It gets flagged as uncertain", misconception: bug-patch }
+    answer: repeats
+    why: "Temperature 0 makes output repeatable, not true."
+  - id: i5
+    kind: order
+    level: apply
+    difficulty: 3
+    prompt: Order from most to least likely to be stated correctly by a model.
+    items:
+      - "The capital of France"
+      - "Einstein's birth year"
+      - "A small town's 1950 population"
+      - "Your dentist's name"
+    answer: [0, 1, 2, 3]
+  - id: i6
+    kind: choice
+    level: transfer
+    difficulty: 3
+    prompt: Which change most reduces made-up answers from a support bot about your policies?
+    options:
+      - { id: ground, text: "Retrieve the real policy into its context" }
+      - { id: temp, text: "Lower the temperature", misconception: temp-zero }
+      - { id: cite, text: "Tell it to always cite a source", misconception: cited-is-checked }
+    answer: ground
+  - id: i7
+    kind: explain
+    level: transfer
+    difficulty: 4
+    prompt: "A colleague says, \"It cited a source, so it must be true.\" Reply in one sentence."
+    keyPoints:
+      - { id: generated, text: "the citation is generated text too", keywords: [generated, "made up", invented, "also text", "just text", tokens] }
+      - { id: verify, text: "so it has to be checked", keywords: [check, verify, "look it up", confirm] }
+    minHits: 2
+    exemplar: "The citation is generated like every other token, so check it exists and says what's claimed."
+    offline:
+      kind: choice
+      prompt: What's wrong with "it cited a source, so it must be true"?
+      options:
+        - { id: generated, text: "The citation is generated text too, so it needs checking" }
+        - { id: fine, text: "Nothing: citations come from a database", misconception: lookup }
+        - { id: honest, text: "Nothing: models don't cite unless sure", misconception: cited-is-checked }
+      answer: generated
+  - id: i8
+    kind: cloze
+    level: recall
+    difficulty: 2
+    prompt: Fill the gaps.
+    text: "Models most often make up facts that were {{1}} in their training text, and nothing in the loop {{2}} them."
+    blanks:
+      "1": { accept: [rare, uncommon, infrequent, scarce], tiles: [rare, common, difficult] }
+      "2": { accept: [checks, verifies, "fact-checks", tests], tiles: [checks, writes, likes] }
+  - id: i9
+    kind: text
+    level: recall
+    difficulty: 1
+    prompt: "One word: a fluent, confident but false statement from a model is called a…"
+    accept: [hallucination, confabulation, hallucinations]
+  - id: i10
+    kind: match
+    level: apply
+    difficulty: 2
+    prompt: Match each failure to its best fix.
+    left: ["Invents your refund policy", "Cites a paper you can't find", "Bluffs on unanswerable questions"]
+    right: ["Paste the real policy in", "Ask for quotes, then verify", "Make \"I don't know\" welcome"]
+    answer: [[0, 0], [1, 1], [2, 2]]
+  - id: i11
+    kind: estimate
+    level: transfer
+    difficulty: 3
+    prompt: "GPT-2 gives Sydney 21.6% and Canberra 4.4% as Australia's capital. At temperature 1, out of {n} completions, about how many say Canberra?"
+    params:
+      vars: { n: [100, 500, 50, 1000] }
+      answerExpr: "n * 0.044"
+    scale: { min: 0.1, max: 1000, log: true, label: completions }
+    answer: 4.4
+    accept: { factor: 1.5 }
+    onWrong:
+      default: { misconception: temp-zero }
+    why: "4.4% of the rolls, and the true answer still loses most of the time."
+  - id: i12
+    kind: widget
+    level: transfer
+    difficulty: 4
+    prompt: Five failures, four fixes, and one fix is a decoy. Drag each failure onto the fix that addresses it best.
+    widget:
+      id: sorter
+      v: 1
+      props:
+        mode: buckets
+        buckets:
+          - { id: source, label: "Put the source in the context" }
+          - { id: verify, label: "Ask for quotes, then verify" }
+          - { id: idk, label: "Allow \"I don't know\"" }
+          - { id: temp, label: "Lower the temperature" }
+        cards:
+          - { id: refund, text: "Support bot invents your refund policy" }
+          - { id: price, text: "Bot quotes a price you never set" }
+          - { id: cites, text: "Summary cites a paper you can't find" }
+          - { id: beyond, text: "Asked about next week's news" }
+          - { id: trivia, text: "Bluffs on obscure trivia" }
+      goal: { kind: buckets, assignment: { refund: source, price: source, cites: verify, beyond: idk, trivia: idk } }
+    solution: { assignment: { refund: source, price: source, cites: verify, beyond: idk, trivia: idk } }
+    fallback:
+      kind: choice
+      prompt: A support bot invents your refund policy. Best fix?
+      options:
+        - { id: source, text: "Put the real policy in its context" }
+        - { id: temp, text: "Lower the temperature", misconception: temp-zero }
+        - { id: cite, text: "Make it cite a source", misconception: cited-is-checked }
+      answer: source
+    onWrong:
+      default: { misconception: temp-zero, feedback: "Temperature changes variety, not truth. At 0.1 GPT-2 names Sydney every time." }
+    why: "The temperature bucket stays empty. What helps is putting the truth in front of the model, and making checking cheap."
+
+flashcards:
+  - { id: c1, kind: qa, front: "Why do LLMs hallucinate, in one line?", back: "They write likely-sounding text, and nothing in generation checks it against reality." }
+  - { id: c2, kind: qa, front: "Which facts are most at risk?", back: "Rare ones: names, dates, citations, exact numbers seen few times in training." }
+  - { id: c3, kind: qa, front: "Does temperature 0 prevent hallucination?", back: "No. It makes output repeatable, not true." }
+  - { id: c4, kind: qa, front: "How does scoring encourage hallucination?", back: "If \"I don't know\" scores the same as wrong, guessing always pays." }
+  - { id: c5, kind: qa, front: "Strongest fix for a bot inventing policy?", back: "Ground it: put the real policy in the context and answer from it." }
+
+toy:
+  prompt: "Turn the temperature right down and roll. Does Canberra ever win?"
+  widget:
+    id: probability-bars
+    v: 1
+    props:
+      context: { $data: "data/sampling.json#/australia/context" }
+      tokens: { $data: "data/sampling.json#/australia/tokens" }
+      task: temperature
+      temperature: 1
+      samples: { $data: "data/sampling.json#/australia/samples" }
+      source: "precomputed:gpt2"
+
+underTheHood:
+  title: Why it persists, and the word itself
+  body: >
+    Kalai and colleagues (2025) argue that hallucinations start as ordinary prediction errors on
+    facts that pretraining can't pin down, then survive post-training because most benchmarks
+    score a wrong answer and "I don't know" the same, so guessing is the better test-taking
+    strategy. Their proposed fix is in the grading: give credit for appropriate uncertainty.
+
+    Retrieval-augmented generation (Lewis and colleagues, 2020) puts relevant documents into the
+    context so the likely answer and the true answer line up. It reduces made-up answers but doesn't
+    remove them: models can still misread or ignore a source. Some researchers prefer
+    "confabulation" to "hallucination", since the model isn't perceiving anything. GPT-2's examples
+    here are extreme because it's small; larger models get these facts right and fail on rarer ones.
+  sources: [kalai-2025, lewis-2020, ji-2023]
+
+faq:
+  - q: Will bigger models stop hallucinating?
+    a: "They get more facts right, so they hallucinate less on common questions. The mechanism stays: rare facts and no built-in check."
+  - q: Was the lawyer case real?
+    a: "Yes: Mata v. Avianca, Southern District of New York, 2023. The judge's order describes the invented cases."
+
+sources:
+  - { id: mata-2023, title: "Mata v. Avianca, Inc., No. 22-cv-1461 (S.D.N.Y. June 22, 2023), opinion and order on sanctions", by: "Judge P. Kevin Castel", year: 2023 }
+  - { id: radford-2019, title: "Language Models are Unsupervised Multitask Learners", by: "Radford et al.", year: 2019, url: "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf", note: "Everest, Einstein and Australia examples computed with GPT-2 small by scripts/precompute (greedy and seeded samples)." }
+  - { id: kalai-2025, title: "Why Language Models Hallucinate", by: "Kalai, Nachum, Vempala & Zhang", year: 2025, url: "https://arxiv.org/abs/2509.04664" }
+  - { id: lewis-2020, title: "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks", by: "Lewis et al.", year: 2020, url: "https://arxiv.org/abs/2005.11401" }
+  - { id: ji-2023, title: "Survey of Hallucination in Natural Language Generation", by: "Ji et al.", year: 2023, url: "https://arxiv.org/abs/2202.03629" }
+
+status: draft

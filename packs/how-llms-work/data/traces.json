@@ -1,0 +1,678 @@
+{
+  "meta": {
+    "about": "Per-sentence traces through GPT-2. Attention: last layer, heads averaged, strongest link from the last token excluding the first token (which GPT-2 uses as an attention sink).",
+    "model": "gpt2",
+    "modelName": "GPT-2 small",
+    "modelRevision": "607a30d783dfa663caf39e06633721c8d4cfcd7e",
+    "parameters": 124439808,
+    "vocabSize": 50257,
+    "contextLength": 1024,
+    "script": "scripts/precompute@1",
+    "seed": 20261020,
+    "libraries": {
+      "python": "3.12.13",
+      "torch": "2.14.1",
+      "transformers": "5.20.2"
+    },
+    "generatedAt": "2026-10-19T23:09:48Z",
+    "note": "Probabilities are GPT-2's softmax over its whole vocabulary, rounded to 4 decimals. Lists show a few tokens; the rest of the probability is 'everything else'."
+  },
+  "model": {
+    "layers": 12,
+    "width": 768,
+    "contextLength": 1024,
+    "parameters": 124439808
+  },
+  "inputs": [
+    {
+      "text": "The cat sat on the",
+      "tokens": [
+        {
+          "text": "The",
+          "id": 464
+        },
+        {
+          "text": " cat",
+          "id": 3797
+        },
+        {
+          "text": " sat",
+          "id": 3332
+        },
+        {
+          "text": " on",
+          "id": 319
+        },
+        {
+          "text": " the",
+          "id": 262
+        }
+      ],
+      "tokenCount": 5,
+      "attention": {
+        "layer": 12,
+        "from": "the",
+        "strongest": "cat",
+        "weight": 0.0848,
+        "firstTokenShare": 0.6973
+      },
+      "midStackPick": "same",
+      "lens": [
+        {
+          "block": 0,
+          "pick": "destro",
+          "p": 0.6225
+        },
+        {
+          "block": 2,
+          "pick": "same",
+          "p": 0.8867
+        },
+        {
+          "block": 4,
+          "pick": "same",
+          "p": 0.9323
+        },
+        {
+          "block": 6,
+          "pick": "same",
+          "p": 0.7502
+        },
+        {
+          "block": 8,
+          "pick": "floor",
+          "p": 0.2482
+        },
+        {
+          "block": 10,
+          "pick": "floor",
+          "p": 0.4628
+        },
+        {
+          "block": 12,
+          "pick": "floor",
+          "p": 0.0764
+        }
+      ],
+      "finalPick": "floor",
+      "top": [
+        {
+          "text": "floor",
+          "p": 0.0764
+        },
+        {
+          "text": "bed",
+          "p": 0.0653
+        },
+        {
+          "text": "couch",
+          "p": 0.0541
+        },
+        {
+          "text": "ground",
+          "p": 0.0521
+        },
+        {
+          "text": "edge",
+          "p": 0.0478
+        }
+      ],
+      "sampledAt08": "wall",
+      "id": "cat",
+      "steps": {
+        "tokens": "5 tokens: The | ·cat | ·sat | ·on | ·the",
+        "embeddings": "each token becomes 768 numbers",
+        "next-token": "the job: score all 50,257 tokens for slot 6",
+        "context-window": "5 of 1,024 slots used",
+        "attention": "\"the\" looks hardest at \"cat\" (after the 70% parked on \"The\")",
+        "transformer": "block 6 guesses \"same\", block 12 says \"floor\"",
+        "sampling": "floor 7.6%, bed 6.5%, couch 5.4% → rolled at temperature 0.8, top-p 0.9: \"wall\""
+      }
+    },
+    {
+      "text": "I poured milk into my",
+      "tokens": [
+        {
+          "text": "I",
+          "id": 40
+        },
+        {
+          "text": " poured",
+          "id": 19036
+        },
+        {
+          "text": " milk",
+          "id": 7545
+        },
+        {
+          "text": " into",
+          "id": 656
+        },
+        {
+          "text": " my",
+          "id": 616
+        }
+      ],
+      "tokenCount": 5,
+      "attention": {
+        "layer": 12,
+        "from": "my",
+        "strongest": "into",
+        "weight": 0.1254,
+        "firstTokenShare": 0.6708
+      },
+      "midStackPick": "own",
+      "lens": [
+        {
+          "block": 0,
+          "pick": "my",
+          "p": 0.9914
+        },
+        {
+          "block": 2,
+          "pick": "own",
+          "p": 0.9894
+        },
+        {
+          "block": 4,
+          "pick": "own",
+          "p": 0.998
+        },
+        {
+          "block": 6,
+          "pick": "own",
+          "p": 0.9997
+        },
+        {
+          "block": 8,
+          "pick": "own",
+          "p": 0.9881
+        },
+        {
+          "block": 10,
+          "pick": "mouth",
+          "p": 0.3366
+        },
+        {
+          "block": 12,
+          "pick": "mouth",
+          "p": 0.0896
+        }
+      ],
+      "finalPick": "mouth",
+      "top": [
+        {
+          "text": "mouth",
+          "p": 0.0896
+        },
+        {
+          "text": "bowl",
+          "p": 0.029
+        },
+        {
+          "text": "glass",
+          "p": 0.0256
+        },
+        {
+          "text": "cup",
+          "p": 0.0238
+        },
+        {
+          "text": "milk",
+          "p": 0.0214
+        }
+      ],
+      "sampledAt08": "diaper",
+      "id": "milk",
+      "steps": {
+        "tokens": "5 tokens: I | ·poured | ·milk | ·into | ·my",
+        "embeddings": "each token becomes 768 numbers",
+        "next-token": "the job: score all 50,257 tokens for slot 6",
+        "context-window": "5 of 1,024 slots used",
+        "attention": "\"my\" looks hardest at \"into\" (after the 67% parked on \"I\")",
+        "transformer": "block 6 guesses \"own\", block 12 says \"mouth\"",
+        "sampling": "mouth 9.0%, bowl 2.9%, glass 2.6% → rolled at temperature 0.8, top-p 0.9: \"diaper\""
+      }
+    },
+    {
+      "text": "Peanut butter and",
+      "tokens": [
+        {
+          "text": "Pe",
+          "id": 6435
+        },
+        {
+          "text": "anut",
+          "id": 20651
+        },
+        {
+          "text": " butter",
+          "id": 9215
+        },
+        {
+          "text": " and",
+          "id": 290
+        }
+      ],
+      "tokenCount": 4,
+      "attention": {
+        "layer": 12,
+        "from": "and",
+        "strongest": "anut",
+        "weight": 0.1098,
+        "firstTokenShare": 0.732
+      },
+      "midStackPick": "then",
+      "lens": [
+        {
+          "block": 0,
+          "pick": "mathemat",
+          "p": 0.7915
+        },
+        {
+          "block": 2,
+          "pick": "then",
+          "p": 0.4616
+        },
+        {
+          "block": 4,
+          "pick": "then",
+          "p": 0.3004
+        },
+        {
+          "block": 6,
+          "pick": "then",
+          "p": 0.3903
+        },
+        {
+          "block": 8,
+          "pick": "cheese",
+          "p": 0.3664
+        },
+        {
+          "block": 10,
+          "pick": "jelly",
+          "p": 0.2509
+        },
+        {
+          "block": 12,
+          "pick": "jelly",
+          "p": 0.1061
+        }
+      ],
+      "finalPick": "jelly",
+      "top": [
+        {
+          "text": "jelly",
+          "p": 0.1061
+        },
+        {
+          "text": "sugar",
+          "p": 0.0484
+        },
+        {
+          "text": "peanut",
+          "p": 0.0461
+        },
+        {
+          "text": "chocolate",
+          "p": 0.0458
+        },
+        {
+          "text": "cream",
+          "p": 0.0329
+        }
+      ],
+      "sampledAt08": "powdered",
+      "id": "peanut",
+      "steps": {
+        "tokens": "4 tokens: Pe | anut | ·butter | ·and",
+        "embeddings": "each token becomes 768 numbers",
+        "next-token": "the job: score all 50,257 tokens for slot 5",
+        "context-window": "4 of 1,024 slots used",
+        "attention": "\"and\" looks hardest at \"anut\" (after the 73% parked on \"Pe\")",
+        "transformer": "block 6 guesses \"then\", block 12 says \"jelly\"",
+        "sampling": "jelly 10.6%, sugar 4.8%, peanut 4.6% → rolled at temperature 0.8, top-p 0.9: \"powdered\""
+      }
+    },
+    {
+      "text": "Water is made of hydrogen and",
+      "tokens": [
+        {
+          "text": "Water",
+          "id": 19184
+        },
+        {
+          "text": " is",
+          "id": 318
+        },
+        {
+          "text": " made",
+          "id": 925
+        },
+        {
+          "text": " of",
+          "id": 286
+        },
+        {
+          "text": " hydrogen",
+          "id": 17669
+        },
+        {
+          "text": " and",
+          "id": 290
+        }
+      ],
+      "tokenCount": 6,
+      "attention": {
+        "layer": 12,
+        "from": "and",
+        "strongest": "of",
+        "weight": 0.1064,
+        "firstTokenShare": 0.6161
+      },
+      "midStackPick": "then",
+      "lens": [
+        {
+          "block": 0,
+          "pick": "mathemat",
+          "p": 0.8045
+        },
+        {
+          "block": 2,
+          "pick": "then",
+          "p": 0.6493
+        },
+        {
+          "block": 4,
+          "pick": "then",
+          "p": 0.6355
+        },
+        {
+          "block": 6,
+          "pick": "then",
+          "p": 0.392
+        },
+        {
+          "block": 8,
+          "pick": "other",
+          "p": 0.2664
+        },
+        {
+          "block": 10,
+          "pick": "hydrogen",
+          "p": 0.608
+        },
+        {
+          "block": 12,
+          "pick": "oxygen",
+          "p": 0.4641
+        }
+      ],
+      "finalPick": "oxygen",
+      "top": [
+        {
+          "text": "oxygen",
+          "p": 0.4641
+        },
+        {
+          "text": "helium",
+          "p": 0.2792
+        },
+        {
+          "text": "carbon",
+          "p": 0.0345
+        },
+        {
+          "text": "methane",
+          "p": 0.0195
+        },
+        {
+          "text": "is",
+          "p": 0.0105
+        }
+      ],
+      "sampledAt08": "helium",
+      "id": "water",
+      "steps": {
+        "tokens": "6 tokens: Water | ·is | ·made | ·of | ·hydrogen | ·and",
+        "embeddings": "each token becomes 768 numbers",
+        "next-token": "the job: score all 50,257 tokens for slot 7",
+        "context-window": "6 of 1,024 slots used",
+        "attention": "\"and\" looks hardest at \"of\" (after the 62% parked on \"Water\")",
+        "transformer": "block 6 guesses \"then\", block 12 says \"oxygen\"",
+        "sampling": "oxygen 46.4%, helium 27.9%, carbon 3.5% → rolled at temperature 0.8, top-p 0.9: \"helium\""
+      }
+    },
+    {
+      "text": "Once upon a time, there was a",
+      "tokens": [
+        {
+          "text": "Once",
+          "id": 7454
+        },
+        {
+          "text": " upon",
+          "id": 2402
+        },
+        {
+          "text": " a",
+          "id": 257
+        },
+        {
+          "text": " time",
+          "id": 640
+        },
+        {
+          "text": ",",
+          "id": 11
+        },
+        {
+          "text": " there",
+          "id": 612
+        },
+        {
+          "text": " was",
+          "id": 373
+        },
+        {
+          "text": " a",
+          "id": 257
+        }
+      ],
+      "tokenCount": 8,
+      "attention": {
+        "layer": 12,
+        "from": "a",
+        "strongest": "was",
+        "weight": 0.0564,
+        "firstTokenShare": 0.7277
+      },
+      "midStackPick": "lot",
+      "lens": [
+        {
+          "block": 0,
+          "pick": "destro",
+          "p": 0.4339
+        },
+        {
+          "block": 2,
+          "pick": "few",
+          "p": 0.1413
+        },
+        {
+          "block": 4,
+          "pick": "lot",
+          "p": 0.6899
+        },
+        {
+          "block": 6,
+          "pick": "lot",
+          "p": 0.772
+        },
+        {
+          "block": 8,
+          "pick": "lot",
+          "p": 0.3916
+        },
+        {
+          "block": 10,
+          "pick": "sudden",
+          "p": 0.1235
+        },
+        {
+          "block": 12,
+          "pick": "man",
+          "p": 0.0442
+        }
+      ],
+      "finalPick": "man",
+      "top": [
+        {
+          "text": "man",
+          "p": 0.0442
+        },
+        {
+          "text": "great",
+          "p": 0.0331
+        },
+        {
+          "text": "time",
+          "p": 0.022
+        },
+        {
+          "text": "certain",
+          "p": 0.0154
+        },
+        {
+          "text": "woman",
+          "p": 0.0134
+        }
+      ],
+      "sampledAt08": "time",
+      "id": "once",
+      "steps": {
+        "tokens": "8 tokens: Once | ·upon | ·a | ·time | , | ·there | ·was | ·a",
+        "embeddings": "each token becomes 768 numbers",
+        "next-token": "the job: score all 50,257 tokens for slot 9",
+        "context-window": "8 of 1,024 slots used",
+        "attention": "\"a\" looks hardest at \"was\" (after the 73% parked on \"Once\")",
+        "transformer": "block 6 guesses \"lot\", block 12 says \"man\"",
+        "sampling": "man 4.4%, great 3.3%, time 2.2% → rolled at temperature 0.8, top-p 0.9: \"time\""
+      }
+    },
+    {
+      "text": "The tallest mountain in Africa is Mount",
+      "tokens": [
+        {
+          "text": "The",
+          "id": 464
+        },
+        {
+          "text": " tallest",
+          "id": 38760
+        },
+        {
+          "text": " mountain",
+          "id": 8598
+        },
+        {
+          "text": " in",
+          "id": 287
+        },
+        {
+          "text": " Africa",
+          "id": 5478
+        },
+        {
+          "text": " is",
+          "id": 318
+        },
+        {
+          "text": " Mount",
+          "id": 5628
+        }
+      ],
+      "tokenCount": 7,
+      "attention": {
+        "layer": 12,
+        "from": "Mount",
+        "strongest": "in",
+        "weight": 0.0239,
+        "firstTokenShare": 0.774
+      },
+      "midStackPick": "Everest",
+      "lens": [
+        {
+          "block": 0,
+          "pick": "Mount",
+          "p": 1.0
+        },
+        {
+          "block": 2,
+          "pick": "Mount",
+          "p": 0.9739
+        },
+        {
+          "block": 4,
+          "pick": "Everest",
+          "p": 0.2449
+        },
+        {
+          "block": 6,
+          "pick": "Everest",
+          "p": 0.8555
+        },
+        {
+          "block": 8,
+          "pick": "Everest",
+          "p": 0.9067
+        },
+        {
+          "block": 10,
+          "pick": "Everest",
+          "p": 0.974
+        },
+        {
+          "block": 12,
+          "pick": "Everest",
+          "p": 0.074
+        }
+      ],
+      "finalPick": "Everest",
+      "top": [
+        {
+          "text": "Everest",
+          "p": 0.074
+        },
+        {
+          "text": "Kil",
+          "p": 0.0678
+        },
+        {
+          "text": "K",
+          "p": 0.061
+        },
+        {
+          "text": "Gamb",
+          "p": 0.0327
+        },
+        {
+          "text": "Et",
+          "p": 0.0304
+        }
+      ],
+      "sampledAt08": "N",
+      "id": "everest",
+      "steps": {
+        "tokens": "7 tokens: The | ·tallest | ·mountain | ·in | ·Africa | ·is | ·Mount",
+        "embeddings": "each token becomes 768 numbers",
+        "next-token": "the job: score all 50,257 tokens for slot 8",
+        "context-window": "7 of 1,024 slots used",
+        "attention": "\"Mount\" looks hardest at \"in\" (after the 77% parked on \"The\")",
+        "transformer": "block 6 guesses \"Everest\", block 12 says \"Everest\"",
+        "sampling": "Everest 7.4%, Kil 6.8%, K 6.1% → rolled at temperature 0.8, top-p 0.9: \"N\""
+      }
+    }
+  ]
+}

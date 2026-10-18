@@ -1,0 +1,76 @@
+# yaml-language-server: $schema=../../schemas/map.schema.json
+# Key order is the reading order: four sections, each closed by a checkpoint, with each card's teaser
+# opening the next card's hook. The planned cards and their checkpoint sit beyond the last gate.
+lines:
+  - { id: text-in,  title: "Text in",          color: 1, outcome: "Say how text becomes tokens and vectors" }
+  - { id: loop,     title: "The guessing loop", color: 2, outcome: "Explain what a model computes at each step, how it picks a word, and what it can see" }
+  - { id: core,     title: "Inside the Core",   color: 3, outcome: "Trace a sentence through weights, attention and the transformer stack" }
+  - { id: learned,  title: "How it learned",    color: 4, outcome: "Explain how training sets the weights, and why models make things up" }
+  - { id: using,    title: "Using it well",     color: 5, outcome: "Steer a model with context, examples and retrieval" }
+nodes:
+  # 1 · Text in
+  tokens:          { requires: [], line: text-in }
+  embeddings:      { requires: [tokens], line: text-in }
+  cp-text-in:
+    requires: [embeddings]
+    line: text-in
+    kind: checkpoint
+    teaser: "New words to split, and new words to place on the map."
+
+  # 2 · The guessing loop
+  next-token:      { requires: [cp-text-in], line: loop }
+  sampling:        { requires: [next-token], line: loop }
+  context-window:  { requires: [next-token], line: loop }
+  cp-loop:
+    requires: [sampling, context-window]
+    line: loop
+    kind: checkpoint
+    teaser: "Count the runs, call the rolls, and spot what falls out of view."
+
+  # 3 · Inside the Core
+  neural-nets:     { requires: [cp-loop], line: core }
+  attention:       { requires: [cp-loop], line: core }
+  transformer:     { requires: [neural-nets, attention], line: core }
+  cp-core:
+    requires: [transformer]
+    line: core
+    kind: checkpoint
+    teaser: "Turn the dials, route the attention, and read the stack."
+
+  # 4 · How it learned (the terminus)
+  training:        { requires: [cp-core], line: learned }
+  pretraining:     { requires: [training], line: learned }
+  hallucination:   { requires: [pretraining], line: learned }
+  cp-learned:
+    requires: [hallucination]
+    line: learned
+    kind: checkpoint
+    title: "Power-on test"
+    teaser: "The whole machine, switched on: training, scale, and the answers it makes up."
+
+  # Beyond the terminus: planned
+  post-training:
+    requires: [cp-learned]
+    line: using
+    status: planned
+    title: "From autocomplete to assistant"
+    teaser: "A raw model continues your question with three more questions. What turned it into something that answers?"
+  prompting:
+    requires: [post-training]
+    line: using
+    status: planned
+    title: "Prompting and in-context learning"
+    teaser: "Show a model three examples and it follows the pattern. Did its weights change?"
+  grounding:
+    requires: [cp-learned]
+    line: using
+    status: planned
+    title: "Grounding: retrieval and tools"
+    teaser: "How do you make a model quote your refund policy instead of inventing one?"
+  cp-support-bot:
+    requires: [post-training, prompting, grounding]
+    line: using
+    kind: checkpoint
+    status: planned
+    title: "Fix the support bot"
+    teaser: "A pilot bot promised a 90-day refund that doesn't exist. Diagnose it and pick the fixes."
