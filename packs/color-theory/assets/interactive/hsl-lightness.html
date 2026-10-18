@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lightness dial: from orange to brown</title>
+<style>
+:root{--c-bg:var(--lm-bg,#F7F3EA);--c-ink:var(--lm-ink,#1C1A3D);--c-ink2:var(--lm-ink-2,#4A4870);--c-line:var(--line-strong,#B9BDD0);--c-surface:var(--surface,#FFFFFF);--c-a1:var(--w-1,#2F5DA8);--c-a2:var(--w-3,#8A3FA0);--c-a3:var(--w-4,#4F7A1E);--c-focus:var(--focus,#12877A)}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font:15px/1.45 var(--lm-font,system-ui,-apple-system,"Segoe UI",sans-serif);background:var(--c-bg);color:var(--c-ink);padding:14px 16px 16px}
+button{font:inherit;font-weight:650;color:var(--c-ink);background:transparent;border:1.5px solid var(--c-ink);border-radius:12px;padding:8px 14px;box-shadow:0 3px 0 var(--c-ink);cursor:pointer;min-height:44px;transition:transform 80ms,box-shadow 80ms}
+button:active{transform:translateY(2px);box-shadow:0 1px 0 var(--c-ink)}
+button[aria-pressed="true"]{background:var(--c-a1);color:#FFFFFF}
+:focus-visible{outline:3px solid var(--c-focus);outline-offset:2px}
+input[type=range]{width:100%;accent-color:var(--c-a1);min-height:32px}
+label{font-weight:650}
+output,.num{font-variant-numeric:tabular-nums;font-weight:700}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.note{font-size:13px;color:var(--c-ink2);margin-top:8px}
+.readout{margin-top:10px;padding:8px 12px;border-radius:12px;border:1px solid var(--c-line);min-height:40px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+:root[data-rm="1"] *{transition:none!important;animation:none!important}
+
+.stage{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:12px 14px;border-radius:16px;background:#9A9A9A;margin:8px 0}
+.sw{height:68px;border-radius:12px;border:2px solid #1C1A3D}
+.cap{font-size:14px;font-weight:650;color:#1C1A3D;margin-top:4px;text-align:center}
+.dial{margin-top:8px}
+
+</style>
+</head>
+<body>
+
+<p style="margin:0">Hue stays at 30° (orange) and saturation at 100%. Only the lightness dial moves.</p>
+<div class="stage" aria-hidden="true">
+  <div><div class="sw" id="target"></div><div class="cap">Target</div></div>
+  <div><div class="sw" id="mine"></div><div class="cap">Yours</div></div>
+</div>
+<div class="dial"><label for="l">Lightness: <output id="lOut" for="l">50</output>%</label><input id="l" type="range" min="0" max="100" step="1" value="50"></div>
+<div class="readout" id="read" aria-live="polite"></div>
+<p class="note">The same grey surround sits behind both swatches, so neither gets a head start.</p>
+<script>
+(function () {
+"use strict";
+/* window.lm is the learncroc bridge, injected by the host before this script. Opened on its own,
+   the file runs with a silent stand-in so it can be tried in a browser. */
+var noop = function () {};
+var lm = window.lm || { ready: noop, report: noop, resize: noop, announce: noop, onReveal: noop, onTest: noop,
+  onInit: function (fn) { fn({ mode: "explore", theme: "light", reducedMotion: false }); } };
+var root = document.documentElement;
+var sayTimer = 0;
+function say(text) { clearTimeout(sayTimer); sayTimer = setTimeout(function () { lm.announce(String(text).slice(0, 120)); }, 250); }
+
+
+function hslHex(h, s, l) {
+  s /= 100; l /= 100;
+  var k = function (n) { return (n + h / 30) % 12; }, a = s * Math.min(l, 1 - l);
+  var f = function (n) { return l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1))); };
+  var hx = function (x) { var v = Math.round(x * 255).toString(16); return v.length < 2 ? "0" + v : v; };
+  return "#" + hx(f(0)) + hx(f(8)) + hx(f(4));
+}
+var l = document.getElementById("l"), TARGET = 25;
+function name(v) { return v <= 6 ? "black" : v <= 16 ? "very dark brown" : v <= 32 ? "brown" : v <= 42 ? "burnt orange" : v <= 58 ? "orange" : v <= 74 ? "light orange" : v <= 92 ? "peach" : "white"; }
+function compare(v) { return Math.abs(v - TARGET) <= 3 ? "a match for the target brown" : v > TARGET ? "lighter than the target" : "darker than the target"; }
+document.getElementById("target").style.background = hslHex(30, 100, 25);
+function render() {
+  var v = Number(l.value);
+  document.getElementById("lOut").textContent = String(v);
+  document.getElementById("mine").style.background = hslHex(30, 100, v);
+  document.getElementById("read").textContent = "Yours: hsl(30, 100%, " + v + "%), " + hslHex(30, 100, v) + ", " + name(v) + ": " + compare(v) + ".";
+}
+function current() { return Number(l.value); }
+function restore(v) { var n = Number(v); if (isFinite(n)) { l.value = String(Math.max(0, Math.min(100, Math.round(n)))); render(); } }
+l.addEventListener("input", function () { render(); send(); say("Lightness " + l.value + " percent, " + name(Number(l.value))); });
+
+lm.onInit(function (s) {
+  root.setAttribute("data-rm", s.reducedMotion ? "1" : "0");
+  var v = s.mode === "review" && s.solution !== undefined ? s.solution : s.value;
+  if (v !== undefined && v !== null) restore(v);
+});
+lm.onReveal(function (sol) { if (sol !== undefined && sol !== null) restore(sol); });
+lm.onTest(function (v) { restore(v); send(); });
+function send() { var v = current(); if (v !== null) lm.report(v); }
+render();
+lm.ready();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,381 @@
+# yaml-language-server: $schema=../../../schemas/node.schema.json
+id: contrast-illusions
+title: "Colors lie: simultaneous contrast"
+tagline: The same grey, two different greys
+estMinutes: 4
+bigIdea: >
+  The visual system judges a color against its surroundings rather than measuring it on its own.
+  The same grey looks lighter on a dark surround and darker on a light one, and a neutral grey
+  leans toward the opposite hue of its surround (bluish on orange). So one swatch can look like
+  two colors, and two different swatches can be made to look alike, as Chevreul described in 1839
+  and Josef Albers turned into a whole course.
+objectives:
+  - Predict whether a surround will make a color look lighter or darker
+  - Predict the faint tint a neutral picks up from a colored surround
+  - Use surrounds to make different colors look alike, or one color look like two
+concepts: [color.simultaneous-contrast, perception.context]
+
+visual:
+  kind: figure
+  asset: assets/img/greys-on-bands.svg
+  alt: "Left half near-black, right half near-white. Each half holds a small square of exactly the same mid grey."
+
+misconceptions:
+  eye-is-light-meter:
+    label: Believes the eye measures each color on its own, like a light meter
+    hint: "Watch the moving square as it crosses from the light band to the dark one. Did its paint change, or its neighbours?"
+  tint-copies-surround:
+    label: Expects a neutral to borrow its surround's color rather than lean the opposite way
+    hint: "Compare the grey on orange with the grey on blue. Which one looks a little cooler?"
+  screen-glitch:
+    label: Thinks the effect is a display or printing error rather than how vision works
+    hint: "Turn on the real values. The pixels never changed. So where does the difference come from?"
+
+hook:
+  blocks:
+    - type: story
+      text: "A neutral grey square in a field of bright orange. No tint mixed in."
+  visual:
+    kind: figure
+    asset: assets/img/grey-on-orange.svg
+    alt: "A neutral grey square (#8C8C8C) in the middle of a bright orange field."
+  interaction:
+    kind: choice
+    id: hook-q
+    prompt: Stare for a few seconds. What faint tint does the grey seem to take on?
+    confidence: true
+    options:
+      - { id: orange, text: "A hint of orange", misconception: tint-copies-surround }
+      - { id: blue, text: "A hint of blue" }
+      - { id: none, text: "None: grey is grey", misconception: eye-is-light-meter }
+      - { id: red, text: "A hint of red", misconception: tint-copies-surround }
+    answer: blue
+  lotsGuess: orange
+  style: surprise
+
+screens:
+  - id: s1-greys
+    newIdea: The surround sets lightness, so one grey looks lighter on dark and darker on light
+    blocks:
+      - type: story
+        text: "Start with something easier to see. One grey, two bands. The square on white looks darker than the one on black."
+    interaction:
+      kind: html
+      id: s1-q
+      prompt: Drag the right square across until it touches the left one. Watch its grey on the way.
+      asset: assets/interactive/greys.html
+      height: 340
+      alt: "A band, half near-black and half near-white, with a fixed grey square on the dark half and a movable grey square that starts on the light half. A button shows both squares' real values."
+      goal: { kind: range, min: 0, max: 4 }
+      solution: 0
+      feedbackRight: "Side by side, they match exactly."
+      fallback:
+        kind: choice
+        prompt: A grey square slides from a white band onto a black band. Its paint never changes. How does it look on the black?
+        options:
+          - { id: lighter, text: "Lighter than before" }
+          - { id: darker, text: "Darker than before", misconception: eye-is-light-meter }
+          - { id: same, text: "Exactly the same", misconception: eye-is-light-meter }
+        answer: lighter
+    reveal:
+      text: >
+        One grey the whole way: rgb(128, 128, 128). On white it looked darker; on black, lighter.
+        Your eye reports contrast with the neighbours, which is brilliant for spotting edges and
+        hopeless for judging paint.
+    alts:
+      simpler: "Your eye compares a color with what's next to it. Next to black, grey looks light. Next to white, the same grey looks dark."
+      analogy: "Like someone of average height who looks tall among children and short on a basketball team. They didn't change; the company did."
+    src: [chevreul-1839]
+
+  - id: s2-tint
+    newIdea: A colored surround tints a neutral toward the surround's opposite hue
+    blocks:
+      - type: story
+        text: "The surround nudges hue as well as lightness. Here is the same grey twice: once on orange, once on blue."
+    interaction:
+      kind: widget
+      id: s2-q
+      prompt: Which grey square looks bluer?
+      widget:
+        id: ab-compare
+        v: 1
+        props:
+          a: { label: "Grey on orange", asset: assets/img/grey-on-orange.svg }
+          b: { label: "Grey on blue", asset: assets/img/grey-on-blue.svg }
+          layout: side-by-side
+        goal: { kind: pick, answer: a }
+      solution: { pick: a }
+      feedbackRight: "On orange, the grey leans cool."
+      onWrong:
+        b: { misconception: tint-copies-surround, feedback: "On blue, the grey leans warm. The surround pushes it the opposite way, not its own way." }
+      fallback:
+        kind: choice
+        prompt: The same neutral grey sits on orange and on blue. On which does it look bluer?
+        options:
+          - { id: orange, text: "On orange" }
+          - { id: blue, text: "On blue", misconception: tint-copies-surround }
+          - { id: neither, text: "Neither", misconception: eye-is-light-meter }
+        answer: orange
+    reveal:
+      text: >
+        A, on the orange. Both squares are #8C8C8C. Each surround pushes the grey toward its own
+        opposite: a cool lean on orange, a warm lean on blue. The neighbours push lightness and
+        hue the same way, away from themselves.
+    alts:
+      simpler: "A colored background makes a grey lean toward the opposite color. With orange all round, the grey looks a little blue."
+      example: "Grey text on a green slide tends to look faintly pink. Nothing in the file is pink."
+    src: [chevreul-1839, albers-1963]
+
+  - id: s3-albers
+    newIdea: Surrounds can make two different colors look like one
+    visual:
+      kind: figure
+      asset: assets/img/two-greys.svg
+      alt: "A lighter grey and a darker grey side by side, and below them two empty backgrounds: a light grey panel and a dark charcoal panel."
+    blocks:
+      - type: story
+        text: "Josef Albers made this a class exercise. Two greys, a step apart. Make them look identical, using only their backgrounds."
+    interaction:
+      kind: choice
+      id: s3-q
+      prompt: Which background should the lighter grey go on?
+      options:
+        - { id: light, text: "The light panel" }
+        - { id: dark, text: "The dark panel", misconception: eye-is-light-meter }
+        - { id: same, text: "Either: backgrounds won't hide the gap", misconception: eye-is-light-meter }
+      answer: light
+      feedbackRight: "Yes. The light panel pulls it down toward its twin."
+    reveal:
+      text: >
+        The light panel. A light surround pushes the lighter grey down; a dark one lifts the
+        darker grey up. Meet in the middle and two greys read as one. Albers's verdict: one color
+        can look like two, and two like one.
+    alts:
+      simpler: "Put the lighter grey where it will look darker, on light. Put the darker grey where it will look lighter, on dark. They meet in the middle."
+    src: [albers-1963]
+
+close:
+  text: "A hint of blue. Your eye judges a color ==against its surround==, never on its own, and pushes a neutral toward the surround's opposite: orange all round, a whisper of blue inside. Chevreul worked this out in 1839, chasing complaints about tapestry wool that seemed to change color."
+  byGuess:
+    orange: "You picked *a hint of orange*. Lots of people do: it feels as if the field should bleed in. It goes the other way. Your eye judges a color ==against its surround== and pushes the grey toward orange's opposite, a faint blue."
+    none: "You picked *none: grey is grey*. Measured, it is. But your eye judges a color ==against its surround==, so orange all round pushes the grey toward its opposite, a faint blue. The pixels never change; the reading does."
+    red: "You picked *a hint of red*. Lots of people expect the warm field to rub off. It does the reverse: your eye judges a color ==against its surround== and pushes the grey toward orange's opposite, a faint blue."
+    idk: "No guess is fine. The grey leans faintly blue. Your eye judges a color ==against its surround== and pushes a neutral toward the surround's opposite: orange outside, a whisper of blue inside."
+  teaser: "One grey can look like two. Now a color everyone knows that isn't in the rainbow: where's brown?"
+
+items:
+  - id: i1
+    kind: widget
+    level: apply
+    difficulty: 2
+    prompt: Will the grey square look lighter or darker than it really is?
+    widget:
+      id: sorter
+      v: 1
+      props:
+        mode: buckets
+        buckets:
+          - { id: lighter, label: "Looks lighter" }
+          - { id: darker, label: "Looks darker" }
+        cards:
+          - { id: a, text: "Grey on black" }
+          - { id: b, text: "Grey on white" }
+          - { id: c, text: "Grey on navy" }
+          - { id: d, text: "Grey on pale yellow" }
+          - { id: e, text: "Grey on charcoal" }
+          - { id: f, text: "Grey on cream" }
+      goal: { kind: buckets, assignment: { a: lighter, b: darker, c: lighter, d: darker, e: lighter, f: darker } }
+    solution: { assignment: { a: lighter, b: darker, c: lighter, d: darker, e: lighter, f: darker } }
+    fallback:
+      kind: choice
+      prompt: A grey square on navy. Lighter or darker than it really is?
+      options:
+        - { id: lighter, text: "It looks lighter" }
+        - { id: darker, text: "It looks darker" }
+      answer: lighter
+    why: "Dark surrounds lift a grey; light surrounds push it down."
+  - id: i2
+    kind: match
+    level: apply
+    difficulty: 3
+    prompt: Match each surround to the faint tint a neutral grey square seems to take.
+    left: ["Orange surround", "Red surround", "Green surround", "Blue surround"]
+    right: ["bluish", "greenish", "pinkish", "yellowish"]
+    answer: [[0, 0], [1, 1], [2, 2], [3, 3]]
+  - id: i3
+    kind: choice
+    level: recall
+    difficulty: 1
+    prompt: Why does the same grey look different on black and on white?
+    options:
+      - { id: context, text: "Vision judges lightness relative to the surroundings" }
+      - { id: screen, text: "The screen shows the two squares differently", misconception: screen-glitch }
+      - { id: meter, text: "The eye measures light, and the bands add or remove some", misconception: eye-is-light-meter }
+    answer: context
+  - id: i4
+    kind: widget
+    level: apply
+    difficulty: 2
+    prompt: Same grey square, two surrounds. Which one looks lighter?
+    widget:
+      id: ab-compare
+      v: 1
+      props:
+        a: { label: "Grey on navy", asset: assets/img/grey-on-navy.svg }
+        b: { label: "Grey on pale cream", asset: assets/img/grey-on-pale.svg }
+        layout: side-by-side
+      goal: { kind: pick, answer: a }
+    solution: { pick: a }
+    fallback:
+      kind: choice
+      prompt: The same grey square sits on navy and on pale cream. Where does it look lighter?
+      options:
+        - { id: navy, text: "On navy" }
+        - { id: cream, text: "On pale cream", misconception: eye-is-light-meter }
+      answer: navy
+    why: "Pixel for pixel they're equal; the dark navy lifts it."
+  - id: i5
+    kind: cloze
+    level: recall
+    difficulty: 2
+    prompt: Fill the gap.
+    text: "A neutral grey on a red background tends to look slightly {{1}}."
+    blanks:
+      "1": { accept: [green, greenish, cyan, "blue-green", "blue green", "bluish green", "greenish blue"], tiles: [greenish, reddish, orange, darker] }
+  - id: i6
+    kind: choice
+    level: transfer
+    difficulty: 3
+    prompt: "A designer's grey text looks lighter on a black slide than on a white one. Same hex code. What's going on?"
+    options:
+      - { id: context, text: "Same grey; the surround changes how it looks" }
+      - { id: render, text: "The projector renders the two slides differently", misconception: screen-glitch }
+      - { id: change, text: "The grey really is lighter on the black slide", misconception: eye-is-light-meter }
+    answer: context
+  - id: i7b
+    kind: widget
+    level: apply
+    difficulty: 3
+    prompt: Same neutral grey square, two surrounds. Which grey looks warmer?
+    widget:
+      id: ab-compare
+      v: 1
+      props:
+        a: { label: "Grey on orange", asset: assets/img/grey-on-orange.svg }
+        b: { label: "Grey on blue", asset: assets/img/grey-on-blue.svg }
+        layout: side-by-side
+      goal: { kind: pick, answer: b }
+    solution: { pick: b }
+    onWrong:
+      a: { misconception: tint-copies-surround, feedback: "On orange the grey leans cool. The surround pushes a neutral toward its opposite." }
+    fallback:
+      kind: choice
+      prompt: The same neutral grey sits on orange and on blue. Where does it look warmer?
+      options:
+        - { id: blue, text: "On blue" }
+        - { id: orange, text: "On orange", misconception: tint-copies-surround }
+      answer: blue
+    why: "Blue around it pushes the grey toward orange, its opposite."
+  - id: i8
+    kind: order
+    level: transfer
+    difficulty: 3
+    prompt: The same grey square is placed on each background. Order them by how light the square will look, lightest-looking first.
+    items: ["On black", "On navy", "On mid grey", "On pale yellow", "On white"]
+    answer: [0, 1, 2, 3, 4]
+  - id: i9
+    kind: explain
+    level: transfer
+    difficulty: 3
+    prompt: "In one sentence: why should a painter judge a color next to its neighbours, not on its own?"
+    keyPoints:
+      - { id: relative, text: "the eye judges color relative to its surroundings", keywords: [relative, surround, neighbour, neighbor, context, next to, background] }
+      - { id: shifts, text: "so the same paint can look lighter, darker or tinted", keywords: [lighter, darker, tint, change, different, shift] }
+    minHits: 1
+    exemplar: "The eye judges a color against what surrounds it, so the same paint can look lighter, darker or tinted depending on its neighbours."
+    offline:
+      kind: choice
+      prompt: Which is right?
+      options:
+        - { id: rel, text: "Surroundings change how a color looks, so judge it in place" }
+        - { id: meter, text: "A color always looks the same, so it doesn't matter", misconception: eye-is-light-meter }
+        - { id: screen, text: "Only screens distort color; paint is safe", misconception: screen-glitch }
+      answer: rel
+  - kind: widget
+    id: st3-logo
+    callback: true
+    prompt: "Remember the grey that turned blue on orange? A client says the printer used two greys for this logo, on navy and on cream. Which logo is lighter?"
+    widget:
+      id: ab-compare
+      v: 1
+      props:
+        a: { label: Logo on navy, asset: assets/img/logo-on-navy.svg }
+        b: { label: Logo on cream, asset: assets/img/logo-on-cream.svg }
+        layout: side-by-side
+        allowSame: true
+      goal: { kind: pick, answer: same }
+    solution: { pick: same }
+    fallback:
+      kind: choice
+      prompt: The same grey logo sits on navy and on cream and looks different. Are the greys different?
+      options:
+        - { id: same, text: "No: same grey, different surrounds" }
+        - { id: navy, text: "Yes: the one on navy is lighter" }
+        - { id: cream, text: "Yes: the one on cream is lighter" }
+      answer: same
+    why: "Same grey, #8C8C8C, twice. Navy lifts it, cream pushes it down. The printer is innocent."
+    level: transfer
+    difficulty: 3
+
+flashcards:
+  - id: c1
+    kind: qa
+    front: "Same grey on black and on white: where does it look lighter?"
+    back: "On black. A dark surround lifts it; a light surround pushes it down."
+  - id: c2
+    kind: qa
+    front: "What tint does a neutral grey pick up on an orange field?"
+    back: "A faint blue: surrounds push neutrals toward their opposite hue."
+  - id: c3
+    kind: cloze
+    front: "Judging a color against its surroundings is called {{simultaneous contrast}}."
+    back: "Described by Chevreul in 1839, made famous by Josef Albers."
+  - id: c4
+    kind: qa
+    front: "How do you make two slightly different greys look the same?"
+    back: "Put the lighter one on a lighter surround and the darker one on a darker surround."
+
+toy:
+  prompt: "Flip between the two surrounds. Can you ever make the two greys look equal?"
+  widget:
+    id: ab-compare
+    v: 1
+    props:
+      a: { label: "Grey on navy", asset: assets/img/grey-on-navy.svg }
+      b: { label: "Grey on pale cream", asset: assets/img/grey-on-pale.svg }
+      layout: toggle
+      allowSame: true
+
+underTheHood:
+  title: Why vision cheats, and who noticed
+  body: >
+    Neurons early in the visual system respond to differences between neighbouring regions more
+    than to absolute light levels (lateral inhibition is part of the story; higher-level
+    interpretation of light and shadow is another). That makes edges pop and keeps objects
+    recognisable as lighting changes, at the cost of making identical swatches look different.
+    Michel Eugène Chevreul, a chemist at the Gobelins tapestry works, published the law of
+    simultaneous contrast in 1839 after weavers complained of dyes that changed next to each
+    other. Josef Albers's Interaction of Color (1963) built a course from these effects.
+
+faq:
+  - q: Is this the same as the famous dress photo?
+    a: "Related but not identical. The dress is about how your brain guesses the lighting. It has its own planned card, color constancy, further down the line."
+  - q: Does it work for color, not just grey?
+    a: "Yes. Any color shifts toward the opposite of its surround in hue and away from it in lightness."
+
+sources:
+  - { id: chevreul-1839, title: "De la loi du contraste simultané des couleurs (The Principles of Harmony and Contrast of Colours)", by: "Michel Eugène Chevreul", year: 1839 }
+  - { id: albers-1963, title: "Interaction of Color", by: "Josef Albers", year: 1963, url: "https://yalebooks.yale.edu/book/9780300179354/interaction-of-color/" }
+  - { id: wiki-contrast-effect, title: "Contrast effect (Simultaneous contrast)", by: "Wikipedia contributors", url: "https://en.wikipedia.org/wiki/Contrast_effect", license: "CC-BY-SA-4.0" }
+
+status: draft

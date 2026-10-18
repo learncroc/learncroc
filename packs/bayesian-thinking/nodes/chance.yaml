@@ -1,0 +1,342 @@
+# yaml-language-server: $schema=../../../schemas/node.schema.json
+id: chance
+title: Out of how many?
+tagline: Turn percentages back into people
+estMinutes: 4
+bigIdea: >
+  A probability is a share of some set of cases, so always ask "out of how many, and of
+  what?" A 30% chance of rain means rain on about 30 of every 100 days like tomorrow.
+  Counting people instead of percentages also tames scary relative risks: doubling 1 in
+  7,000 gives 2 in 7,000.
+objectives:
+  - Translate a percentage into a count out of 100 or 1,000
+  - Name the set of cases a probability is about
+  - Turn a relative risk into an absolute one
+concepts: [prob.chance, prob.natural-frequencies]
+
+misconceptions:
+  area-or-time:
+    label: Reads "30% chance of rain" as rain over 30% of the area or 30% of the day
+    hint: "Thirty out of a hundred what? Picture a hundred days exactly like tomorrow."
+  relative-is-absolute:
+    label: Treats "doubles your risk" as a big risk without asking what it doubled from
+    hint: "Double of what? Write the risk as a count out of 7,000, before and after."
+  wrong-total:
+    label: Turns a percentage into a count using the wrong total
+    hint: "Which crowd is the percentage about? Write that total down first, then take the share."
+
+hook:
+  interaction:
+    kind: choice
+    id: hook-q
+    prompt: "The forecast says '30% chance of rain tomorrow'. What does the 30% mean?"
+    confidence: true
+    options:
+      - { id: area, text: "Rain will fall on 30% of the region", misconception: area-or-time }
+      - { id: time, text: "It will rain for 30% of the day", misconception: area-or-time }
+      - { id: days, text: "It rains on 30 of every 100 days like tomorrow" }
+    answer: days
+  lotsGuess: time
+
+screens:
+  - id: s1-days
+    newIdea: A probability is a count out of a set of similar cases
+    blocks:
+      - type: story
+        text: "A forecaster said '30% chance of rain' on 200 different days. Her track record is on the chart."
+    visual:
+      kind: widget
+      widget:
+        id: plot
+        v: 1
+        props:
+          title: "Did her forecasts come true?"
+          kind: bar
+          x: { label: "what she forecast", min: 0, max: 1 }
+          y: { label: "days it actually rained (%)", min: 0, max: 100 }
+          series:
+            - id: rained
+              label: "share of days with rain"
+              color: 2
+              bars:
+                - { label: "said 10%", value: 11 }
+                - { label: "said 30%", value: 29 }
+                - { label: "said 50%", value: 52 }
+                - { label: "said 70%", value: 68 }
+                - { label: "said 90%", value: 88 }
+          dataSource: illustrative
+      alt: "Bar chart of an illustrative forecaster's record. On days she said 10%, it rained 11% of the time; 30% gave 29%; 50% gave 52%; 70% gave 68%; 90% gave 88%."
+    interaction:
+      kind: numeric
+      id: s1-q
+      prompt: If her 30% means what it should, on about how many of those 200 days did it rain?
+      answer: 60
+      tolerance: 2
+      unit: days
+      feedbackRight: "About 60: 30 out of every 100 such days."
+      onWrong:
+        "30": { misconception: wrong-total, feedback: "30 out of every 100 days, and there are 200 of them." }
+    reveal:
+      text: >
+        About 60 wet days out of 200. That's all a 30% forecast promises: a share of days like
+        this one, not of the map or the clock. Her bar sits at 29%, so her numbers mean what
+        they say.
+      visualState: { note: "30% of days, not hours" }
+    alts:
+      example: "A 30% chance means: of 10 days with this exact forecast, expect rain on about 3."
+    src: [gigerenzer-2005]
+
+  - id: s2-double
+    newIdea: A relative risk needs its starting count
+    blocks:
+      - type: story
+        text: >
+          UK, 1995: newer contraceptive pills were said to double the risk of a dangerous
+          clot. On older pills, about 1 woman in 7,000 had one.
+    visual:
+      kind: widget
+      widget:
+        id: plot
+        v: 1
+        props:
+          title: "Clots per 7,000 women"
+          kind: bar
+          x: { label: "pill", min: 0, max: 1 }
+          y: { label: "clots per 7,000 women", min: 0, max: 10 }
+          series:
+            - id: clots
+              label: "clots per 7,000"
+              color: 1
+              bars:
+                - { label: "older pill", value: 1 }
+                - { label: "newer pill", value: 2 }
+          dataSource: sources
+      alt: "Two tiny bars on a scale of 0 to 10: 1 clot per 7,000 women on the older pill, 2 per 7,000 on the newer one."
+    interaction:
+      kind: numeric
+      id: s2-q
+      prompt: Doubled. How many extra clots is that per 7,000 women?
+      answer: 1
+      tolerance: 0
+      feedbackRight: "One. From 1 in 7,000 to 2 in 7,000."
+      onWrong:
+        "7000": { misconception: relative-is-absolute, feedback: "Doubling 1 in 7,000 gives 2 in 7,000. How many extra is that?" }
+        "100": { misconception: relative-is-absolute, feedback: "100% is the relative change. Count the extra women instead." }
+    reveal:
+      text: >
+        One extra clot per 7,000 women. The headlines said 100% more; many women stopped the
+        pill, and an estimated 13,000 extra abortions followed in England and Wales. The
+        percentage was true. The count was the story.
+      visualState: { note: "+1 in 7,000" }
+    src: [furedi-1999, gigerenzer-2007]
+
+  - id: s3-headline
+    blocks:
+      - type: story
+        text: "A headline: a daily habit raises a disease's risk by 18%. Without the habit, 50 people in 1,000 get it."
+      - type: callout
+        tone: illustrative
+        text: "Illustrative numbers."
+    visual:
+      kind: widget
+      widget:
+        id: plot
+        v: 1
+        props:
+          title: "Cases per 1,000 people"
+          kind: function
+          x: { label: "relative increase in risk (%)", min: 0, max: 100, unit: "%" }
+          y: { label: "cases per 1,000", min: 0, max: 100 }
+          series:
+            - { id: cases, label: "cases per 1,000", expr: "50 * (1 + x / 100)", color: 3 }
+          dataSource: illustrative
+      alt: "A straight line from 50 cases per 1,000 at no increase to 100 cases per 1,000 at a 100% increase."
+    interaction:
+      kind: numeric
+      id: s3-q
+      prompt: With the habit, about how many people in 1,000 get it?
+      answer: 59
+      tolerance: 1
+      feedbackRight: "18% of 50 is 9, so about 59."
+      onWrong:
+        "68": { misconception: wrong-total, feedback: "18% of the 50 cases, not 18 extra per 1,000." }
+        "180": { misconception: wrong-total, feedback: "18% of 1,000 is too big a crowd. Take 18% of the 50 cases." }
+    reveal:
+      text: >
+        About 59 in 1,000: nine extra people per thousand. Worth knowing, and a long way from
+        the dread an "18%" headline sells. Ask every percentage the same question: out of how
+        many?
+      visualState: { props: { markerAt: 18 }, note: "50 → 59 per 1,000" }
+
+close:
+  text: >
+    Rain on about 30 of every 100 days like tomorrow. In surveys across five cities, plenty of
+    people read it as time or area instead. A probability always hides a question: out of
+    how many, and of what?
+
+  teaser: ""
+
+items:
+  - id: i1
+    kind: numeric
+    level: apply
+    difficulty: 1
+    prompt: "A well-calibrated forecaster said '{p}% chance of rain' on 200 different days. On about how many did it rain?"
+    params:
+      vars: { p: [30, 10, 70, 45] }
+      answerExpr: "p * 2"
+    answer: 60
+    tolerance: 2
+    unit: days
+    why: "The percentage is a share of the days, so take it of 200."
+  - id: i2
+    kind: numeric
+    level: apply
+    difficulty: 2
+    prompt: "A drug cuts heart attacks by 25%, from {a} per 1,000 people. How many fewer heart attacks per 1,000?"
+    params:
+      vars: { a: [20, 8, 40, 12] }
+      answerExpr: "a * 0.25"
+    answer: 5
+    tolerance: 0
+    onWrong:
+      "25": { misconception: relative-is-absolute, feedback: "25% is the relative cut. Take 25% of the starting count." }
+    why: "A 25% relative cut of 20 per 1,000 is 5 fewer per 1,000."
+  - id: i3
+    kind: choice
+    level: recall
+    difficulty: 1
+    prompt: "'This doubles your risk.' What should you ask first?"
+    options:
+      - { id: serious, text: "Nothing: doubling is always serious", misconception: relative-is-absolute }
+      - { id: start, text: "Double of what? What's the starting risk?" }
+      - { id: hundred, text: "Is that 100 out of 100 people?", misconception: wrong-total }
+    answer: start
+    shuffle: true
+    why: "A relative change means nothing until you know what it's relative to."
+  - id: i4
+    kind: match
+    level: recall
+    difficulty: 2
+    prompt: Match each statement to the same chance as a count.
+    left: ["30% chance of rain", "Doubled from 1 in 7,000", "1 in 4", "0.1%"]
+    right: ["30 of 100 days like tomorrow", "2 in 7,000", "250 in 1,000", "1 in 1,000"]
+    answer: [[0, 0], [1, 1], [2, 2], [3, 3]]
+  - id: i5
+    kind: estimate
+    level: apply
+    difficulty: 2
+    prompt: "A screening test flags 0.5% of the people who take it. A stadium of {n},000 people take it. Roughly how many get flagged?"
+    params:
+      vars: { n: [60, 40, 80, 20] }
+      answerExpr: "n * 1000 * 0.005"
+    scale: { min: 1, max: 10000, log: true, label: "people flagged" }
+    answer: 300
+    accept: { factor: 1.3 }
+    why: "0.5% is 5 in 1,000, so 60,000 people gives about 300."
+  - id: i6
+    kind: cloze
+    level: recall
+    difficulty: 2
+    prompt: Fill the gaps.
+    text: "A {{1}} risk compares two risks. An {{2}} risk says how many people out of a total."
+    blanks:
+      "1": { accept: [relative], tiles: [relative, absolute, average] }
+      "2": { accept: [absolute], tiles: [absolute, relative, average] }
+  - id: i7
+    kind: numeric
+    level: apply
+    difficulty: 2
+    prompt: "One lottery ticket wins 1 time in {n}. Buying two tickets 'doubles your chance'. Two tickets win 1 time in how many?"
+    params:
+      vars: { n: [14000000, 1000000, 300000, 50000] }
+      answerExpr: "n / 2"
+    answer: 7000000
+    tolerance: 0
+    why: "Doubled, and still roughly nothing."
+  - id: i8
+    kind: choice
+    level: transfer
+    difficulty: 3
+    prompt: "Made-up story: 'Flying is twice as deadly this year.' Deaths went from 2 to 4 per 10 billion passenger-kilometres. Best summary?"
+    options:
+      - { id: danger, text: "Flying is now dangerous", misconception: relative-is-absolute }
+      - { id: tiny, text: "A real change, from a very small number" }
+      - { id: hundred, text: "4% of passengers now die", misconception: wrong-total }
+    answer: tiny
+    shuffle: true
+    why: "Twice almost nothing is still almost nothing. Ask for the count."
+  - id: i9
+    kind: explain
+    level: transfer
+    difficulty: 3
+    prompt: "In one sentence: why can a '100% increase' in risk be nothing to panic about?"
+    keyPoints:
+      - { id: small-base, text: "it can double a tiny starting risk", keywords: [tiny, small, from, "1 in", starting, baseline, rare] }
+      - { id: count, text: "count the extra cases out of the total", keywords: [count, out of, extra, absolute, per] }
+    minHits: 1
+    exemplar: "Doubling 1 in 7,000 gives 2 in 7,000: one extra person per 7,000, which is small even though it's a 100% increase."
+    offline:
+      kind: choice
+      prompt: Which explanation is right?
+      options:
+        - { id: wrong, text: "Percentages over 100 are always errors", misconception: wrong-total }
+        - { id: always, text: "It can't; 100% more is always huge", misconception: relative-is-absolute }
+        - { id: base, text: "It may double a tiny risk into a slightly less tiny one" }
+      answer: base
+      shuffle: true
+  - id: i10
+    kind: order
+    level: apply
+    difficulty: 3
+    prompt: Order these risks from smallest to largest.
+    items: ["1%", "1 in 10,000", "1 in 1,000", "0.05%"]
+    answer: [1, 3, 2, 0]
+    why: "As counts out of 10,000: 1, 5, 10 and 100."
+
+flashcards:
+  - id: c1
+    kind: qa
+    front: What does "30% chance of rain tomorrow" mean?
+    back: "It rains on about 30 of every 100 days like tomorrow. Not 30% of the day or the area."
+  - id: c2
+    kind: qa
+    front: "A risk 'doubles'. What do you need before you worry?"
+    back: "The starting count. Doubling 1 in 7,000 gives 2 in 7,000."
+  - id: c3
+    kind: cloze
+    front: "Always ask of a probability: out of how many, and of {{what}}?"
+    back: "Every probability is a share of some set of cases."
+  - id: c4
+    kind: qa
+    front: "Relative risk vs absolute risk?"
+    back: "Relative compares two risks (100% more). Absolute counts people (1 extra in 7,000)."
+
+toy:
+  prompt: "Set 'doubles the risk'. At what starting risk does doubling start to matter?"
+  widget:
+    id: plot
+    v: 1
+    props:
+      title: "Extra cases from a relative increase"
+      kind: function
+      x: { label: "starting risk (cases per 1,000)", min: 0, max: 200 }
+      y: { label: "extra cases per 1,000", min: 0, max: 400 }
+      series:
+        - { id: extra, label: "extra cases per 1,000", expr: "x * r / 100", color: 1 }
+      params:
+        - { name: r, label: "relative increase", min: 0, max: 200, step: 5, value: 100, unit: "%" }
+      dataSource: formula
+
+faq:
+  - q: Is 30% about the whole region?
+    a: "No. Weather services define it per location: on days with this forecast, expect rain at a given spot about 3 times in 10."
+  - q: Were the 1995 pill numbers real?
+    a: "Yes: roughly 1 in 7,000 to 2 in 7,000. Researchers later estimated about 13,000 extra abortions in England and Wales the following year."
+
+sources:
+  - { id: gigerenzer-2005, title: "\"A 30% chance of rain tomorrow\": How does the public understand probabilistic weather forecasts?", by: "Gigerenzer, Hertwig, van den Broek, Fasolo & Katsikopoulos", year: 2005, note: "Risk Analysis 25(3). Surveys in Amsterdam, Athens, Berlin, Milan and New York." }
+  - { id: furedi-1999, title: "The public health implications of the 1995 'pill scare'", by: "Ann Furedi", year: 1999, note: "Human Reproduction Update 5(6). Estimated about 13,000 additional abortions in England and Wales in 1996." }
+  - { id: gigerenzer-2007, title: "Helping doctors and patients make sense of health statistics", by: "Gigerenzer, Gaissmaier, Kurz-Milcke, Schwartz & Woloshin", year: 2007, note: "Psychological Science in the Public Interest 8(2). The pill scare: from about 1 in 7,000 to 2 in 7,000." }
+
+status: draft

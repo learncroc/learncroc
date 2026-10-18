@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>7,000 women: what "double the risk" counts</title>
+<style>
+  :root {
+    --c-bg: #FFFFFF; --c-ink: #1C1A3D; --c-ink2: #4A4870; --c-dot: #C9CCDC; --c-sunk: #F6F7FB;
+    --c-old: #5E48D6; --c-new: #2F6FB0; --c-focus: #12877A;
+    color-scheme: light;
+  }
+  :root[data-theme="dark"] {
+    --c-bg: #1D1C3D; --c-ink: #ECEBFA; --c-ink2: #B6B4DA; --c-dot: #3B3A72; --c-sunk: #232249;
+    --c-old: #A493FF; --c-new: #86B6F0; --c-focus: #7FE3D5;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    font: 15px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--surface, var(--c-bg)); color: var(--ink, var(--c-ink));
+    padding: 12px 14px;
+  }
+  .layout { display: grid; grid-template-columns: minmax(180px, 210px) 1fr; gap: 12px 18px; align-items: start; }
+  .side { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+  label { font-weight: 600; font-size: 14px; display: block; line-height: 1.3; }
+  input[type="range"] { width: 100%; margin: 6px 0 0; accent-color: var(--c-new); }
+  output { font-variant-numeric: tabular-nums; font-weight: 700; }
+  :focus-visible { outline: 3px solid var(--focus, var(--c-focus)); outline-offset: 2px; }
+  .card { padding: 8px 10px; border-radius: 12px; background: var(--surface-2, var(--c-sunk)); font-size: 14px; line-height: 1.35; }
+  .card .k { font-size: 12px; color: var(--ink-2, var(--c-ink2)); display: block; }
+  .card .v { font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .stage { min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+  canvas { display: block; width: 100%; height: auto; }
+  .legend { display: flex; gap: 4px 12px; flex-wrap: wrap; font-size: 12px; line-height: 1.3; color: var(--ink-2, var(--c-ink2)); }
+  .sw { display: inline-block; width: 10px; height: 10px; border-radius: 50%; vertical-align: -1px; margin-right: 4px; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+</style>
+</head>
+<body>
+<div class="layout">
+<div class="side">
+  <div>
+    <label for="r">Newer pill: risk up by <output id="rOut" for="r">0</output>%</label>
+    <input id="r" type="range" min="0" max="300" step="25" value="0" aria-describedby="rHelp">
+    <span id="rHelp" class="sr">Sets how much the newer pill raises the clot risk, as a percentage increase over the older pill.</span>
+  </div>
+  <div class="card"><span class="k">The headline</span><span class="v" id="headline">No change</span></div>
+  <div class="card" aria-live="polite"><span class="k">The count, per 7,000 women</span><span class="v" id="count">1 clot</span><span class="k" id="extra">0 extra women</span></div>
+</div>
+<div class="stage">
+  <canvas id="grid" role="img" aria-label="7,000 women as dots. 1 has a clot."></canvas>
+  <div class="legend" aria-hidden="true">
+    <span><span class="sw" style="background:var(--c-old)"></span>clot on the older pill</span>
+    <span><span class="sw" style="background:var(--c-new)"></span>extra clots on the newer pill</span>
+    <span>each dot is one woman</span>
+  </div>
+</div>
+</div>
+
+<script>
+(() => {
+  "use strict";
+  /* The learncroc host injects a frozen window.lm bridge (ready, report, resize, announce, onInit,
+     onReveal, onTest). makeShim() gives the same API when this file is opened on its own. */
+  const lm = window.lm || makeShim();
+  let root = document.documentElement, mode = "explore", announceTimer = 0;
+  function report(v) { if (mode === "answer") lm.report(v); }
+  function announce(text) {
+    clearTimeout(announceTimer);
+    announceTimer = setTimeout(() => { lm.announce(String(text).slice(0, 120)); }, 300);
+  }
+  function fit() { lm.resize(Math.ceil(root.scrollHeight)); }
+  function applyEnv(s) {
+    mode = s.mode === "answer" || s.mode === "review" ? s.mode : "explore";
+    root.setAttribute("data-theme", s.theme === "dark" ? "dark" : "light");
+  }
+  function makeShim() {
+    let P = window.parent, initFns = [], revealFns = [], testFn = null;
+    const framed = !!P && P !== window;
+    function post(m) { if (framed) { try { P.postMessage(m, "*"); } catch (e) { /* not framed */ } } }
+    window.addEventListener("message", (e) => {
+      if (!framed || e.source !== P) return;
+      const d = e.data;
+      if (!d || typeof d !== "object") return;
+      if (d.type === "init") {
+        const t = d.tokens || {};
+        for (const k in t) {
+          if (Object.hasOwn(t, k) && /^--[a-z0-9-]{1,40}$/.test(k) && typeof t[k] === "string" && !/[;{}<>]/.test(t[k])) root.style.setProperty(k, t[k]);
+        }
+        const snap = { mode: d.mode, theme: d.theme, reducedMotion: d.reducedMotion === true, value: d.value, solution: d.solution };
+        initFns.forEach((fn) => { fn(snap); });
+      } else if (d.type === "reveal") {
+        revealFns.forEach((fn) => { fn(d.solution); });
+      } else if (d.type === "selftest") {
+        const el = document.querySelector("input[type=range]");
+        const before = document.body.textContent;
+        const old = el ? el.value : "";
+        if (el) { el.stepUp(); if (el.value === old) el.stepDown(); el.dispatchEvent(new Event("input", { bubbles: true })); }
+        const ok = !!el && document.body.textContent !== before;
+        if (el) { el.value = old; el.dispatchEvent(new Event("input", { bubbles: true })); }
+        post({ type: "selftest", ok: ok });
+      }
+    });
+    return {
+      ready: () => { post({ type: "ready", v: 1 }); },
+      report: (v) => { post({ type: "report", value: v }); },
+      resize: (h) => { post({ type: "resize", height: h }); },
+      announce: (t) => { post({ type: "announce", text: String(t).slice(0, 120) }); },
+      onInit: (fn) => { initFns.push(fn); },
+      onReveal: (fn) => { revealFns.push(fn); },
+      onTest: (fn) => { testFn = fn; },
+      test: (v) => { if (testFn) testFn(v); }
+    };
+  }
+
+  const WOMEN = 7000, COLS = 100, ROWS = WOMEN / COLS, CELL = 4.6, PAD = 6;
+  /* The older pill's clot, and the slots where extra clots appear: spread out so each one is a hunt. */
+  const OLD = 3517, EXTRA = [1288, 5893, 4462];
+  const r = document.getElementById("r"), rOut = document.getElementById("rOut");
+  const headline = document.getElementById("headline"), count = document.getElementById("count"), extraEl = document.getElementById("extra");
+  const canvas = document.getElementById("grid"), ctx = canvas.getContext("2d");
+  const W = COLS * CELL + PAD * 2, H = ROWS * CELL + PAD * 2;
+
+  function css(name, fallback) {
+    const v = getComputedStyle(root).getPropertyValue(name).trim();
+    return v || getComputedStyle(root).getPropertyValue(fallback).trim();
+  }
+  function fmt(n) { return Number.isInteger(n) ? String(n) : n.toFixed(2).replace(/0$/, ""); }
+
+  function draw(extra) {
+    const dpr = Math.max(1, Math.min(3, window.devicePixelRatio || 1));
+    canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+    canvas.style.aspectRatio = `${W} / ${H}`;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = css("--c-dot", "--c-dot");
+    for (let i = 0; i < WOMEN; i++) {
+      const x = PAD + (i % COLS) * CELL + CELL / 2, y = PAD + Math.floor(i / COLS) * CELL + CELL / 2;
+      ctx.beginPath(); ctx.arc(x, y, 1.35, 0, Math.PI * 2); ctx.fill();
+    }
+    function mark(i, color, share) {
+      const x = PAD + (i % COLS) * CELL + CELL / 2, y = PAD + Math.floor(i / COLS) * CELL + CELL / 2;
+      ctx.globalAlpha = 1;
+      ctx.strokeStyle = color; ctx.lineWidth = 1.6;
+      ctx.beginPath(); ctx.arc(x, y, 5.5, 0, Math.PI * 2); ctx.stroke();
+      ctx.globalAlpha = Math.max(0.25, share);
+      ctx.fillStyle = color;
+      ctx.beginPath(); ctx.arc(x, y, 2.6, 0, Math.PI * 2); ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+    mark(OLD, css("--c-old", "--c-old"), 1);
+    let left = extra;
+    for (let k = 0; k < EXTRA.length && left > 0; k++) {
+      mark(EXTRA[k], css("--c-new", "--c-new"), Math.min(1, left));
+      left -= 1;
+    }
+  }
+
+  function render() {
+    const pct = Number(r.value), clots = 1 + pct / 100, extra = pct / 100;
+    rOut.textContent = String(pct);
+    headline.textContent = pct === 0 ? "No change" : `Risk up ${pct}%`;
+    count.textContent = `${fmt(clots)} clot${clots === 1 ? "" : "s"}`;
+    extraEl.textContent = `${fmt(extra)} extra wom${extra === 1 ? "an" : "en"}`;
+    draw(extra);
+    const text = `Risk up ${pct}%: ${fmt(clots)} clots per 7,000 women, ${fmt(extra)} extra.`;
+    canvas.setAttribute("aria-label", `7,000 women as dots. ${fmt(clots)} have a clot.`);
+    fit();
+    return text;
+  }
+
+  function setR(v) {
+    const n = Math.max(0, Math.min(300, Math.round(Number(v) / 25) * 25));
+    if (Number.isFinite(n)) r.value = String(n);
+  }
+
+  r.addEventListener("input", () => {
+    const text = render();
+    report(Number(r.value));
+    announce(text);
+  });
+
+  lm.onInit((m) => {
+    applyEnv(m);
+    if (typeof m.value === "number") setR(m.value);
+    if (m.mode === "review" && typeof m.solution === "number") setR(m.solution);
+    render();
+  });
+  lm.onReveal((solution) => {
+    if (typeof solution === "number") setR(solution);
+    announce(render());
+  });
+  lm.onTest((value) => {
+    setR(value);
+    render();
+    lm.report(Number(r.value));
+  });
+  window.addEventListener("resize", () => { render(); });
+
+  render();
+  lm.ready();
+})();
+</script>
+</body>
+</html>

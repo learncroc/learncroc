@@ -1,0 +1,45 @@
+# yaml-language-server: $schema=../../schemas/pack.schema.json
+schema: 2
+id: bayesian-thinking
+version: 0.1.0
+title: Bayesian thinking
+subtitle: Why a positive test usually isn't what it seems
+tagline: A good test says yes. You're probably fine. A crowd of 1,000 shows why.
+publisher: learncroc
+authors: [ { name: learncroc contributors } ]
+reviewers: []
+license: CC-BY-SA-4.0
+lang: en
+level: beginner
+estMinutes: 30
+tags: [probability, bayes, statistics, base rates, reasoning]
+category: thinking
+engine: ">=0.1.0 <1.0.0"
+widgets: { plot: 1, sorter: 1 }
+profile: sampler
+theme:
+  renderer: sketchbook
+  world: The Detective's Corkboard
+  mode: dark
+  direction: lr
+  ground: "#1C1814"
+  texture: corkboard
+  lines: ["#F29BB8", "#86B6F0", "#CDA8F5", "#B8D98A", "#E8E1D0"]
+  token: pin
+  gateName: The Positive Test
+  fieldNoteStyle: card
+  landmarks:
+    base-rates: { name: The Farmer File, glyph: box }
+    bayes-frequency: { name: The Crowd Room, glyph: box }
+    boss-positive-test: { name: The Positive Test, glyph: star }
+entry: { suggestedStart: base-rates }
+outcomes:
+  - Ask for the base rate before trusting a clue
+  - Work out what a positive test means with a crowd of 1,000 people
+  - Update a probability when a second clue arrives
+ai:
+  tutorNotes: >
+    Every case is fictional and every number is illustrative unless a source is named. Use
+    natural frequencies (counts out of 1,000) before any formula. Never give medical advice:
+    real test results belong with a clinician.
+status: draft

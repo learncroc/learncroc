@@ -1,0 +1,405 @@
+# yaml-language-server: $schema=../../../schemas/node.schema.json
+id: conditional
+title: Flip the question
+tagline: "\"Of the tall\" is not \"of the players\""
+estMinutes: 4
+bigIdea: >
+  The chance of A given B is not the chance of B given A. Almost every NBA player is tall,
+  but almost no tall man plays in the NBA. "Given" names the group you count inside;
+  swap the group and the answer can change from nearly all to nearly none.
+objectives:
+  - Say which group a conditional probability counts inside
+  - Compute both directions from one table of counts
+  - Spot a claim that quietly swaps the direction
+concepts: [prob.conditional]
+
+misconceptions:
+  flip:
+    label: Assumes the chance of A given B equals the chance of B given A
+    hint: "Which group are you counting inside? Name it first, then count."
+  wrong-total:
+    label: Divides by the whole crowd instead of the group named after "given"
+    upstream: chance
+    hint: "Out of how many? The group named after 'given' is your new total."
+  rates-vs-shares:
+    label: Reads "most crashes happen near home" as "driving near home is riskier"
+    hint: "That counts inside crashes. Your risk counts inside drivers like you. Which crowd is bigger?"
+
+hook:
+  interaction:
+    kind: choice
+    id: hook-q
+    prompt: "Almost every NBA player is taller than 1.85 m. Roughly what share of men taller than 1.85 m play in the NBA?"
+    confidence: true
+    options:
+      - { id: nearly-all, text: "Nearly all of them", misconception: flip }
+      - { id: tenth, text: "About 1 in 10", misconception: flip }
+      - { id: tiny, text: "Far fewer than 1 in 1,000" }
+    answer: tiny
+
+screens:
+  - id: s1-groups
+    newIdea: "\"Given\" names the group you count inside"
+    blocks:
+      - type: story
+        text: "Same two traits, two different crowds. Sort each fact by the crowd it counts inside."
+    interaction:
+      kind: widget
+      id: s1-q
+      prompt: Sort each fact by the group it counts inside.
+      widget:
+        id: sorter
+        v: 1
+        props:
+          mode: buckets
+          buckets:
+            - { id: players, label: "Counting inside NBA players" }
+            - { id: tall, label: "Counting inside tall men" }
+          cards:
+            - { id: a, text: "Almost all are taller than 1.85 m" }
+            - { id: b, text: "Far fewer than 1 in 1,000 play in the NBA" }
+            - { id: c, text: "Their average height is about 1.98 m" }
+            - { id: d, text: "Millions of them never play professionally" }
+        goal: { kind: buckets, assignment: { a: players, b: tall, c: players, d: tall } }
+      solution: { assignment: { a: players, b: tall, c: players, d: tall } }
+      fallback:
+        kind: choice
+        prompt: "'Far fewer than 1 in 1,000 play in the NBA' counts inside which group?"
+        options:
+          - { id: players, text: "NBA players", misconception: flip }
+          - { id: tall, text: "Tall men" }
+        answer: tall
+        shuffle: true
+      feedbackRight: "Two crowds, two answers."
+    reveal:
+      text: >
+        Two facts about players, two about tall men. "Given" picks the crowd you count
+        inside. Change the crowd and a near-certainty becomes a rounding error.
+      visualState: { note: "same traits, different crowds" }
+    alts:
+      simpler: "Most dogs have four legs. That doesn't make most four-legged things dogs."
+
+  - id: s2-umbrella
+    newIdea: One table of counts answers both directions
+    blocks:
+      - type: story
+        text: "100 days. It rained on 20; you carried your umbrella on 18 of those, and on 16 dry days too."
+    visual:
+      kind: widget
+      widget:
+        id: plot
+        v: 1
+        props:
+          title: "100 days, sorted"
+          kind: bar
+          x: { label: "kind of day", min: 0, max: 1 }
+          y: { label: "days", min: 0, max: 70 }
+          series:
+            - id: days
+              label: "days"
+              color: 2
+              bars:
+                - { label: "rain, umbrella", value: 18 }
+                - { label: "rain, no umbrella", value: 2 }
+                - { label: "dry, umbrella", value: 16 }
+                - { label: "dry, no umbrella", value: 64 }
+          dataSource: illustrative
+      alt: "Four bars for 100 illustrative days: rain with umbrella 18, rain without 2, dry with umbrella 16, dry without 64."
+    interaction:
+      kind: numeric
+      id: s2-q
+      prompt: Of the days you carried the umbrella, what percent were rainy?
+      answer: 53
+      tolerance: 1
+      unit: "%"
+      feedbackRight: "18 of 34 umbrella days: about 53%."
+      onWrong:
+        "90": { misconception: flip, feedback: "90% is rainy days with an umbrella. Count inside umbrella days instead: 18 + 16 of them." }
+        "18": { misconception: wrong-total, feedback: "18 out of what? Only umbrella days count: 18 + 16." }
+    reveal:
+      text: >
+        18 of 34 umbrella days were wet: about 53%. Of rainy days, you had the umbrella 90% of
+        the time. Same four bars, two questions, two different answers.
+      visualState: { note: "18 ÷ 34 vs 18 ÷ 20" }
+
+  - id: s3-crashes
+    blocks:
+      - type: story
+        text: >
+          A small town: 950 drivers stay near home, 50 drive far. Seven near-home drivers crash
+          this year, and three far drivers do.
+      - type: callout
+        tone: illustrative
+        text: "Illustrative numbers."
+    visual:
+      kind: widget
+      widget:
+        id: plot
+        v: 1
+        props:
+          title: "Crashes this year"
+          kind: bar
+          x: { label: "drivers", min: 0, max: 1 }
+          y: { label: "crashes", min: 0, max: 10 }
+          series:
+            - id: crash
+              label: "crashes"
+              color: 3
+              bars:
+                - { label: "near home", value: 7 }
+                - { label: "far", value: 3 }
+          dataSource: illustrative
+      alt: "Two bars: 7 crashes among near-home drivers, 3 among far drivers."
+    interaction:
+      kind: numeric
+      id: s3-q
+      prompt: "70% of crashes were near home. But what percent of far drivers crashed?"
+      answer: 6
+      tolerance: 0.2
+      unit: "%"
+      feedbackRight: "3 of 50: 6%."
+      onWrong:
+        "30": { misconception: rates-vs-shares, feedback: "30% is the far drivers' share of crashes. Count inside the 50 far drivers." }
+        "0.3": { misconception: wrong-total, feedback: "Divide by the 50 far drivers, not by everyone." }
+    reveal:
+      text: >
+        3 of 50: 6%, against under 1% near home. "Most crashes happen near home" counts inside
+        crashes; your risk counts inside drivers like you. The bars flipped when the crowd
+        did.
+      visualState:
+        props:
+          title: "Crashes per 100 drivers"
+          y: { label: "crashes per 100 drivers", min: 0, max: 10 }
+          series:
+            - id: crash
+              label: "crashes per 100 drivers"
+              color: 3
+              bars:
+                - { label: "near home", value: 0.7 }
+                - { label: "far", value: 6 }
+        note: "rate inside each group"
+
+close:
+  text: >
+    Far fewer than 1 in 1,000. About 450 men play in the NBA, and millions of men are that
+    tall. "Of NBA players, nearly all are tall" and "of tall men, almost none play" are both
+    true.
+
+  teaser: ""
+
+items:
+  - id: i1
+    kind: numeric
+    level: apply
+    difficulty: 2
+    prompt: "On 20 rainy days you carried an umbrella 18 times. You also carried it on {d} dry days. What percent of umbrella days were rainy?"
+    params:
+      vars: { d: [18, 2, 42, 6] }
+      answerExpr: "100 * 18 / (18 + d)"
+    answer: 50
+    tolerance: 1
+    unit: "%"
+    onWrong:
+      "90": { misconception: flip, feedback: "That's inside rainy days. Count inside umbrella days." }
+    why: "Umbrella days are the new total: 18 rainy plus the dry ones."
+  - id: i2
+    kind: choice
+    level: recall
+    difficulty: 1
+    prompt: "'The chance of being sick, given a positive test' counts inside which group?"
+    options:
+      - { id: positives, text: "People who tested positive" }
+      - { id: sick, text: "People who are sick", misconception: flip }
+      - { id: everyone, text: "Everyone who was tested", misconception: wrong-total }
+    answer: positives
+    shuffle: true
+    why: "The group after 'given' is the crowd you count inside."
+  - id: i3
+    kind: numeric
+    level: apply
+    difficulty: 3
+    prompt: "40 people have a rash, and 30 of them used a new soap. In all, {u} people used the soap. What percent of soap users have the rash?"
+    params:
+      vars: { u: [300, 150, 600, 100] }
+      answerExpr: "100 * 30 / u"
+    answer: 10
+    tolerance: 0.5
+    unit: "%"
+    onWrong:
+      "75": { misconception: flip, feedback: "75% is soap users among the rash group. Flip it: rash cases among soap users." }
+  - id: i4
+    kind: match
+    level: recall
+    difficulty: 2
+    prompt: Match each question to its answer.
+    left:
+      - "Of NBA players, share taller than 1.85 m"
+      - "Of men over 1.85 m, share in the NBA"
+      - "Of rainy days, share with an umbrella"
+      - "Of umbrella days, share that were rainy"
+    right: ["nearly all", "almost none", "90%", "about 53%"]
+    answer: [[0, 0], [1, 1], [2, 2], [3, 3]]
+  - id: i5
+    kind: widget
+    level: apply
+    difficulty: 3
+    prompt: Sort each statement about a screening test by the group it counts inside.
+    widget:
+      id: sorter
+      v: 1
+      props:
+        mode: buckets
+        buckets:
+          - { id: sick, label: "Inside people who are sick" }
+          - { id: positive, label: "Inside people who test positive" }
+        cards:
+          - { id: a, text: "The test catches 9 in 10 cases" }
+          - { id: b, text: "Of people flagged, 1 in 12 is sick" }
+          - { id: c, text: "1 in 10 cases gets a false all-clear" }
+          - { id: d, text: "Your chance of being sick after a positive" }
+      goal: { kind: buckets, assignment: { a: sick, b: positive, c: sick, d: positive } }
+    solution: { assignment: { a: sick, b: positive, c: sick, d: positive } }
+    fallback:
+      kind: choice
+      prompt: "'The test catches 9 in 10 cases' counts inside which group?"
+      options:
+        - { id: positive, text: "People who test positive", misconception: flip }
+        - { id: sick, text: "People who are sick" }
+      answer: sick
+      shuffle: true
+    why: "A test's accuracy counts inside the sick. Your question counts inside the positives."
+  - id: i6
+    kind: cloze
+    level: recall
+    difficulty: 2
+    prompt: Fill the gaps.
+    text: "\"Given B\" means: count only inside {{1}}, and use that group as the new {{2}}."
+    blanks:
+      "1": { accept: [B, group B, the B group], tiles: [B, A, everyone] }
+      "2": { accept: [total, denominator], tiles: [total, answer, numerator] }
+  - id: i7
+    kind: choice
+    level: transfer
+    difficulty: 3
+    prompt: "A made-up report: '8 in 10 drowning victims could swim.' Does that make swimming lessons useless?"
+    options:
+      - { id: same-thing, text: "Yes. Swimmers drown more than non-swimmers", misconception: flip }
+      - { id: not-same, text: "No. It counts inside drowning victims, not inside swimmers" }
+      - { id: share, text: "Yes. Swimmers make up most drownings", misconception: rates-vs-shares }
+    answer: not-same
+    shuffle: true
+    why: "Inside the victims, swimmers are common because swimmers are common near water."
+  - id: i8
+    kind: numeric
+    level: apply
+    difficulty: 2
+    prompt: "A test catches 90% of the {s} sick people in a town, and wrongly flags 50 healthy people. How many people test positive in all?"
+    params:
+      vars: { s: [100, 20, 200, 60] }
+      answerExpr: "0.9 * s + 50"
+    answer: 140
+    tolerance: 0
+    why: "True hits plus false alarms: everyone who tests positive."
+  - id: i9
+    kind: explain
+    level: transfer
+    difficulty: 3
+    prompt: "In one sentence: why isn't 'nearly all NBA players are tall' evidence that a tall man probably plays?"
+    keyPoints:
+      - { id: different-group, text: "each statement counts inside a different group", keywords: [group, inside, among, crowd, out of, given] }
+      - { id: sizes, text: "there are millions of tall men but only a few hundred players", keywords: [millions, few, "450", many tall, more tall, hundreds] }
+    minHits: 1
+    exemplar: "It counts inside players; among millions of tall men only a few hundred play, so the chance a tall man plays is tiny."
+    offline:
+      kind: choice
+      prompt: Which explanation is right?
+      options:
+        - { id: same, text: "It is evidence: the two chances are equal", misconception: flip }
+        - { id: groups, text: "Each counts inside a different, very differently sized group" }
+        - { id: total, text: "Both should be divided by all men", misconception: wrong-total }
+      answer: groups
+      shuffle: true
+  - id: i10
+    kind: estimate
+    level: apply
+    difficulty: 3
+    prompt: "About 450 men play in the NBA. Suppose {m} million men in a country are taller than 1.85 m. Even if every player came from there, roughly 1 in how many of those men plays?"
+    params:
+      vars: { m: [13, 5, 20, 2] }
+      answerExpr: "m * 1000000 / 450"
+    scale: { min: 100, max: 1000000, log: true, label: "1 in …" }
+    answer: 28888.888888889
+    accept: { factor: 2 }
+    why: "Divide the tall men by the 450 players: for 13 million, about 1 in 29,000."
+  - kind: widget
+    id: st2-who
+    prompt: The test catches 8 in 10 cases and flags 1 in 10 healthy people. Sort each statement by the crowd it counts inside.
+    widget:
+      id: sorter
+      v: 1
+      props:
+        mode: buckets
+        buckets:
+          - { id: sick, label: Inside people who have it }
+          - { id: positive, label: Inside people who test positive }
+        cards:
+          - { id: a, text: The test catches 8 in 10 of them }
+          - { id: b, text: "Dana's question: given my positive, do I have it?" }
+          - { id: c, text: 2 in 10 get a false all-clear }
+          - { id: d, text: Most of this group are actually healthy }
+      goal:
+        kind: buckets
+        assignment: { a: sick, b: positive, c: sick, d: positive }
+    solution:
+      assignment: { a: sick, b: positive, c: sick, d: positive }
+    fallback:
+      kind: choice
+      prompt: Dana asks, 'Given my positive, do I have it?' Which crowd does that count inside?
+      options:
+        - { id: positive, text: People who test positive }
+        - { id: sick, text: People who have the condition }
+      answer: positive
+      shuffle: true
+    why: The 80% is about the sick. Dana's question is about the positives. Different crowds, so different answers.
+    level: transfer
+    difficulty: 3
+
+flashcards:
+  - id: c1
+    kind: qa
+    front: Is the chance of A given B the same as the chance of B given A?
+    back: "No. Each counts inside a different group. Nearly all NBA players are tall; almost no tall men play."
+  - id: c2
+    kind: cloze
+    front: "In 'the chance of A given B', you count inside {{B}}."
+    back: "The group after 'given' is your new total."
+  - id: c3
+    kind: qa
+    front: "A test 'catches 90% of cases'. Which group does that 90% count inside?"
+    back: "The people who have the condition. Not the people who test positive."
+  - id: c4
+    kind: qa
+    front: "'70% of crashes happen near home.' Why isn't that your risk near home?"
+    back: "It counts inside crashes. Your risk counts inside drivers, and most driving happens near home."
+
+toy:
+  prompt: "Shrink the dry-day umbrella habit. Watch 'rainy, given umbrella' climb."
+  widget:
+    id: plot
+    v: 1
+    props:
+      title: "Rainy, given umbrella"
+      kind: function
+      x: { label: "dry days you carry the umbrella", min: 0, max: 80 }
+      y: { label: "umbrella days that were rainy (%)", min: 0, max: 100 }
+      series:
+        - { id: rainy, label: "rainy, given umbrella", expr: "100 * w / (w + x)", color: 2 }
+      params:
+        - { name: w, label: "rainy days with umbrella", min: 1, max: 20, step: 1, value: 18 }
+      dataSource: formula
+
+sources:
+  - { id: nba-heights, title: "NBA player heights", by: "NBA", note: "Illustrative summary: about 450 rostered players, average height about 1.98 m." }
+  - { id: cdc-anthropometry, title: "Anthropometric Reference Data for Children and Adults: United States", by: "CDC National Center for Health Statistics", year: 2021, note: "Used for the rough count of US men taller than 1.85 m (about one in ten)." }
+
+status: draft

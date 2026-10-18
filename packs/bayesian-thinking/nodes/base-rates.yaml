@@ -1,0 +1,360 @@
+# yaml-language-server: $schema=../../../schemas/node.schema.json
+id: base-rates
+title: Start with how common
+tagline: The number everyone forgets to ask for
+estMinutes: 4
+bigIdea: >
+  Before weighing a clue, ask how common each possibility is. A description that fits
+  librarians better still points to a farmer when farmers outnumber librarians twenty to
+  one, because more farmers fit it. The base rate is where every judgement starts.
+objectives:
+  - Ask for the base rate before judging how well a clue fits
+  - Count how many people in each group fit a description
+  - Explain why a well-fitting description can still point to the more common group
+concepts: [prob.base-rates]
+
+visual:
+  kind: html
+  asset: assets/interactive/town-crowd.html
+  height: 520
+  alt: "A town drawn as two groups: 10 librarians as squares and 200 farmers as circles. A slider changes how many farmers there are; a button fills in everyone who fits the description."
+
+misconceptions:
+  fit-is-enough:
+    label: Judges by how well a description fits, ignoring how common each group is
+    hint: "How many farmers are there for every librarian? Count the people who fit in each group, not how well they fit."
+  base-rate-irrelevant:
+    label: Thinks the base rate is background trivia that a specific clue overrides
+    hint: "Slide the town's mix and watch the answer move. If the base rate didn't matter, nothing would change."
+  share-flip:
+    label: Reads "the clue fits nearly all of group A" as "anyone with the clue is probably in group A"
+    hint: "Fitting most of a tiny group can still be a small crowd. Count the fitting people in each group."
+
+hook:
+  blocks:
+    - type: quote
+      text: >
+        Steve is very shy and withdrawn, invariably helpful, but with little interest in
+        people, or in the world of reality. A meek and tidy soul, he has a need for order
+        and structure, and a passion for detail.
+      cite: { title: "Tversky & Kahneman, Judgment under Uncertainty (1974)" }
+  interaction:
+    kind: choice
+    id: hook-q
+    prompt: Is Steve more likely a librarian or a farmer?
+    confidence: true
+    options:
+      - { id: librarian, text: "Librarian", misconception: fit-is-enough }
+      - { id: farmer, text: "Farmer" }
+      - { id: equal, text: "Equally likely", misconception: base-rate-irrelevant }
+    answer: farmer
+  lotsGuess: librarian
+
+screens:
+  - id: s1-crowd
+    newIdea: Count the people who fit, in each group
+    blocks:
+      - type: story
+        text: >
+          Steve's town: 10 librarians, 200 farmers. Say the description fits 4 in 10
+          librarians and 1 in 10 farmers.
+    interaction:
+      kind: numeric
+      id: s1-q
+      prompt: Light up everyone who fits. How many of them are farmers?
+      answer: 20
+      tolerance: 0
+      feedbackRight: "20 farmers against 4 librarians."
+      onWrong:
+        "4": { misconception: fit-is-enough, feedback: "That's the librarians who fit. Now count the filled circles: 1 in 10 of 200 farmers." }
+        "10": { feedback: "1 in 10 of the farmers, and there are 200 of them." }
+    reveal:
+      text: >
+        20 farmers fit, next to 4 librarians. Someone who fits is a farmer five times out
+        of six. The description favoured librarians; the crowd outvoted it.
+      visualState: { note: "4 librarians, 20 farmers" }
+    alts:
+      simpler: "More farmers fit the description than librarians do, simply because there are so many more farmers."
+      example: "A loud laugh fits clowns better than accountants. A loud laugh at a dinner party still probably belongs to an accountant."
+    src: [kahneman-2011]
+
+  - id: s2-mix
+    newIdea: The base rate can move the answer more than the clue
+    blocks:
+      - type: story
+        text: "The clue stays fixed: it fits 4 in 10 librarians and 1 in 10 farmers. Only the town's mix changes."
+    interaction:
+      kind: html
+      id: s2-q
+      prompt: Slide the mix until someone who fits is equally likely to be a librarian or a farmer.
+      asset: assets/interactive/town-crowd.html
+      height: 520
+      alt: "The town crowd with a slider for farmers per librarian. The readout gives the share of fitting people who are librarians."
+      goal: { kind: equals, value: 4 }
+      solution: 4
+      fallback:
+        kind: numeric
+        prompt: "A description fits 4 in 10 librarians and 1 in 10 farmers. How many farmers per librarian make someone who fits a 50/50 case?"
+        answer: 4
+        tolerance: 0
+      feedbackRight: "4 farmers per librarian: 4 fitting of each."
+      onWrong:
+        "20": { misconception: base-rate-irrelevant, feedback: "That's Steve's real town, where librarians lose. Bring the farmers down until the lit counts match." }
+    reveal:
+      text: >
+        At 4 farmers per librarian the lit crowd split evenly. Steve's real town has about
+        20. The clue never changed; only the base rate moved, and it dragged the answer
+        with it.
+    alts:
+      simpler: "Same clue, different town, different answer. That's what a base rate does."
+
+  - id: s3-priya
+    blocks:
+      - type: story
+        text: >
+          Priya reads Latin poetry for fun. Say that fits 1 in 2 classics professors and 1 in
+          100 salespeople, and salespeople outnumber them 500 to 1.
+      - type: callout
+        tone: illustrative
+        text: "Illustrative numbers."
+    visual:
+      kind: widget
+      widget:
+        id: plot
+        v: 1
+        props:
+          title: "Is Priya a professor?"
+          kind: function
+          x: { label: "salespeople per professor", min: 1, max: 1000, scale: log }
+          y: { label: "chance she's a professor (%)", min: 0, max: 100 }
+          series:
+            - { id: prof, label: "chance she's a professor", expr: "100 * 0.5 / (0.5 + 0.01 * x)", color: 1 }
+          dataSource: illustrative
+      alt: "A curve falling from about 98% at 1 salesperson per professor to under 5% at 1,000 salespeople per professor."
+    interaction:
+      kind: numeric
+      id: s3-q
+      prompt: For every professor who fits, how many salespeople fit?
+      answer: 10
+      tolerance: 0
+      feedbackRight: "Half of 1 against 1% of 500: 10 to 1."
+      onWrong:
+        "500": { misconception: fit-is-enough, feedback: "That's how many salespeople there are. Only 1 in 100 of them fits." }
+        "0.1": { misconception: share-flip, feedback: "Flip it: count fitting salespeople per fitting professor." }
+    reveal:
+      text: >
+        Ten fitting salespeople for each fitting professor, so Priya is a salesperson about 10
+        times in 11. The curve sits near 9% at 500: a strong clue, flattened by a lopsided
+        base rate.
+      visualState: { props: { markerAt: 500 }, note: "about 9%" }
+
+close:
+  text: >
+    Probably a farmer. In the US there are over 20 male farmers for every male librarian.
+    The description fits librarians better, but fit isn't the whole story. Count the crowd.
+
+  teaser: ""
+
+items:
+  - id: i1
+    kind: numeric
+    level: apply
+    difficulty: 1
+    prompt: "A town has 10 librarians and {f} farmers. A description fits 1 in 10 farmers. How many farmers fit?"
+    params:
+      vars: { f: [200, 100, 300, 50] }
+      answerExpr: "f / 10"
+    answer: 20
+    tolerance: 0
+    why: "One in ten of the farmers. The count, not the fit, is what you compare."
+  - id: i2
+    kind: numeric
+    level: apply
+    difficulty: 3
+    prompt: "A description fits 40% of librarians and 10% of farmers. There are {k} farmers per librarian. What percent of people who fit are librarians?"
+    params:
+      vars: { k: [4, 20, 10, 1] }
+      answerExpr: "100 * 0.4 / (0.4 + 0.1 * k)"
+    answer: 50
+    tolerance: 1
+    onWrong:
+      "40": { misconception: fit-is-enough, feedback: "40% is how well it fits librarians. Count fitting librarians against fitting farmers." }
+    why: "Per librarian: 0.4 fitting librarians against 0.1 × k fitting farmers."
+  - id: i3
+    kind: choice
+    level: recall
+    difficulty: 1
+    prompt: Before judging how well a clue fits, a good detective first asks…
+    options:
+      - { id: vivid, text: "how vivid the description is", misconception: fit-is-enough }
+      - { id: specific, text: "how specific the clue is", misconception: base-rate-irrelevant }
+      - { id: common, text: "how common each possibility is" }
+    answer: common
+    shuffle: true
+    why: "The base rate sets the starting point; the clue only shifts it."
+  - id: i4
+    kind: estimate
+    level: recall
+    difficulty: 2
+    prompt: Roughly how many male farmers are there in the US for every male librarian?
+    scale: { min: 1, max: 100, log: true, label: "farmers per librarian" }
+    answer: 20
+    accept: { factor: 1.5 }
+    why: "Kahneman's figure: more than 20 male farmers for each male librarian."
+  - id: i5
+    kind: order
+    level: apply
+    difficulty: 2
+    prompt: Put the detective's method in order.
+    items:
+      - "Compare the two counts"
+      - "Ask how common each group is"
+      - "Count who fits the clue in each group"
+      - "Picture a crowd with those numbers"
+    answer: [1, 3, 2, 0]
+  - id: i6
+    kind: cloze
+    level: recall
+    difficulty: 2
+    prompt: Fill the gaps.
+    text: "A description that fits {{1}} better can still point to {{2}}, because there are far more of them."
+    blanks:
+      "1": { accept: [librarians, librarian], tiles: [librarians, farmers] }
+      "2": { accept: [farmers, a farmer, farmer], tiles: [farmers, librarians] }
+  - id: i7
+    kind: text
+    level: recall
+    difficulty: 2
+    prompt: "Two words: the name for how common something is before any clue arrives."
+    accept: ["base rate", "the base rate", "base rates", "prior probability", "prior"]
+    normalize: [case, punct, space, articles]
+    why: "The base rate, also called the prior."
+  - id: i8
+    kind: choice
+    level: transfer
+    difficulty: 3
+    prompt: "A bird app labels a bird a 'Siberian rubythroat', seen here about once a decade. The app is right about 90% of the time. Which is likeliest?"
+    options:
+      - { id: rare, text: "It's a rubythroat: the app is good", misconception: fit-is-enough }
+      - { id: common, text: "It's a common bird the app got wrong" }
+      - { id: ninety, text: "It's 90% likely to be a rubythroat", misconception: base-rate-irrelevant }
+    answer: common
+    shuffle: true
+    why: "Common birds vastly outnumber the rarity, so even rare mistakes on them outnumber real sightings."
+  - id: i9
+    kind: explain
+    level: transfer
+    difficulty: 3
+    prompt: "In one sentence: why can a description that fits librarians well still point to a farmer?"
+    keyPoints:
+      - { id: more-farmers, text: "there are far more farmers than librarians", keywords: [more farmers, outnumber, twenty, "20", more common, so many] }
+      - { id: count-fit, text: "so more farmers fit, even if a smaller share of them do", keywords: [count, fit, crowd, more of them, share] }
+    minHits: 1
+    exemplar: "Farmers outnumber librarians so heavily that even a small share of them fitting is more people than the librarians who fit."
+    offline:
+      kind: choice
+      prompt: Which explanation is right?
+      options:
+        - { id: fit, text: "The description fits farmers better", misconception: share-flip }
+        - { id: count, text: "Farmers are so many that more of them fit" }
+        - { id: random, text: "Descriptions say nothing at all", misconception: base-rate-irrelevant }
+      answer: count
+      shuffle: true
+  - id: i10
+    kind: numeric
+    level: apply
+    difficulty: 3
+    prompt: "A clue fits 50% of group A and 5% of group B. Group B is {k} times bigger. For each person in A who fits, how many in B fit?"
+    params:
+      vars: { k: [100, 20, 50, 10] }
+      answerExpr: "0.05 * k / 0.5"
+    answer: 10
+    tolerance: 0.01
+    onWrong:
+      "0.1": { misconception: share-flip, feedback: "Flip it: fitting Bs per fitting A." }
+  - kind: widget
+    id: st1-crowd
+    prompt: "Dana's screening is for a condition that affects 1 in 100 people her age. Set the crowd: how many of 1,000 have it?"
+    widget:
+      id: plot
+      v: 1
+      props:
+        title: Dana's crowd of 1,000
+        kind: function
+        x: { label: "people with the condition, per 1,000", min: 1, max: 100, scale: log }
+        y: { label: healthy people for each one who has it, min: 1, max: 1000, scale: log }
+        series:
+          - { id: ratio, label: healthy people per person with it, expr: (1000 - x) / x, color: 1 }
+        params:
+          - { name: s, label: have the condition, min: 1, max: 100, step: 1, value: 50 }
+        readouts:
+          - { label: have the condition, expr: s, digits: 0 }
+          - { label: healthy, expr: 1000 - s, digits: 0 }
+          - { label: healthy per person with it, expr: (1000 - s) / s, digits: 0 }
+        dataSource: illustrative
+      goal: { kind: param, name: s, target: 10, tolerance: 0 }
+    solution:
+      params: { s: 10 }
+    fallback: { kind: numeric, prompt: "A condition affects 1 in 100 people. How many in a crowd of 1,000?", answer: 10, tolerance: 0 }
+    why: "10 with the condition, 990 without: 99 healthy people for every one who has it. That is Dana's starting point, before any test: 1%."
+    level: transfer
+    difficulty: 3
+
+flashcards:
+  - id: c1
+    kind: qa
+    front: What should you ask before judging how well a clue fits?
+    back: "How common each possibility is to begin with: the base rate."
+  - id: c2
+    kind: qa
+    front: Steve fits the librarian stereotype. Why is he still more likely a farmer?
+    back: "Male farmers outnumber male librarians about 20 to 1 in the US, so more farmers fit the description."
+  - id: c3
+    kind: cloze
+    front: "The {{base rate}} is how common something is before any clue arrives."
+    back: "Every judgement starts there. The clue only shifts it."
+  - id: c4
+    kind: qa
+    front: "A clue fits 40% of 10 librarians and 10% of 200 farmers. Who fits?"
+    back: "4 librarians and 20 farmers: a fitting person is a librarian about 1 time in 6."
+
+toy:
+  prompt: "Make the clue fit librarians perfectly. How many farmers per librarian still wins?"
+  widget:
+    id: plot
+    v: 1
+    props:
+      title: "Librarian or farmer?"
+      kind: function
+      x: { label: "farmers per librarian", min: 1, max: 40 }
+      y: { label: "chance a fitting person is a librarian (%)", min: 0, max: 100 }
+      series:
+        - { id: lib, label: "chance of librarian", expr: "100 * lf / (lf + ff * x)", color: 1 }
+      params:
+        - { name: lf, label: "fits librarians (%)", min: 5, max: 100, step: 5, value: 40, unit: "%" }
+        - { name: ff, label: "fits farmers (%)", min: 1, max: 100, step: 1, value: 10, unit: "%" }
+      dataSource: formula
+
+underTheHood:
+  title: Why this is Bayes in disguise
+  body: >
+    Counting the fitting people in each group is Bayes' rule with the arithmetic done for you.
+    The chance Steve is a librarian, given that he fits, is the fitting librarians divided by
+    everyone who fits: (0.4 × 10) ÷ (0.4 × 10 + 0.1 × 200) = 4 ÷ 24. Tversky and Kahneman
+    found that people judge such cases by resemblance and largely ignore the group sizes, which
+    they called base-rate neglect. Later work by Gigerenzer showed that framing the same problem
+    as counts of people, as you just did, makes the right answer far easier to see.
+  sources: [tversky-kahneman-1974, gigerenzer-hoffrage-1995]
+
+faq:
+  - q: Are the 40% and 10% fit rates real?
+    a: "No, they are illustrative. The farmer-to-librarian ratio (over 20 to 1 among US men) is the one real number; it comes from Kahneman."
+  - q: Isn't this just stereotyping?
+    a: "The opposite. The stereotype is the description. The base rate is the check that keeps a vivid description from running the show."
+
+sources:
+  - { id: tversky-kahneman-1974, title: "Judgment under Uncertainty: Heuristics and Biases", by: "Amos Tversky & Daniel Kahneman", year: 1974, note: "Science 185. Source of the Steve description, quoted in the hook." }
+  - { id: kahneman-2011, title: "Thinking, Fast and Slow", by: "Daniel Kahneman", year: 2011, note: "More than 20 male farmers for each male librarian in the United States." }
+  - { id: gigerenzer-hoffrage-1995, title: "How to improve Bayesian reasoning without instruction: Frequency formats", by: "Gerd Gigerenzer & Ulrich Hoffrage", year: 1995, note: "Psychological Review 102(4)." }
+
+status: draft

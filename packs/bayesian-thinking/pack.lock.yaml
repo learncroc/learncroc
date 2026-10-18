@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../schemas/lock.schema.json
+# AI provenance per file. Human review sign-offs go in `reviews` and are written by reviewers only.
+provenance:
+  pack.yaml: { feature: build, prompt: "sampler-authoring@1", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  map.yaml: { feature: build, prompt: "sampler-authoring@1", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  nodes/base-rates.yaml: { feature: build, prompt: "sampler-authoring@1", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  nodes/chance.yaml: { feature: build, prompt: "sampler-authoring@1", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  nodes/conditional.yaml: { feature: build, prompt: "sampler-authoring@1", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  nodes/bayes-frequency.yaml: { feature: build, prompt: "sampler-authoring@1", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  nodes/updating.yaml: { feature: build, prompt: "sampler-authoring@1", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  assets/interactive/town-crowd.html: { feature: toy, prompt: "sampler-authoring@1", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  assets/interactive/crowd-1000.html: { feature: toy, prompt: "sampler-authoring@1", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+reviews: []

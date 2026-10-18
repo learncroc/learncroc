@@ -1,0 +1,94 @@
+# yaml-language-server: $schema=../../schemas/map.schema.json
+lines:
+  - { id: seeing, title: "Seeing", color: 1, outcome: "Notice when your eyes are fooled, and use it" }
+  - { id: mixing, title: "Mixing", color: 2, outcome: "Predict mixes of light and paint, and find complements" }
+  - { id: dials, title: "The three dials", color: 3, outcome: "Describe and set any color by hue, saturation and lightness" }
+  - { id: designing, title: "Designing", color: 4, outcome: "Build palettes that hold together and say what you mean" }
+  - { id: everyone, title: "Color for everyone", color: 5, outcome: "Make color work for every pair of eyes" }
+nodes:
+  # Key order is the reading order: two sections, each closed by a checkpoint, with each card's teaser
+  # opening the next card's hook. The planned cards and their checkpoints sit beyond the last gate.
+
+  # 1 · Seeing and naming
+  contrast-illusions: { requires: [], line: seeing }
+  hsl:                { requires: [contrast-illusions], line: dials }
+  cp-seeing:
+    requires: [hsl]
+    line: seeing
+    kind: checkpoint
+    teaser: "New greys on new surrounds, and new colors to set with three dials."
+
+  # 2 · Value, mixing and the wheel (the mini-terminus)
+  value:              { requires: [cp-seeing], line: seeing }
+  light-vs-paint:     { requires: [value], line: mixing }
+  wheel:              { requires: [light-vs-paint], line: mixing }
+  cp-poster-rescue:
+    requires: [wheel]
+    line: seeing
+    kind: checkpoint
+    title: "Rescue the Poster"
+    teaser: "A gallery poster that doesn't read. Fix its values, its accent, a contested grey and its print files."
+
+  # Beyond the terminus: planned
+  light-spectrum:
+    requires: [cp-poster-rescue]
+    line: seeing
+    status: planned
+    title: "Color is light: the spectrum and your cones"
+    teaser: "Your screen has no yellow pixels at all. So how is it showing you yellow?"
+  harmonies:
+    requires: [cp-poster-rescue]
+    line: designing
+    status: planned
+    title: "Harmonies: analogous, triadic, split"
+    teaser: "Three hues evenly spaced round the wheel. Why do they look planned rather than random?"
+  temperature:
+    requires: [cp-poster-rescue]
+    line: designing
+    status: planned
+    title: "Warm vs. cool: advancing and receding"
+    teaser: "Why do distant hills look bluer than the ones close by?"
+  digital-color:
+    requires: [cp-poster-rescue]
+    line: dials
+    status: planned
+    title: "Hex, RGB and HSL: color in code"
+    teaser: "#FF8800. Can you read the color from the code before you see it?"
+  accessibility:
+    requires: [cp-poster-rescue]
+    line: everyone
+    status: planned
+    title: "Contrast ratios and color blindness"
+    teaser: "Around 1 in 12 men can't easily tell certain reds from greens. Would your chart still work for them?"
+  constancy:
+    requires: [light-spectrum]
+    line: seeing
+    status: planned
+    title: "The dress: your brain corrects for light"
+    teaser: "Blue and black, or white and gold? Millions of people disagreed about one photo. Who was right?"
+  palette:
+    requires: [harmonies]
+    line: designing
+    status: planned
+    title: "Build a palette: dominant, secondary, accent"
+    teaser: "Why do so many good rooms keep their boldest color to a small accent?"
+  meaning:
+    requires: [temperature]
+    line: designing
+    status: planned
+    title: "Color meaning, culture and the myths"
+    teaser: "Does red really make you hungry, or is that marketing folklore?"
+  cp-ugly-poster:
+    requires: [harmonies, temperature, constancy]
+    line: designing
+    kind: checkpoint
+    status: planned
+    title: "Fix the Ugly Poster"
+    teaser: "Value, harmony and temperature, all broken at once. Can you repair it with three moves?"
+  cp-brand-palette:
+    requires: [palette, accessibility, digital-color, meaning]
+    line: everyone
+    kind: checkpoint
+    status: planned
+    title: "An accessible brand palette"
+    teaser: "Five colors that pass contrast checks and still work in greyscale. Possible?"

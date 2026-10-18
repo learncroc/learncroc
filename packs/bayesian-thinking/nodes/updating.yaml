@@ -1,0 +1,385 @@
+# yaml-language-server: $schema=../../../schemas/node.schema.json
+id: updating
+title: Today's answer, tomorrow's prior
+tagline: Evidence nudges, and the next clue nudges again
+estMinutes: 5
+bigIdea: >
+  After a clue, your updated probability becomes the starting point for the next one. A
+  second independent positive on the same test lifts about 9% to about 50%, and a third to
+  about 91%. Evidence shifts belief by degrees; it rarely proves, and repeated evidence only
+  counts if it can fail in different ways.
+objectives:
+  - Use the result of one clue as the starting point for the next
+  - Compute the effect of a second independent test with a crowd
+  - Explain why one clue rarely settles a case
+concepts: [prob.bayes-updating]
+
+visual:
+  kind: html
+  asset: assets/interactive/crowd-1000.html
+  height: 640
+  alt: "A grid of 1,000 people with sliders for base rate, hit rate and false-alarm rate, and a readout of the share of positives who have the condition."
+
+misconceptions:
+  restart-from-base:
+    label: Starts the second test from the original base rate instead of the updated one
+    hint: "Who takes the second test? Only the people who tested positive. Start your crowd there."
+  proof:
+    label: Thinks one or two positive clues prove the case
+    upstream: bayes-frequency
+    hint: "How many of the positives were healthy? Count them before calling it proof."
+  multiply-accuracies:
+    label: Combines two tests by multiplying or adding their accuracies (90% × 90%)
+    hint: "Accuracies don't combine like that. Run the second test on the crowd the first one left you."
+  repeat-is-independent:
+    label: Assumes repeating the same flawed check gives a fresh, independent clue
+    hint: "The crowd trick needs the second test to fail in different ways. If the same flaw fooled it once, will it fool it again?"
+
+hook:
+  blocks:
+    - type: story
+      text: >
+        Same test as before: a 1% base rate, it catches 90% of cases and flags 9% of healthy
+        people. You test positive, then take a second, independent test. Positive again.
+  interaction:
+    kind: choice
+    id: hook-q
+    prompt: Now what's the chance you have the condition?
+    confidence: true
+    options:
+      - { id: p10, text: "Still about 10%", misconception: restart-from-base }
+      - { id: p50, text: "About 50%" }
+      - { id: p81, text: "About 81%: 90% × 90%", misconception: multiply-accuracies }
+      - { id: p99, text: "About 99%", misconception: proof }
+    answer: p50
+  lotsGuess: p99
+
+screens:
+  - id: s1-second
+    newIdea: The second test starts from the first test's result
+    blocks:
+      - type: story
+        text: "After one positive you're at about 9%: roughly 92 in 1,000. That is your new base rate."
+    interaction:
+      kind: html
+      id: s1-q
+      prompt: Set the crowd's base rate to about 92 in 1,000, keep the test the same, and test everyone again.
+      asset: assets/interactive/crowd-1000.html
+      height: 640
+      alt: "The crowd of 1,000 with a base-rate slider. Raising it to about 92 in 1,000 shows the second test's result."
+      goal: { kind: set, values: [test-default, real-half], match: all }
+      solution: [test-default, real-half]
+      fallback:
+        kind: numeric
+        prompt: "Of 98 first positives (9 sick, 89 healthy), the second test flags 8 sick and 8 healthy people. What percent of double positives are sick?"
+        answer: 50
+        tolerance: 1
+        unit: "%"
+      feedbackRight: "About half the double positives have it."
+      onWrong:
+        default: { misconception: restart-from-base, feedback: "Leave the test at 90% and 9%. Move only the base rate, to where the first positive left you: about 92 in 1,000." }
+    reveal:
+      text: >
+        The base rate went from 10 to about 92 in 1,000, and the same test now gives about 50%.
+        Yesterday's answer became today's starting point. That's Bayesian updating, the whole
+        of it.
+      visualState: { note: "posterior → next prior" }
+    alts:
+      simpler: "Only the people who tested positive take the second test. About 1 in 11 of them is sick, so start there."
+
+  - id: s2-chain
+    newIdea: Each clue shifts belief by degrees
+    blocks:
+      - type: story
+        text: "The curve shows where one positive takes you from any starting chance. Two positives got you to about 50%."
+    interaction:
+      kind: widget
+      id: s2-q
+      prompt: Drag the marker to where a third positive test would start.
+      widget:
+        id: plot
+        v: 1
+        props:
+          title: "One positive test, from any start"
+          kind: function
+          x: { label: "chance before this test (%)", min: 0, max: 100, unit: "%" }
+          y: { label: "chance after a positive (%)", min: 0, max: 100, unit: "%" }
+          series:
+            - { id: after, label: "chance after a positive", expr: "100 * 0.9 * x / (0.9 * x + 0.09 * (100 - x))", color: 1 }
+          marker: x
+          dataSource: formula
+        goal: { kind: point, x: 50, tolerance: 3 }
+      solution: { point: [50, 90.9] }
+      fallback:
+        kind: numeric
+        prompt: "After two positives you're at about 50%. In percent, where does a third test start?"
+        answer: 50
+        tolerance: 3
+        unit: "%"
+      feedbackRight: "50% in, about 91% out."
+      onWrong:
+        default: { misconception: restart-from-base, feedback: "Each test starts where the last one ended. Where did the second positive leave you?" }
+    reveal:
+      text: >
+        From 50%, a third positive lands near 91%. 1%, then 9%, then 50%, then 91%: each clue
+        shifted you, none jumped to certain. A fourth reaches about 99%.
+      visualState: { props: { markerAt: 50 }, note: "50% → 91%" }
+    alts:
+      why: "The curve is steepest in the middle: a clue moves you most when you're unsure, and least when you're already nearly certain either way."
+
+  - id: s3-spam
+    blocks:
+      - type: story
+        text: >
+          1,000 emails: 100 spam, 900 real. "Prize" appears in 40 spam and 18 real ones. A
+          strange link appears in half of those spam and 1 in 20 of those real.
+    visual:
+      kind: widget
+      widget:
+        id: plot
+        v: 1
+        props:
+          title: "Emails left after each clue"
+          kind: bar
+          x: { label: "emails", min: 0, max: 1 }
+          y: { label: "emails", min: 0, max: 100 }
+          series:
+            - id: left
+              label: "emails"
+              color: 4
+              bars:
+                - { label: "spam, all", value: 100 }
+                - { label: "spam with 'prize'", value: 40 }
+                - { label: "real with 'prize'", value: 18 }
+          dataSource: illustrative
+      alt: "Bars for an illustrative inbox: 100 spam emails, 40 spam with the word prize, 18 real emails with the word prize."
+    interaction:
+      kind: numeric
+      id: s3-q
+      prompt: Of the emails with both clues, what percent are spam?
+      answer: 96
+      tolerance: 1.5
+      unit: "%"
+      feedbackRight: "20 spam against about 1 real email."
+      onWrong:
+        "69": { misconception: restart-from-base, feedback: "That's after 'prize' alone. Now apply the link clue to those 40 spam and 18 real emails." }
+        "50": { misconception: multiply-accuracies, feedback: "Count the emails: half of 40 spam, and 1 in 20 of 18 real." }
+    reveal:
+      text: >
+        20 spam against about 1 real email: roughly 96%. "Prize" moved you from 10% to 69%;
+        the link moved you on from there. Spam filters chain clues in much the same way.
+      visualState:
+        props:
+          series:
+            - id: left
+              label: "emails"
+              color: 4
+              bars:
+                - { label: "spam with both", value: 20 }
+                - { label: "real with both", value: 0.9 }
+        note: "20 vs about 1"
+    src: [graham-2002]
+
+close:
+  text: >
+    About 50%. Two positives from a decent test lift you from 1% to a coin flip, not to
+    certainty. The trick: the second test starts from where the first one left you.
+
+  teaser: ""
+
+items:
+  - id: i1
+    kind: numeric
+    level: apply
+    difficulty: 3
+    prompt: "You're at {p}% after some evidence. A test that catches 90% of cases and flags 9% of healthy people comes back positive. New chance, in percent?"
+    params:
+      vars: { p: [10, 50, 1, 20] }
+      answerExpr: "100 * 0.9 * p / (0.9 * p + 0.09 * (100 - p))"
+    answer: 52.631578947
+    tolerance: 1.5
+    unit: "%"
+    why: "Per 1,000: 90% of the sick against 9% of the healthy, starting from your current chance."
+  - id: i2
+    kind: choice
+    level: recall
+    difficulty: 1
+    prompt: For a second, independent test, what's your starting probability?
+    options:
+      - { id: base, text: "The original base rate", misconception: restart-from-base }
+      - { id: updated, text: "Where the first test left you" }
+      - { id: proof, text: "100%: the first test already showed it", misconception: proof }
+    answer: updated
+    shuffle: true
+    why: "Today's posterior is tomorrow's prior."
+  - id: i3
+    kind: numeric
+    level: apply
+    difficulty: 2
+    prompt: "{s} sick people and 89 healthy people take a second test. It catches 90% of cases. How many sick people test positive again?"
+    params:
+      vars: { s: [9, 20, 50, 30] }
+      answerExpr: "0.9 * s"
+    answer: 8.1
+    tolerance: 0.2
+  - id: i4
+    kind: order
+    level: apply
+    difficulty: 2
+    prompt: "Start at 1%. Put the chances after each positive test in order."
+    items: ["about 50%", "1%, before any test", "about 91%", "about 9%"]
+    answer: [1, 3, 0, 2]
+  - id: i5
+    kind: estimate
+    level: transfer
+    difficulty: 4
+    prompt: "Start at 1%. Each independent test catches 90% of cases and flags 9% of healthy people. Roughly what percent after {k} positives in a row?"
+    params:
+      vars: { k: [4, 3, 2] }
+      answerExpr: "100 * 10^k / (10^k + 99)"
+    scale: { min: 1, max: 100, unit: "%" }
+    answer: 99.019704921
+    accept: { abs: 2 }
+    onWrong:
+      default: { misconception: restart-from-base }
+    why: "Each positive multiplies the odds by 10: 1% → 9% → 50% → 91% → 99%."
+  - id: i6
+    kind: match
+    level: recall
+    difficulty: 2
+    prompt: Match each word to its job.
+    left: ["Prior", "Evidence", "Posterior", "Next prior"]
+    right:
+      - "What you believed before the clue"
+      - "The clue, and how much likelier it is if true"
+      - "What you believe after the clue"
+      - "The posterior, carried into the next clue"
+    answer: [[0, 0], [1, 1], [2, 2], [3, 3]]
+  - id: i7
+    kind: choice
+    level: transfer
+    difficulty: 3
+    prompt: A lab runs the same blood sample through the same machine twice. Both positive. Is that as strong as two independent tests?
+    options:
+      - { id: same-thing, text: "Yes: two positives are two positives", misconception: repeat-is-independent }
+      - { id: stronger, text: "It's stronger: the same machine agrees with itself", misconception: repeat-is-independent }
+      - { id: not-same, text: "No: whatever fooled it once can fool it again" }
+    answer: not-same
+    shuffle: true
+    why: "Updating twice assumes the second check can fail differently. A repeat of the same flaw adds little."
+  - id: i8
+    kind: cloze
+    level: recall
+    difficulty: 1
+    prompt: Fill the gaps.
+    text: "Today's {{1}} is tomorrow's {{2}}."
+    blanks:
+      "1": { accept: [posterior], tiles: [posterior, prior, evidence] }
+      "2": { accept: [prior], tiles: [prior, posterior, evidence] }
+  - id: i9
+    kind: explain
+    level: transfer
+    difficulty: 3
+    prompt: "In one sentence: why doesn't one positive clue usually prove a case?"
+    keyPoints:
+      - { id: shift, text: "evidence shifts the probability by degrees", keywords: [shift, nudge, degree, update, moves, raises] }
+      - { id: start, text: "the result depends on where you started", keywords: [start, prior, base rate, before, rare] }
+    minHits: 1
+    exemplar: "A clue shifts the chance from where you started; if you started low, one positive moves you up but not to certain."
+    offline:
+      kind: choice
+      prompt: Which explanation is right?
+      options:
+        - { id: shift, text: "It shifts the chance up from a starting point, not to 100%" }
+        - { id: useless, text: "Clues never change anything", misconception: restart-from-base }
+        - { id: proof, text: "It does prove it, if the test is good", misconception: proof }
+      answer: shift
+      shuffle: true
+  - id: i10
+    kind: numeric
+    level: transfer
+    difficulty: 3
+    prompt: "1,000 emails, 100 of them spam. A clue appears in {a}% of spam and 2% of real email. What percent of emails with the clue are spam?"
+    params:
+      vars: { a: [40, 20, 80, 10] }
+      answerExpr: "100 * a / (a + 18)"
+    answer: 68.965517241
+    tolerance: 1.5
+    unit: "%"
+    why: "a spam emails against 18 real ones (2% of 900)."
+  - kind: widget
+    id: st4-retest
+    prompt: Dana's second, independent test is also positive. On the curve, drag the marker to where the second test starts.
+    widget:
+      id: plot
+      v: 1
+      props:
+        title: One positive test, from any start
+        kind: function
+        x: { label: chance before this test (%), min: 0, max: 100, unit: "%" }
+        y: { label: chance after a positive (%), min: 0, max: 100, unit: "%" }
+        series:
+          - { id: after, label: chance after a positive, expr: 100 * 0.8 * x / (0.8 * x + 0.1 * (100 - x)), color: 1 }
+        marker: x
+        dataSource: illustrative
+      goal: { kind: point, x: 7.5, tolerance: 1.5 }
+    solution:
+      point: [ 7.5, 39.3 ]
+    fallback: { kind: numeric, prompt: "After the first positive, Dana is at about 7.5%. Where, in percent, does the second test start?", answer: 7.5, tolerance: 1 }
+    why: From 7.5%, a second positive lands near 39%. Likelier, not yet likely. Her doctor orders a third, different test.
+    level: transfer
+    difficulty: 3
+
+flashcards:
+  - id: c1
+    kind: qa
+    front: What is the starting point for the second test?
+    back: "Where the first test left you: today's posterior is tomorrow's prior."
+  - id: c2
+    kind: qa
+    front: "1% base rate, test catches 90%, flags 9%. Chance after two independent positives?"
+    back: "About 50%: 1% → 9% → 50%."
+  - id: c3
+    kind: qa
+    front: Why doesn't retesting the same sample on the same machine count as a fresh clue?
+    back: "Whatever fooled it once can fool it again. Updating assumes the next clue can fail differently."
+  - id: c4
+    kind: cloze
+    front: "Evidence {{shifts}} a probability; it rarely proves."
+    back: "Each clue moves you by degrees from where you started."
+
+toy:
+  prompt: "Make the test weaker. How many positives in a row until you pass 95%?"
+  widget:
+    id: plot
+    v: 1
+    props:
+      title: "One positive test, from any start"
+      kind: function
+      x: { label: "chance before (%)", min: 0, max: 100 }
+      y: { label: "chance after a positive (%)", min: 0, max: 100 }
+      series:
+        - { id: after, label: "after a positive", expr: "100 * h * x / (h * x + f * (100 - x))", color: 1 }
+        - { id: same, label: "no change", expr: "x", color: 5 }
+      params:
+        - { name: h, label: "catches (%)", min: 50, max: 100, step: 1, value: 90, unit: "%" }
+        - { name: f, label: "false alarms (%)", min: 1, max: 50, step: 1, value: 9, unit: "%" }
+      marker: x
+      dataSource: formula
+
+underTheHood:
+  title: Updating in odds
+  body: >
+    Bayesians often update in odds, which makes chaining simple. Odds of having the condition
+    start at 1 to 99. A positive multiplies them by the likelihood ratio: 90% ÷ 9% = 10. So one
+    positive gives 10 to 99 (about 9%), a second gives 100 to 99 (about 50%), a third 1,000 to
+    99 (about 91%). This only works if each test can fail independently of the others: the same
+    machine, the same sample or the same biased witness repeated gives far less than a factor
+    of 10 each time. The planned stops beyond the terminus build this out.
+  sources: [gigerenzer-2007]
+
+sources:
+  - { id: gigerenzer-2007, title: "Helping doctors and patients make sense of health statistics", by: "Gigerenzer, Gaissmaier, Kurz-Milcke, Schwartz & Woloshin", year: 2007, note: "Psychological Science in the Public Interest 8(2). Teaching numbers reused here." }
+  - { id: graham-2002, title: "A Plan for Spam", by: "Paul Graham", year: 2002, url: "https://paulgraham.com/spam.html", note: "Chaining word clues to score email, Bayes-style. Inbox numbers on this stop are illustrative." }
+
+status: draft

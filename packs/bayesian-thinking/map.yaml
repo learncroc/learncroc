@@ -1,0 +1,83 @@
+# yaml-language-server: $schema=../../schemas/map.schema.json
+lines:
+  - { id: evidence, title: "Reading the evidence", color: 1, outcome: "Work out what a positive test really means, with a crowd of 1,000" }
+  - { id: odds, title: "Thinking in odds", color: 2, outcome: "Weigh clues as odds and say how sure you should be" }
+  - { id: randomness, title: "Chance and randomness", color: 3, outcome: "Tell real randomness from a pattern, and small samples from big ones" }
+  - { id: decisions, title: "Bets and decisions", color: 4, outcome: "Decide whether a bet is worth taking" }
+nodes:
+  # Playable sampler: 5 stops and the mini-terminus.
+  base-rates:         { requires: [], line: evidence }
+  chance:             { requires: [], line: evidence }
+  conditional:        { requires: [chance], line: evidence }
+  bayes-frequency:    { requires: [base-rates, conditional], line: evidence }
+  updating:           { requires: [bayes-frequency], line: evidence }
+  boss-positive-test: { requires: [updating], line: evidence, kind: checkpoint }
+
+  # The rest of the subject, planned beyond the terminus.
+  monty-hall:
+    requires: [boss-positive-test]
+    line: evidence
+    status: planned
+    title: "Monty Hall's doors"
+    teaser: "The host opens a door and shows a goat. Should you switch, and why does it matter that he knew?"
+  likelihood-ratio:
+    requires: [boss-positive-test]
+    line: odds
+    status: planned
+    title: "How strong is this clue?"
+    teaser: "A clue is three times likelier if he's guilty. Is that strong evidence or weak?"
+  odds-updating:
+    requires: [likelihood-ratio]
+    line: odds
+    status: planned
+    title: "Prior times clue"
+    teaser: "Odds of 1 to 9, then a clue nine times likelier if true. Where do you land?"
+  calibration:
+    requires: [odds-updating]
+    line: odds
+    status: planned
+    title: "How sure should you be?"
+    teaser: "You say '90% sure' ten times. How many of those should you get right?"
+  and-or:
+    requires: [boss-positive-test]
+    line: randomness
+    status: planned
+    title: "And, or, not"
+    teaser: "Two fair coins. Is 'at least one head' a 50% bet?"
+  randomness:
+    requires: [boss-positive-test]
+    line: randomness
+    status: planned
+    title: "What random looks like"
+    teaser: "Two coin-flip sequences: one real, one faked by a person. Which one has the long run of heads?"
+  independence:
+    requires: [and-or, randomness]
+    line: randomness
+    status: planned
+    title: "The gambler's fallacy"
+    teaser: "Red has come up eight times in a row. Is black now due?"
+  law-large-numbers:
+    requires: [randomness]
+    line: randomness
+    status: planned
+    title: "Small samples lie"
+    teaser: "Which hospital records more days when over 60% of babies are boys: the big one or the small one?"
+  regression-mean:
+    requires: [law-large-numbers]
+    line: randomness
+    status: planned
+    title: "Regression to the mean"
+    teaser: "The rookie of the year slumps the next season. A curse, or arithmetic?"
+  expected-value:
+    requires: [and-or]
+    line: decisions
+    status: planned
+    title: "Is the bet worth it?"
+    teaser: "Pay 2 for a one-in-three shot at 5. Take the bet?"
+  boss-cold-case:
+    requires: [odds-updating, calibration, regression-mean, expected-value]
+    line: odds
+    kind: checkpoint
+    status: planned
+    title: "The Cold Case"
+    teaser: "Weigh the clues in odds, catch the prosecutor's fallacy, and say exactly how sure you are."

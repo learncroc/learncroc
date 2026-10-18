@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hue wheel: find the complement</title>
+<style>
+:root{--c-bg:var(--lm-bg,#F7F3EA);--c-ink:var(--lm-ink,#1C1A3D);--c-ink2:var(--lm-ink-2,#4A4870);--c-line:var(--line-strong,#B9BDD0);--c-surface:var(--surface,#FFFFFF);--c-a1:var(--w-1,#2F5DA8);--c-a2:var(--w-3,#8A3FA0);--c-a3:var(--w-4,#4F7A1E);--c-focus:var(--focus,#12877A)}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font:15px/1.45 var(--lm-font,system-ui,-apple-system,"Segoe UI",sans-serif);background:var(--c-bg);color:var(--c-ink);padding:14px 16px 16px}
+button{font:inherit;font-weight:650;color:var(--c-ink);background:transparent;border:1.5px solid var(--c-ink);border-radius:12px;padding:8px 14px;box-shadow:0 3px 0 var(--c-ink);cursor:pointer;min-height:44px;transition:transform 80ms,box-shadow 80ms}
+button:active{transform:translateY(2px);box-shadow:0 1px 0 var(--c-ink)}
+button[aria-pressed="true"]{background:var(--c-a1);color:#FFFFFF}
+:focus-visible{outline:3px solid var(--c-focus);outline-offset:2px}
+input[type=range]{width:100%;accent-color:var(--c-a1);min-height:32px}
+label{font-weight:650}
+output,.num{font-variant-numeric:tabular-nums;font-weight:700}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.note{font-size:13px;color:var(--c-ink2);margin-top:8px}
+.readout{margin-top:10px;padding:8px 12px;border-radius:12px;border:1px solid var(--c-line);min-height:40px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+:root[data-rm="1"] *{transition:none!important;animation:none!important}
+
+.wrap{display:grid;grid-template-columns:206px 1fr;gap:18px;align-items:center;margin-top:8px}
+.wheel{position:relative;width:200px;height:200px;border-radius:50%;background:conic-gradient(hsl(0,100%,50%),hsl(60,100%,50%),hsl(120,100%,50%),hsl(180,100%,50%),hsl(240,100%,50%),hsl(300,100%,50%),hsl(360,100%,50%));border:2px solid #1C1A3D;touch-action:none;cursor:pointer}
+.hole{position:absolute;inset:40px;border-radius:50%;background:var(--c-bg);border:2px solid #1C1A3D}
+.handle{position:absolute;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;border:3px solid #1C1A3D;background:#FFFFFF}
+.mark{position:absolute;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:2px;background:#1C1A3D}
+.show{height:150px;border-radius:16px;display:flex;align-items:center;justify-content:center;border:2px solid #1C1A3D}
+.obj{width:90px;height:90px;border-radius:12px;background:hsl(30,100%,50%);border:2px solid #1C1A3D}
+
+</style>
+</head>
+<body>
+
+<p style="margin:0">The square is orange (30°, the dark tick). Drag the wheel or the slider to set the surround.</p>
+<div class="wrap">
+  <div class="wheel" id="wheel" aria-hidden="true"><div class="hole"></div><div class="mark" id="mark"></div><div class="handle" id="handle"></div></div>
+  <div><div class="show" id="show" aria-hidden="true"><div class="obj"></div></div>
+  <label for="hue" style="display:block;margin-top:10px">Surround hue: <output id="hOut" for="hue">90</output>°</label>
+  <input id="hue" type="range" min="0" max="359" step="1" value="90"></div>
+</div>
+<div class="readout" id="read" aria-live="polite"></div>
+<script>
+(function () {
+"use strict";
+/* window.lm is the learncroc bridge, injected by the host before this script. Opened on its own,
+   the file runs with a silent stand-in so it can be tried in a browser. */
+var noop = function () {};
+var lm = window.lm || { ready: noop, report: noop, resize: noop, announce: noop, onReveal: noop, onTest: noop,
+  onInit: function (fn) { fn({ mode: "explore", theme: "light", reducedMotion: false }); } };
+var root = document.documentElement;
+var sayTimer = 0;
+function say(text) { clearTimeout(sayTimer); sayTimer = setTimeout(function () { lm.announce(String(text).slice(0, 120)); }, 250); }
+
+
+var hue = document.getElementById("hue"), wheel = document.getElementById("wheel");
+var HUES = ["red", "orange", "yellow", "yellow-green", "green", "spring green", "cyan", "azure blue", "blue", "violet", "magenta", "rose"];
+function hueName(h) { return HUES[Math.round(h / 30) % 12]; }
+function place(el, deg, r) { var a = (deg - 90) * Math.PI / 180; el.style.left = (98 + r * Math.cos(a)) + "px"; el.style.top = (98 + r * Math.sin(a)) + "px"; }
+function render() {
+  var h = Number(hue.value), gap = Math.abs(((h - 30 + 540) % 360) - 180);
+  document.getElementById("hOut").textContent = String(h);
+  document.getElementById("show").style.background = "hsl(" + h + ",100%,50%)";
+  place(document.getElementById("handle"), h, 79); place(document.getElementById("mark"), 30, 79);
+  document.getElementById("read").textContent = "Surround at " + h + "°, " + hueName(h) + ": " + Math.round(gap) + "° round the wheel from the orange" + (gap >= 175 ? ", directly opposite." : gap <= 5 ? ", the same hue." : ".");
+}
+function current() { return Number(hue.value); }
+function restore(v) { var n = Number(v); if (isFinite(n)) { hue.value = String(((Math.round(n) % 360) + 360) % 360); render(); } }
+hue.addEventListener("input", function () { render(); send(); say("Surround hue " + hue.value + " degrees, " + hueName(Number(hue.value))); });
+function fromPointer(ev) { var b = wheel.getBoundingClientRect(), x = ev.clientX - b.left - b.width / 2, y = ev.clientY - b.top - b.height / 2; var d = Math.round(Math.atan2(y, x) * 180 / Math.PI + 90); hue.value = String((d + 360) % 360); render(); send(); }
+wheel.addEventListener("pointerdown", function (ev) {
+  ev.preventDefault(); if (wheel.setPointerCapture) wheel.setPointerCapture(ev.pointerId); fromPointer(ev);
+  function mv(e2) { fromPointer(e2); }
+  function up() { wheel.removeEventListener("pointermove", mv); wheel.removeEventListener("pointerup", up); wheel.removeEventListener("pointercancel", up); say("Surround hue " + hue.value + " degrees, " + hueName(Number(hue.value))); }
+  wheel.addEventListener("pointermove", mv); wheel.addEventListener("pointerup", up); wheel.addEventListener("pointercancel", up);
+});
+
+lm.onInit(function (s) {
+  root.setAttribute("data-rm", s.reducedMotion ? "1" : "0");
+  var v = s.mode === "review" && s.solution !== undefined ? s.solution : s.value;
+  if (v !== undefined && v !== null) restore(v);
+});
+lm.onReveal(function (sol) { if (sol !== undefined && sol !== null) restore(sol); });
+lm.onTest(function (v) { restore(v); send(); });
+function send() { var v = current(); if (v !== null) lm.report(v); }
+render();
+lm.ready();
+})();
+</script>
+</body>
+</html>

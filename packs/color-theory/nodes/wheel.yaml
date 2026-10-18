@@ -1,0 +1,343 @@
+# yaml-language-server: $schema=../../../schemas/node.schema.json
+id: wheel
+title: The color wheel and complements
+tagline: Opposites make each other sing, and cancel when mixed
+estMinutes: 4
+bigIdea: >
+  Arranging hues in a circle puts each hue opposite its complement, 180 degrees away. Side by
+  side, complements make each other look more intense; mixed as paint, they dull each other
+  toward grey. On screens (RGB and HSL) red's complement is cyan; the painters' traditional
+  red-yellow-blue wheel pairs red with green. Both are useful as long as you know which wheel you
+  are using.
+objectives:
+  - Find a hue's complement on the hue wheel
+  - Use a complement to make a color pop, or to tone it down
+  - Say which wheel a complement comes from, screen or painter's
+concepts: [color.wheel, color.complement]
+
+visual:
+  kind: html
+  asset: assets/interactive/hue-wheel.html
+  height: 440
+  alt: "A hue wheel from red through yellow, green, cyan, blue and magenta back to red, with a handle to pick a hue, and an orange square on a surround of the chosen hue."
+
+misconceptions:
+  complement-is-neighbor:
+    label: Thinks the strongest partner for a color sits next to it on the wheel
+    hint: "Try a neighbour of orange as the surround, then try the far side of the wheel. Which makes the orange glow?"
+  complements-mix-bright:
+    label: Expects mixing complementary paints to make a brighter color
+    upstream: light-vs-paint
+    hint: "Each paint absorbs light. Opposite paints absorb nearly everything the other reflects. What's left?"
+  one-true-wheel:
+    label: Thinks there's only one correct color wheel
+    hint: "Screens build color from red, green and blue; painters traditionally from red, yellow and blue. Would their wheels line up?"
+
+hook:
+  blocks:
+    - type: story
+      text: "A screen's hue wheel runs round 360°: red at 0°, orange at 30°."
+  interaction:
+    kind: choice
+    id: hook-q
+    prompt: "Which hue, set right beside orange, makes it look most vivid?"
+    confidence: true
+    options:
+      - { id: h60, text: "60°, yellow, its neighbour", misconception: complement-is-neighbor }
+      - { id: h120, text: "120°, green", misconception: complement-is-neighbor }
+      - { id: h210, text: "210°, a clear blue" }
+      - { id: h0, text: "0°, red, its other neighbour", misconception: complement-is-neighbor }
+    answer: h210
+  lotsGuess: h60
+
+screens:
+  - id: s1-opposite
+    newIdea: A hue's complement sits directly opposite, 180° away
+    blocks:
+      - type: story
+        text: "An orange square on a colored surround. Move the surround round the wheel and watch when the orange glows hardest."
+    interaction:
+      kind: html
+      id: s1-q
+      prompt: Set the surround to orange's complement.
+      asset: assets/interactive/hue-wheel.html
+      height: 440
+      alt: "A hue wheel with a draggable handle and a slider for the surround hue, an orange square on a surround of the chosen hue, and a readout of how far round the wheel the surround is from orange."
+      goal: { kind: range, min: 200, max: 220 }
+      solution: 210
+      feedbackRight: "210°: opposite orange."
+      fallback:
+        kind: numeric
+        prompt: Orange sits at 30° on the hue wheel. What angle is its complement?
+        answer: 210
+        tolerance: 5
+        onWrong:
+          "60": { misconception: complement-is-neighbor, feedback: "That's a neighbour. Go to the opposite side: add 180°." }
+    reveal:
+      text: >
+        210°, a clear blue, 180° round from orange. Opposites on the wheel make each other look
+        more vivid. It's the same push that tinted the grey on orange, now working for you.
+
+  - id: s2-cancel
+    newIdea: Mixed as paint, complements dull each other toward grey
+    blocks:
+      - type: story
+        text: "This red paint is screaming. Two fixes: a dab of green, its painter's complement, or a dab of white."
+    interaction:
+      kind: widget
+      id: s2-q
+      prompt: Which fix made the red less saturated without making it lighter?
+      widget:
+        id: ab-compare
+        v: 1
+        props:
+          a: { label: "Red + a dab of green", asset: assets/img/red-plus-green.svg }
+          b: { label: "Red + a dab of white", asset: assets/img/red-plus-white.svg }
+          layout: side-by-side
+        goal: { kind: pick, answer: a }
+      solution: { pick: a }
+      feedbackRight: "A: duller, still dark, still red."
+      onWrong:
+        b: { misconception: complements-mix-bright, feedback: "White lifted the lightness and made pink. The complement is what dulls it." }
+      fallback:
+        kind: choice
+        prompt: "To make a red less saturated without lightening it, add a dab of…"
+        options:
+          - { id: green, text: "Green, its complement" }
+          - { id: white, text: "White", misconception: complements-mix-bright }
+          - { id: orange, text: "Orange, its neighbour", misconception: complement-is-neighbor }
+        answer: green
+    reveal:
+      text: >
+        A. A touch of the complement knocks red toward grey but keeps it dark and red. White lifts
+        the lightness and turns it pink. Side by side, complements shout; mixed, they hush.
+
+  - id: s3-two-wheels
+    blocks:
+      - type: story
+        text: "Back to the screen. On the screen's hue wheel, red sits at 0°."
+    interaction:
+      kind: text
+      id: s3-q
+      prompt: Name the hue at 180°, red's complement on a screen.
+      accept: [cyan, aqua]
+      feedbackRight: "Cyan: the opposite of red on screens."
+      onWrong:
+        green: { misconception: one-true-wheel, feedback: "Green is red's partner on the painter's wheel. On a screen's RGB wheel, look at 180°." }
+    reveal:
+      text: >
+        Cyan. On screens, red's complement is cyan; the painters' red-yellow-blue wheel pairs red
+        with green. Different primaries, different wheels. Both work; just don't mix their answers.
+
+close:
+  text: "210°, a clear blue: ==directly opposite, 180° away==. Neighbours share most of their light and blend in; opposites differ in every way, so each makes the other look more intense. Blue shadows beside orange light are one of painting's oldest tricks."
+  byGuess:
+    h60: "You picked *60°, yellow, its neighbour*. Lots of people do: neighbours look friendly together. But neighbours blend in. The hue that makes orange glow sits ==directly opposite, 180° away==: 210°, a clear blue."
+    h120: "You picked *120°, green*. Further round, but not far enough: green is only halfway there. The hue that makes orange glow sits ==directly opposite, 180° away==: 210°, a clear blue."
+    h0: "You picked *0°, red, its other neighbour*. Red and orange share most of their light, so they melt together. The hue that makes orange glow sits ==directly opposite, 180° away==: 210°, a clear blue."
+    idk: "No guess is fine. It's 210°, a clear blue, ==directly opposite, 180° away==. Neighbours blend in; opposites make each other look more intense."
+  teaser: "One gallery poster needs every trick in this section: value, light, ink and complements. Can you rescue it?"
+
+items:
+  - id: i1
+    kind: numeric
+    level: apply
+    difficulty: 2
+    prompt: "A color sits at {h}° on the hue wheel. At what angle is its complement? (Use 0 to 359.)"
+    params:
+      vars: { h: [30, 120, 90, 150, 60] }
+      answerExpr: "h + 180"
+    answer: 210
+    tolerance: 0
+    onWrong:
+      default: { misconception: complement-is-neighbor, feedback: "A complement is on the opposite side: add 180°." }
+  - id: i2
+    kind: numeric
+    level: apply
+    difficulty: 3
+    prompt: "A color sits at {h}° on the hue wheel. At what angle is its complement? (Use 0 to 359.)"
+    params:
+      vars: { h: [200, 270, 300, 240, 330] }
+      answerExpr: "h - 180"
+    answer: 20
+    tolerance: 0
+    why: "Past 180°, subtract 180° to stay on the wheel."
+  - id: i3
+    kind: match
+    level: recall
+    difficulty: 2
+    prompt: Match each color to its complement on a screen's hue wheel.
+    left: ["Red", "Green", "Blue", "Orange"]
+    right: ["cyan", "magenta", "yellow", "azure blue"]
+    answer: [[0, 0], [1, 1], [2, 2], [3, 3]]
+  - id: i4
+    kind: choice
+    level: recall
+    difficulty: 2
+    prompt: Why do painters put cool blue shadows beside warm orange light?
+    options:
+      - { id: pop, text: "Complements side by side make each other look more intense" }
+      - { id: near, text: "Colors next to each other on the wheel contrast most", misconception: complement-is-neighbor }
+      - { id: bright, text: "Blue and orange mix into a brighter color", misconception: complements-mix-bright }
+    answer: pop
+  - id: i5
+    kind: choice
+    level: transfer
+    difficulty: 3
+    prompt: "On a traditional painter's red-yellow-blue wheel, what is red's complement?"
+    options:
+      - { id: green, text: "Green" }
+      - { id: cyan, text: "Cyan", misconception: one-true-wheel }
+      - { id: orange, text: "Orange", misconception: complement-is-neighbor }
+    answer: green
+    why: "The painter's wheel pairs red with green, blue with orange, yellow with violet."
+  - id: i6
+    kind: widget
+    level: apply
+    difficulty: 2
+    prompt: Complementary pair, or neighbours? Sort each pair (screen wheel).
+    widget:
+      id: sorter
+      v: 1
+      props:
+        mode: buckets
+        buckets:
+          - { id: comp, label: "Complements (opposite)" }
+          - { id: near, label: "Neighbours (side by side)" }
+        cards:
+          - { id: a, text: "Red and cyan" }
+          - { id: b, text: "Orange and azure blue" }
+          - { id: c, text: "Yellow and blue" }
+          - { id: d, text: "Red and orange" }
+          - { id: e, text: "Blue and violet" }
+          - { id: f, text: "Green and yellow-green" }
+      goal: { kind: buckets, assignment: { a: comp, b: comp, c: comp, d: near, e: near, f: near } }
+    solution: { assignment: { a: comp, b: comp, c: comp, d: near, e: near, f: near } }
+    fallback:
+      kind: choice
+      prompt: "On a screen's wheel, red and cyan are…"
+      options:
+        - { id: comp, text: "Complements" }
+        - { id: near, text: "Neighbours", misconception: complement-is-neighbor }
+      answer: comp
+  - id: i7
+    kind: cloze
+    level: recall
+    difficulty: 1
+    prompt: Fill the gap.
+    text: "Complements sit {{1}} degrees apart on the hue wheel."
+    blanks:
+      "1": { accept: ["180", "one hundred eighty", "one hundred and eighty"] }
+  - id: i8
+    kind: order
+    level: recall
+    difficulty: 2
+    prompt: "Walk round a screen's hue wheel from 0°. Put the hues in order."
+    items: ["Red (0°)", "Yellow", "Green", "Cyan", "Blue", "Magenta"]
+    answer: [0, 1, 2, 3, 4, 5]
+  - id: i9
+    kind: text
+    level: transfer
+    difficulty: 3
+    prompt: A dab of which hue dulls a too-bright orange without making it lighter?
+    accept: [blue, "azure", "azure blue", "a blue"]
+    onWrong:
+      default: { misconception: complement-is-neighbor, feedback: "Reach for orange's opposite on the wheel." }
+  - id: i10
+    kind: explain
+    level: transfer
+    difficulty: 3
+    prompt: "In one sentence: what does a complement do beside a color, and what does it do mixed in?"
+    keyPoints:
+      - { id: beside, text: "beside it, it makes the color look more intense", keywords: [intense, vivid, pop, stronger, brighter, beside, next to] }
+      - { id: mixed, text: "mixed in, it dulls it toward grey", keywords: [dull, grey, gray, neutral, cancel, mute, calm] }
+    minHits: 2
+    exemplar: "Next to a color, its complement makes it look more vivid; mixed into it, the complement dulls it toward grey."
+    offline:
+      kind: choice
+      prompt: Which is right?
+      options:
+        - { id: right, text: "Beside it: more vivid. Mixed in: duller, toward grey" }
+        - { id: bright, text: "Beside it or mixed in, it makes the color brighter", misconception: complements-mix-bright }
+        - { id: near, text: "It only works with neighbouring hues", misconception: complement-is-neighbor }
+      answer: right
+  - kind: widget
+    id: st2-accent
+    prompt: The poster is mostly orange. Which accent makes the orange look most vivid?
+    widget:
+      id: ab-compare
+      v: 1
+      props:
+        a: { label: Blue accent, asset: assets/img/accent-blue.svg }
+        b: { label: Red-orange accent, asset: assets/img/accent-red.svg }
+        layout: side-by-side
+      goal: { kind: pick, answer: a }
+    solution: { pick: a }
+    fallback:
+      kind: choice
+      prompt: An orange poster needs an accent that makes the orange pop. Which?
+      options:
+        - { id: blue, text: "Blue, its complement" }
+        - { id: red, text: "Red-orange, its neighbour" }
+      answer: blue
+    why: "Blue: orange's opposite on the wheel. The red-orange just melts into the background."
+    level: transfer
+    difficulty: 3
+
+flashcards:
+  - id: c1
+    kind: qa
+    front: "How far apart are complements on the hue wheel?"
+    back: "180°: directly opposite."
+  - id: c2
+    kind: qa
+    front: "Red's complement on a screen vs a painter's wheel?"
+    back: "Cyan on screens (RGB/HSL); green on the traditional red-yellow-blue wheel."
+  - id: c3
+    kind: cloze
+    front: "A dab of a color's {{complement}} dulls it without making it lighter."
+    back: "Opposite pigments absorb what the other reflects, pulling the mix toward grey."
+  - id: c4
+    kind: qa
+    front: "Orange's complement on a screen's hue wheel?"
+    back: "A clear blue, about 210°."
+
+toy:
+  prompt: "Sort more pairs: opposite, or side by side?"
+  widget:
+    id: sorter
+    v: 1
+    props:
+      mode: buckets
+      buckets:
+        - { id: comp, label: "Complements" }
+        - { id: near, label: "Neighbours" }
+      cards:
+        - { id: a, text: "Magenta and green" }
+        - { id: b, text: "Yellow and orange" }
+        - { id: c, text: "Violet and yellow-green" }
+        - { id: d, text: "Cyan and blue" }
+
+underTheHood:
+  title: Why there's more than one wheel
+  body: >
+    A color wheel is a map, and different maps serve different jobs. The RGB/HSL wheel, used by
+    screens and CSS, places red, green and blue 120° apart, so complements are the additive
+    opposites: red and cyan, green and magenta, blue and yellow. Mixed as light, these pairs add up
+    to white. The traditional red-yellow-blue wheel, from centuries of painting manuals, pairs red
+    with green and blue with orange; mixed as pigment, those pairs make dull greys and browns.
+    Perceptual wheels (Munsell, or hue in CIELAB and OKLCH) land somewhere between. Pick the
+    wheel that matches your medium.
+
+faq:
+  - q: So which wheel is right?
+    a: "Both, for their medium. Use the RGB/HSL wheel for screens and CSS, and the painter's wheel when mixing paint. Just say which one you mean."
+  - q: Do complements always look good together?
+    a: "They always look intense. Whether that's good depends on balance: one usually dominates and the other accents."
+
+sources:
+  - { id: wiki-complementary, title: "Complementary colors", by: "Wikipedia contributors", url: "https://en.wikipedia.org/wiki/Complementary_colors", license: "CC-BY-SA-4.0" }
+  - { id: wiki-color-wheel, title: "Color wheel", by: "Wikipedia contributors", url: "https://en.wikipedia.org/wiki/Color_wheel", license: "CC-BY-SA-4.0" }
+  - { id: chevreul-1839, title: "De la loi du contraste simultané des couleurs (The Principles of Harmony and Contrast of Colours)", by: "Michel Eugène Chevreul", year: 1839 }
+
+status: draft

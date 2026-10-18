@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Steve's town: librarians and farmers</title>
+<style>
+  :root {
+    --c-bg: #FFFFFF; --c-ink: #1C1A3D; --c-ink2: #4A4870; --c-line: #B9BDD0; --c-sunk: #F6F7FB;
+    --c-lib: #5E48D6; --c-farm: #2F6FB0; --c-focus: #12877A;
+    color-scheme: light;
+  }
+  :root[data-theme="dark"] {
+    --c-bg: #1D1C3D; --c-ink: #ECEBFA; --c-ink2: #B6B4DA; --c-line: #4A4990; --c-sunk: #232249;
+    --c-lib: #A493FF; --c-farm: #86B6F0; --c-focus: #7FE3D5;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    font: 15px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--surface, var(--c-bg)); color: var(--ink, var(--c-ink));
+    padding: 12px 14px;
+  }
+  .layout { display: grid; grid-template-columns: minmax(180px, 210px) 1fr; gap: 12px 18px; align-items: start; }
+  .side { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+  label { font-weight: 600; font-size: 14px; display: block; }
+  input[type="range"] { width: 100%; margin: 4px 0 0; accent-color: var(--c-farm); }
+  .side button { align-self: flex-start; }
+  output { font-variant-numeric: tabular-nums; font-weight: 700; min-width: 2ch; display: inline-block; }
+  button {
+    font: inherit; font-weight: 600; padding: 6px 12px; border-radius: 12px; cursor: pointer;
+    border: 1.5px solid var(--ink, var(--c-ink)); background: var(--surface-2, var(--c-sunk)); color: inherit;
+    box-shadow: 0 3px 0 var(--key-edge, var(--c-ink)); transition: transform 80ms, box-shadow 80ms;
+  }
+  button[aria-pressed="true"] { transform: translateY(2px); box-shadow: 0 1px 0 var(--key-edge, var(--c-ink)); }
+  :focus-visible { outline: 3px solid var(--focus, var(--c-focus)); outline-offset: 2px; }
+  .town { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  .group h2 { font-size: 13px; font-weight: 600; margin: 0 0 4px; color: var(--ink-2, var(--c-ink2)); }
+  svg { display: block; max-width: 100%; height: auto; }
+  .lib { fill: none; stroke: var(--c-lib); stroke-width: 1.5; }
+  .farm { fill: none; stroke: var(--c-farm); stroke-width: 1.5; opacity: .8; }
+  .fits .lib.fit { fill: var(--c-lib); }
+  .fits .farm.fit { fill: var(--c-farm); opacity: 1; }
+  .fits .lib:not(.fit), .fits .farm:not(.fit) { opacity: .28; }
+  .shape { transition: opacity 220ms, fill 220ms; }
+  :root[data-rm="true"] .shape, :root[data-rm="true"] button { transition: none; }
+  .readout { padding: 8px 10px; border-radius: 12px; background: var(--surface-2, var(--c-sunk)); font-size: 14px; line-height: 1.35; min-height: 4.1em; }
+  .legend { display: flex; gap: 4px 12px; font-size: 12px; line-height: 1.3; color: var(--ink-2, var(--c-ink2)); flex-wrap: wrap; }
+  .legend svg { display: inline-block; vertical-align: -2px; margin-right: 4px; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+</style>
+</head>
+<body>
+<div class="layout">
+<div class="side">
+  <div>
+    <label for="k">Farmers per librarian: <output id="kOut" for="k">20</output></label>
+    <input id="k" type="range" min="1" max="30" step="1" value="20" aria-describedby="kHelp">
+    <span id="kHelp" class="sr">Sets how many farmers live in the town for each of the 10 librarians.</span>
+  </div>
+  <button id="fits" type="button" aria-pressed="false">Light up who fits</button>
+  <div class="readout" id="readout" aria-live="polite"></div>
+</div>
+<div class="town" id="town">
+  <div class="group">
+    <h2 id="libTitle">Librarians (10)</h2>
+    <svg id="libSvg" role="img" aria-label="10 librarians"></svg>
+  </div>
+  <div class="group">
+    <h2 id="farmTitle">Farmers (200)</h2>
+    <svg id="farmSvg" role="img" aria-label="200 farmers"></svg>
+  </div>
+  <div class="legend" aria-hidden="true">
+    <span><svg aria-hidden="true" width="14" height="14"><rect x="2" y="2" width="10" height="10" class="lib fit" style="fill:var(--c-lib)"/></svg>librarian</span>
+    <span><svg aria-hidden="true" width="14" height="14"><circle cx="7" cy="7" r="5" class="farm fit" style="fill:var(--c-farm);opacity:1"/></svg>farmer</span>
+    <span>filled = fits (4 in 10 librarians, 1 in 10 farmers; illustrative)</span>
+  </div>
+</div>
+</div>
+
+<script>
+(() => {
+  "use strict";
+  /* The learncroc host injects a frozen window.lm bridge (ready, report, resize, announce, onInit,
+     onReveal, onTest). makeShim() gives the same API when this file is opened on its own. */
+  const lm = window.lm || makeShim();
+  let root = document.documentElement, mode = "explore", announceTimer = 0;
+  function report(v) { if (mode === "answer") lm.report(v); }
+  function announce(text) {
+    clearTimeout(announceTimer);
+    announceTimer = setTimeout(() => { lm.announce(String(text).slice(0, 120)); }, 300);
+  }
+  function fit() { lm.resize(Math.ceil(root.scrollHeight)); }
+  function applyEnv(s) {
+    mode = s.mode === "answer" || s.mode === "review" ? s.mode : "explore";
+    root.setAttribute("data-theme", s.theme === "dark" ? "dark" : "light");
+    root.setAttribute("data-rm", s.reducedMotion ? "true" : "false");
+  }
+  function makeShim() {
+    let P = window.parent, initFns = [], revealFns = [], testFn = null;
+    const framed = !!P && P !== window;
+    function post(m) { if (framed) { try { P.postMessage(m, "*"); } catch (e) { /* not framed */ } } }
+    window.addEventListener("message", (e) => {
+      if (!framed || e.source !== P) return;
+      const d = e.data;
+      if (!d || typeof d !== "object") return;
+      if (d.type === "init") {
+        const t = d.tokens || {};
+        for (const k in t) {
+          if (Object.hasOwn(t, k) && /^--[a-z0-9-]{1,40}$/.test(k) && typeof t[k] === "string" && !/[;{}<>]/.test(t[k])) root.style.setProperty(k, t[k]);
+        }
+        const snap = { mode: d.mode, theme: d.theme, reducedMotion: d.reducedMotion === true, value: d.value, solution: d.solution };
+        initFns.forEach((fn) => { fn(snap); });
+      } else if (d.type === "reveal") {
+        revealFns.forEach((fn) => { fn(d.solution); });
+      } else if (d.type === "selftest") {
+        const el = document.querySelector("input[type=range]");
+        const before = document.body.textContent;
+        const old = el ? el.value : "";
+        if (el) { el.stepUp(); if (el.value === old) el.stepDown(); el.dispatchEvent(new Event("input", { bubbles: true })); }
+        const ok = !!el && document.body.textContent !== before;
+        if (el) { el.value = old; el.dispatchEvent(new Event("input", { bubbles: true })); }
+        post({ type: "selftest", ok: ok });
+      }
+    });
+    return {
+      ready: () => { post({ type: "ready", v: 1 }); },
+      report: (v) => { post({ type: "report", value: v }); },
+      resize: (h) => { post({ type: "resize", height: h }); },
+      announce: (t) => { post({ type: "announce", text: String(t).slice(0, 120) }); },
+      onInit: (fn) => { initFns.push(fn); },
+      onReveal: (fn) => { revealFns.push(fn); },
+      onTest: (fn) => { testFn = fn; },
+      test: (v) => { if (testFn) testFn(v); }
+    };
+  }
+
+  const LIBRARIANS = 10, LIB_FIT = 0.4, FARM_FIT = 0.1, COLS = 30, CELL = 13;
+  const k = document.getElementById("k"), kOut = document.getElementById("kOut");
+  const fitsBtn = document.getElementById("fits"), town = document.getElementById("town");
+  const libSvg = document.getElementById("libSvg"), farmSvg = document.getElementById("farmSvg");
+  const farmTitle = document.getElementById("farmTitle"), readout = document.getElementById("readout");
+  const NS = libSvg.namespaceURI;
+
+  function shape(kind, i, cols, fit) {
+    let x = (i % cols) * CELL + 2, y = Math.floor(i / cols) * CELL + 2, el;
+    if (kind === "lib") {
+      el = document.createElementNS(NS, "rect");
+      el.setAttribute("x", x + 1); el.setAttribute("y", y + 1); el.setAttribute("width", 9); el.setAttribute("height", 9);
+    } else {
+      el = document.createElementNS(NS, "circle");
+      el.setAttribute("cx", x + 5.5); el.setAttribute("cy", y + 5.5); el.setAttribute("r", 4.5);
+    }
+    el.setAttribute("class", `shape ${kind}${fit ? " fit" : ""}`);
+    return el;
+  }
+
+  function sized(svg, n, cols) {
+    const rows = Math.max(1, Math.ceil(n / cols));
+    svg.setAttribute("viewBox", `0 0 ${cols * CELL + 4} ${rows * CELL + 4}`);
+    svg.setAttribute("width", cols * CELL + 4);
+    svg.setAttribute("height", rows * CELL + 4);
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+  }
+
+  function counts() {
+    const perLib = Number(k.value), farmers = LIBRARIANS * perLib;
+    const libFit = Math.round(LIBRARIANS * LIB_FIT), farmFit = Math.round(farmers * FARM_FIT);
+    return { perLib: perLib, farmers: farmers, libFit: libFit, farmFit: farmFit, share: libFit / (libFit + farmFit) };
+  }
+
+  function render() {
+    let c = counts(), i;
+    kOut.textContent = String(c.perLib);
+    farmTitle.textContent = `Farmers (${c.farmers})`;
+    sized(libSvg, LIBRARIANS, LIBRARIANS);
+    for (i = 0; i < LIBRARIANS; i++) libSvg.appendChild(shape("lib", i, LIBRARIANS, i < c.libFit));
+    sized(farmSvg, c.farmers, COLS);
+    for (i = 0; i < c.farmers; i++) farmSvg.appendChild(shape("farm", i, COLS, i % 10 === 0));
+    const lit = fitsBtn.getAttribute("aria-pressed") === "true";
+    town.classList.toggle("fits", lit);
+    libSvg.setAttribute("aria-label", `${LIBRARIANS} librarians${lit ? `, ${c.libFit} fit the description` : ""}`);
+    farmSvg.setAttribute("aria-label", `${c.farmers} farmers${lit ? `, ${c.farmFit} fit the description` : ""}`);
+    const pct = Math.round(c.share * 100);
+    readout.textContent = lit
+      ? `${c.libFit} librarians and ${c.farmFit} farmers fit. Someone who fits is a librarian ${pct}% of the time.`
+      : `${LIBRARIANS} librarians, ${c.farmers} farmers. Light up who fits.`;
+    fit();
+    return readout.textContent;
+  }
+
+  function setK(v) {
+    const n = Math.max(1, Math.min(30, Math.round(Number(v))));
+    if (Number.isFinite(n)) k.value = String(n);
+  }
+
+  k.addEventListener("input", () => {
+    const text = render();
+    report(Number(k.value));
+    announce(text);
+  });
+  fitsBtn.addEventListener("click", () => {
+    fitsBtn.setAttribute("aria-pressed", fitsBtn.getAttribute("aria-pressed") === "true" ? "false" : "true");
+    announce(render());
+  });
+
+  lm.onInit((m) => {
+    applyEnv(m);
+    if (typeof m.value === "number") setK(m.value);
+    if (m.mode === "review" && typeof m.solution === "number") {
+      setK(m.solution);
+      fitsBtn.setAttribute("aria-pressed", "true");
+    }
+    render();
+  });
+  lm.onReveal((solution) => {
+    if (typeof solution === "number") setK(solution);
+    fitsBtn.setAttribute("aria-pressed", "true");
+    announce(render());
+  });
+  lm.onTest((value) => {
+    setK(value);
+    render();
+    lm.report(Number(k.value));
+  });
+
+  render();
+  lm.ready();
+})();
+</script>
+</body>
+</html>

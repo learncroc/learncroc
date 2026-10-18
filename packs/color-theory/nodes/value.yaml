@@ -1,0 +1,364 @@
+# yaml-language-server: $schema=../../../schemas/node.schema.json
+id: value
+title: Value does the heavy lifting
+tagline: If it works in greyscale, it works in color
+estMinutes: 4
+bigIdea: >
+  Value is how light or dark a color looks, and it carries most of an image's structure: a design
+  that reads in greyscale reads in color. Each hue has its own natural value, so equal HSL
+  lightness does not mean equal perceived lightness: pure yellow (CIELAB L* about 97) looks far
+  lighter than pure blue (about 32). Hue grabs attention; value decides what can be read.
+objectives:
+  - Rank colors by perceived value
+  - Use the squint (greyscale) test to judge whether a design will read
+  - Fix a color pair that only differs in hue
+concepts: [color.value, color.luminance, perception.lightness]
+
+misconceptions:
+  hsl-is-perceptual:
+    label: Thinks equal HSL lightness means equal perceived lightness
+    upstream: hsl
+    hint: "Yellow and blue both sit at 50% lightness in HSL. Squint at them. Do they look equally light?"
+  hue-carries-structure:
+    label: Thinks contrasting hues alone make a design readable
+    hint: "Turn the design grey in your head. Red and green both become what? Is there anything left to tell them apart?"
+  vivid-is-light:
+    label: Thinks more saturated colors always look lighter
+    hint: "Pure blue is as vivid as pure yellow. Which one looks lighter?"
+
+hook:
+  blocks:
+    - type: story
+      text: "Pure yellow and pure blue both sit at 50% lightness in HSL. Now switch the screen to greyscale."
+  interaction:
+    kind: choice
+    id: hook-q
+    prompt: What happens to the two swatches?
+    confidence: true
+    options:
+      - { id: same, text: "They turn the same grey", misconception: hsl-is-perceptual }
+      - { id: yellow-light, text: "Yellow turns a far lighter grey" }
+      - { id: blue-light, text: "Blue becomes the lighter grey", misconception: vivid-is-light }
+      - { id: white, text: "Both turn white", misconception: hsl-is-perceptual }
+    answer: yellow-light
+  lotsGuess: same
+
+screens:
+  - id: s1-rank
+    newIdea: Every hue has its own natural value
+    blocks:
+      - type: story
+        text: "Five pure colors, every one at full saturation and HSL lightness 50%."
+    interaction:
+      kind: widget
+      id: s1-q
+      prompt: Rank them by how light they look, lightest first.
+      widget:
+        id: sorter
+        v: 1
+        props:
+          mode: rank
+          rankLabels: ["lightest", "darkest"]
+          cards:
+            - { id: yellow, text: "Yellow", asset: assets/img/swatch-yellow.svg, why: "Perceived lightness about 97 of 100." }
+            - { id: cyan, text: "Cyan", asset: assets/img/swatch-cyan.svg, why: "Perceived lightness about 91." }
+            - { id: green, text: "Green", asset: assets/img/swatch-green.svg, why: "Perceived lightness about 88." }
+            - { id: red, text: "Red", asset: assets/img/swatch-red.svg, why: "Perceived lightness about 53." }
+            - { id: blue, text: "Blue", asset: assets/img/swatch-blue.svg, why: "Perceived lightness about 32." }
+        goal: { kind: rank, order: [yellow, cyan, green, red, blue], minKendall: 0.8 }
+      solution: { order: [yellow, cyan, green, red, blue] }
+      feedbackRight: "Yellow near white, blue near charcoal."
+      fallback:
+        kind: order
+        prompt: Order these pure colors from lightest-looking to darkest.
+        items: ["Yellow", "Cyan", "Green", "Red", "Blue"]
+        answer: [0, 1, 2, 3, 4]
+    reveal:
+      text: >
+        Yellow, cyan, green, red, blue: same HSL lightness, values from about 97 down to 32.
+        Your eyes are most sensitive to yellow-green light and least to blue. Greyscale turns a
+        yellow headline on white invisible, while a blue one shouts.
+
+  - id: s2-squint
+    newIdea: Squint or go greyscale; if the values separate, the design reads
+    blocks:
+      - type: story
+        text: "Two posters for an open studio. Painters squint to blur the detail and see only lights and darks."
+    interaction:
+      kind: widget
+      id: s2-q
+      prompt: Which poster still reads when you squint?
+      widget:
+        id: ab-compare
+        v: 1
+        props:
+          a: { label: "Poster A", asset: assets/img/poster-red-green.svg, caption: "red on green" }
+          b: { label: "Poster B", asset: assets/img/poster-navy-cream.svg, caption: "navy on cream" }
+          layout: side-by-side
+        goal: { kind: pick, answer: b }
+      solution: { pick: b }
+      feedbackRight: "B: dark on light, far apart in value."
+      onWrong:
+        a: { misconception: hue-carries-structure, feedback: "Red and green are loud as hues, but nearly the same grey. Squint and the words dissolve." }
+      fallback:
+        kind: choice
+        prompt: "Which poster still reads in greyscale: red letters on green, or navy letters on cream?"
+        options:
+          - { id: b, text: "Navy on cream" }
+          - { id: a, text: "Red on green", misconception: hue-carries-structure }
+        answer: b
+    reveal:
+      text: >
+        B. Navy and cream sit far apart in value. A's red and green clash as hues but are nearly
+        the same grey, so squint and the words melt. Hue gets attention; value gets read.
+
+  - id: s3-map
+    blocks:
+      - type: story
+        text: "A hazard map: danger in red, safe in green, both the same value. Around 1 in 12 men struggle to tell them apart."
+    visual:
+      kind: figure
+      asset: assets/img/map-red-green.svg
+      alt: "A map with a red region labelled danger and a green region labelled safe. The red and green are nearly the same value."
+    interaction:
+      kind: choice
+      id: s3-q
+      prompt: What's the sturdiest fix?
+      options:
+        - { id: value, text: "Make danger zones much darker" }
+        - { id: brighter, text: "Use a more vivid red", misconception: vivid-is-light }
+        - { id: hue, text: "Swap in a different green", misconception: hue-carries-structure }
+      answer: value
+      feedbackRight: "Value survives greyscale and red-green color blindness."
+    reveal:
+      text: >
+        Darken the danger zones. A clear value gap works in greyscale, on a cheap printer and for
+        red-green color blindness. Add a label or pattern too, and color stops being the only clue.
+
+close:
+  text: "Yellow turns a far lighter grey, almost white; blue lands near charcoal. ==Every hue has its own value==, how light it looks to your eye. HSL lightness is arithmetic on the screen's channels, so it calls them equal. Value is what survives a squint."
+  byGuess:
+    same: "You picked *they turn the same grey*. Lots of people do: the numbers match. But ==every hue has its own value==, how light it looks to your eye. Yellow lands near white, blue near charcoal. HSL lightness is screen arithmetic, not sight."
+    blue-light: "You picked *blue becomes the lighter grey*. Blue is just as vivid, but vivid isn't light. ==Every hue has its own value==: yellow lands near white, blue near charcoal. Your eyes are least sensitive to blue."
+    white: "You picked *both turn white*. Yellow nearly does. Blue lands near charcoal, because ==every hue has its own value==, how light it looks to your eye. HSL's 50% is screen arithmetic, not sight."
+    idk: "No guess is fine. Yellow turns a far lighter grey, near white, while blue lands near charcoal. ==Every hue has its own value==, and HSL lightness, being screen arithmetic, can't see it."
+  teaser: "Red and green paint mixed make mud. What do a red and a green spotlight make?"
+
+items:
+  - id: i1
+    kind: widget
+    level: apply
+    difficulty: 3
+    prompt: Rank these pure colors by how light they look, lightest first.
+    widget:
+      id: sorter
+      v: 1
+      props:
+        mode: rank
+        rankLabels: ["lightest", "darkest"]
+        cards:
+          - { id: cyan, text: "Cyan", asset: assets/img/swatch-cyan.svg }
+          - { id: magenta, text: "Magenta", asset: assets/img/swatch-magenta.svg }
+          - { id: red, text: "Red", asset: assets/img/swatch-red.svg }
+          - { id: blue, text: "Blue", asset: assets/img/swatch-blue.svg }
+      goal: { kind: rank, order: [cyan, magenta, red, blue], minKendall: 0.66 }
+    solution: { order: [cyan, magenta, red, blue] }
+    fallback:
+      kind: order
+      prompt: Order from lightest-looking to darkest.
+      items: ["Cyan", "Magenta", "Red", "Blue"]
+      answer: [0, 1, 2, 3]
+    why: "Perceived lightness: cyan about 91, magenta 60, red 53, blue 32."
+  - id: i2
+    kind: choice
+    level: recall
+    difficulty: 2
+    prompt: Why does a yellow headline on a white page fail?
+    options:
+      - { id: value, text: "Yellow and white are almost the same value" }
+      - { id: vivid, text: "Yellow isn't vivid enough", misconception: vivid-is-light }
+      - { id: hue, text: "Yellow is the wrong hue for headlines", misconception: hue-carries-structure }
+    answer: value
+  - id: i3
+    kind: numeric
+    level: apply
+    difficulty: 2
+    prompt: "What HSL lightness, in percent, does pure yellow, #FFFF00, have?"
+    answer: 50
+    tolerance: 0
+    onWrong:
+      "100": { misconception: hsl-is-perceptual, feedback: "It looks nearly white, but HSL says 50%: arithmetic, not perception." }
+    why: "HSL lightness is the average of the brightest and dimmest channel: (255 + 0) / 2."
+  - id: i4
+    kind: numeric
+    level: apply
+    difficulty: 3
+    prompt: "Screens weight light roughly as red 21%, green 72%, blue 7% of white's brightness. A pixel sends red at {r}%, green at {g}% and blue at {b}% of full light. How bright is it, in percent of white?"
+    params:
+      vars: { r: [100, 0, 50], g: [100, 0, 50], b: [0, 100, 50] }
+      answerExpr: "(21 * r + 72 * g + 7 * b) / 100"
+    answer: 93
+    tolerance: 1
+    onWrong:
+      "67": { misconception: hsl-is-perceptual, feedback: "Equal shares would give a third per channel. Weight green heavily and blue lightly." }
+    why: "Multiply each channel by its weight and add: full red plus full green is 21 + 72 = 93."
+  - id: i5
+    kind: numeric
+    level: apply
+    difficulty: 3
+    prompt: "Using the same weights (red 21%, green 72%, blue 7%), how bright is pure blue, in percent of white?"
+    answer: 7
+    tolerance: 0.5
+    onWrong:
+      "33": { misconception: hsl-is-perceptual, feedback: "Equal shares would give a third each. Your eyes weight blue very lightly." }
+  - id: i6
+    kind: widget
+    level: apply
+    difficulty: 2
+    prompt: Which pair has more value contrast?
+    widget:
+      id: ab-compare
+      v: 1
+      props:
+        a: { label: "Pair A", asset: assets/img/poster-navy-cream.svg, caption: "navy on cream" }
+        b: { label: "Pair B", asset: assets/img/poster-red-green.svg, caption: "red on green" }
+        layout: side-by-side
+      goal: { kind: pick, answer: a }
+    solution: { pick: a }
+    fallback:
+      kind: choice
+      prompt: "More value contrast: navy on cream, or red on green?"
+      options:
+        - { id: a, text: "Navy on cream" }
+        - { id: b, text: "Red on green", misconception: hue-carries-structure }
+      answer: a
+  - id: i7
+    kind: cloze
+    level: recall
+    difficulty: 1
+    prompt: Fill the gap.
+    text: "If a design works in {{1}}, it usually works in color."
+    blanks:
+      "1": { accept: [greyscale, grayscale, "grey scale", "gray scale", "black and white"], tiles: [greyscale, neon, pastels, red] }
+  - id: i8
+    kind: choice
+    level: transfer
+    difficulty: 3
+    prompt: You're painting a sunlit orange against a shadowed blue wall and want the orange to pop. What matters most?
+    options:
+      - { id: value, text: "Its value compared with the wall's" }
+      - { id: hue, text: "Shifting its hue toward red", misconception: hue-carries-structure }
+      - { id: sat, text: "Pushing its saturation to the maximum", misconception: vivid-is-light }
+    answer: value
+  - id: i9
+    kind: match
+    level: recall
+    difficulty: 3
+    prompt: Match each pure color to its approximate perceived lightness (0 black, 100 white).
+    left: ["Yellow", "Green", "Red", "Blue"]
+    right: ["about 97", "about 88", "about 53", "about 32"]
+    answer: [[0, 0], [1, 1], [2, 2], [3, 3]]
+  - id: i10
+    kind: explain
+    level: transfer
+    difficulty: 3
+    prompt: "In one sentence: why do painters squint at their work?"
+    keyPoints:
+      - { id: value, text: "to see only lights and darks, the values", keywords: [value, values, light, dark, lights and darks, greyscale, grayscale] }
+      - { id: blur, text: "squinting blurs detail and dulls hue", keywords: [blur, detail, hue, color, colour] }
+    minHits: 1
+    exemplar: "Squinting blurs detail and dulls hue, so only the lights and darks remain, and those values are what make a picture read."
+    offline:
+      kind: choice
+      prompt: Which is right?
+      options:
+        - { id: value, text: "To blur detail and judge the lights and darks alone" }
+        - { id: hue, text: "To see the hues more vividly", misconception: hue-carries-structure }
+        - { id: sat, text: "To find the most saturated color", misconception: vivid-is-light }
+      answer: value
+  - kind: widget
+    id: st1-values
+    callback: true
+    prompt: "Remember yellow and blue in greyscale? A poster has four colors. Rank them by how light they look, lightest first, to find where the headline goes."
+    widget:
+      id: sorter
+      v: 1
+      props:
+        mode: rank
+        rankLabels: [ lightest, darkest ]
+        cards:
+          - { id: cream, text: Pale cream, asset: assets/img/swatch-cream.svg }
+          - { id: orange, text: Warm orange, asset: assets/img/swatch-orange.svg }
+          - { id: brick, text: Brick red, asset: assets/img/swatch-brick.svg }
+          - { id: navy, text: Deep navy, asset: assets/img/swatch-navy.svg }
+      goal:
+        kind: rank
+        order: [ cream, orange, brick, navy ]
+    solution:
+      order: [ cream, orange, brick, navy ]
+    fallback:
+      kind: order
+      prompt: Order these from lightest-looking to darkest.
+      items: [ Pale cream, Warm orange, Brick red, Deep navy ]
+      answer: [ 0, 1, 2, 3 ]
+    why: "Cream, orange, brick, navy. Navy on cream is the widest value gap: that's where the headline lives."
+    level: transfer
+    difficulty: 3
+
+flashcards:
+  - id: c1
+    kind: qa
+    front: "Pure yellow vs pure blue: same HSL lightness, same look?"
+    back: "No. Yellow looks near white (L* about 97), blue near charcoal (about 32)."
+  - id: c2
+    kind: qa
+    front: "What is the squint test?"
+    back: "Blur your eyes so hue fades; if the lights and darks still separate, the design reads."
+  - id: c3
+    kind: cloze
+    front: "Hue gets attention; {{value}} gets read."
+    back: "Value: how light or dark a color looks."
+  - id: c4
+    kind: qa
+    front: "Sturdiest fix for a red/green chart?"
+    back: "Give the two colors very different values, and add labels or patterns."
+
+toy:
+  prompt: "Rank six pure colors by how light they look. Any surprises?"
+  widget:
+    id: sorter
+    v: 1
+    props:
+      mode: rank
+      rankLabels: ["lightest", "darkest"]
+      cards:
+        - { id: yellow, text: "Yellow", asset: assets/img/swatch-yellow.svg }
+        - { id: cyan, text: "Cyan", asset: assets/img/swatch-cyan.svg }
+        - { id: green, text: "Green", asset: assets/img/swatch-green.svg }
+        - { id: magenta, text: "Magenta", asset: assets/img/swatch-magenta.svg }
+        - { id: red, text: "Red", asset: assets/img/swatch-red.svg }
+        - { id: blue, text: "Blue", asset: assets/img/swatch-blue.svg }
+
+underTheHood:
+  title: Value, luminance and L*
+  body: >
+    Perceived lightness is modelled by CIELAB's L*, from 0 (black) to 100 (white). It's built on
+    relative luminance, which weights a screen's linear red, green and blue light by about 0.21,
+    0.72 and 0.07, because our eyes are most sensitive to green and least to blue. The same
+    luminance drives the WCAG contrast ratio used for accessible text. HSL lightness simply
+    averages the strongest and weakest channel, which is why it calls yellow and blue equal. The
+    1-in-12 figure for men with red-green color vision deficiency is the usual estimate for people
+    of Northern European descent; it's lower in some other populations.
+
+faq:
+  - q: Is value the same as brightness?
+    a: "Nearly. Value is the painter's word for how light a color looks; L* is the scientist's measure of it."
+  - q: How do I check value quickly?
+    a: "Squint, take a greyscale photo, or use a greyscale filter. If shapes still separate, you're fine."
+
+sources:
+  - { id: wcag-luminance, title: "Web Content Accessibility Guidelines (WCAG) 2.2: relative luminance", by: "W3C", year: 2023, url: "https://www.w3.org/TR/WCAG22/#dfn-relative-luminance" }
+  - { id: wiki-cielab, title: "CIELAB color space", by: "Wikipedia contributors", url: "https://en.wikipedia.org/wiki/CIELAB_color_space", license: "CC-BY-SA-4.0" }
+  - { id: nhs-colour-vision, title: "Colour vision deficiency (colour blindness)", by: "NHS", year: 2023, url: "https://www.nhs.uk/conditions/colour-vision-deficiency/", note: "Around 1 in 12 men and 1 in 200 women in the UK." }
+
+status: draft

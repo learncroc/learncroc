@@ -1,0 +1,47 @@
+# yaml-language-server: $schema=../../schemas/pack.schema.json
+schema: 2
+id: color-theory
+version: 0.2.0
+title: Color theory
+subtitle: See like a painter, and like a screen
+tagline: Two identical greys look different. Learn why color lies, and how to make it sing.
+publisher: learncroc
+authors: [ { name: learncroc contributors } ]
+reviewers: []
+license: CC-BY-SA-4.0
+lang: en
+level: beginner
+estMinutes: 26
+tags: [color, colour, design, painting, perception, hsl, rgb]
+category: arts
+engine: ">=0.1.0 <1.0.0"
+widgets: { sorter: 1, ab-compare: 1 }
+profile: sampler
+theme:
+  renderer: sketchbook
+  world: The Prism Studio
+  mode: light
+  direction: lr
+  ground: "#F7F3EA"
+  texture: watercolour
+  lines: ["#2F5DA8", "#8A3FA0", "#B0306A", "#4F7A1E", "#6B4E2E"]
+  token: paper-plane
+  gateName: Crit
+  backdrop: prism
+  fieldNoteStyle: card
+  landmarks:
+    cp-seeing: { name: The Grey Jars, glyph: box }
+    cp-poster-rescue: { name: The Easel, glyph: star }
+entry: { suggestedStart: contrast-illusions }
+outcomes:
+  - Describe any color with hue, saturation and lightness, and change one without the others
+  - Predict what mixing lights or inks will make, and pick a color's complement
+  - Use value and simultaneous contrast to make a design read, and spot when your eyes are fooled
+ai:
+  tutorNotes: >
+    Always name colors in words (and hex where useful), never by swatch alone. HSL numbers follow
+    CSS conventions. Distinguish HSL lightness (screen maths) from perceived value (CIELAB L*).
+    Screen complements use the RGB/HSL wheel (red opposite cyan); the painter's RYB wheel pairs
+    red with green; say which wheel you mean. Color psychology claims are weak: teach convention,
+    not effects on mood or appetite.
+status: draft

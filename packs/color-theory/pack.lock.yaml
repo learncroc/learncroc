@@ -1,0 +1,43 @@
+# yaml-language-server: $schema=../../schemas/lock.schema.json
+# AI provenance per file. Human review sign-offs go in `reviews` and are written by reviewers only.
+provenance:
+  pack.yaml: { feature: build, prompt: "sampler-authoring@1", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  map.yaml: { feature: build, prompt: "sampler-authoring@1", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  nodes/contrast-illusions.yaml: { feature: build, prompt: "sampler-authoring@1", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  nodes/hsl.yaml: { feature: build, prompt: "sampler-authoring@1", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  nodes/light-vs-paint.yaml: { feature: build, prompt: "sampler-authoring@1", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  nodes/value.yaml: { feature: build, prompt: "sampler-authoring@1", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  nodes/wheel.yaml: { feature: build, prompt: "sampler-authoring@1", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  assets/img/accent-blue.svg: { feature: figure, prompt: "sampler-authoring@1", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  assets/img/accent-red.svg: { feature: figure, prompt: "sampler-authoring@1", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  assets/img/grey-on-blue.svg: { feature: figure, prompt: "sampler-authoring@1", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  assets/img/grey-on-navy.svg: { feature: figure, prompt: "sampler-authoring@1", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  assets/img/grey-on-orange.svg: { feature: figure, prompt: "sampler-authoring@1", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  assets/img/grey-on-pale.svg: { feature: figure, prompt: "sampler-authoring@1", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  assets/img/greys-on-bands.svg: { feature: figure, prompt: "sampler-authoring@1", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  assets/img/logo-on-cream.svg: { feature: figure, prompt: "sampler-authoring@1", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  assets/img/logo-on-navy.svg: { feature: figure, prompt: "sampler-authoring@1", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  assets/img/map-red-green.svg: { feature: figure, prompt: "sampler-authoring@1", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  assets/img/poster-navy-cream.svg: { feature: figure, prompt: "sampler-authoring@1", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  assets/img/poster-red-green.svg: { feature: figure, prompt: "sampler-authoring@1", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  assets/img/red-plus-green.svg: { feature: figure, prompt: "sampler-authoring@1", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  assets/img/red-plus-white.svg: { feature: figure, prompt: "sampler-authoring@1", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  assets/img/swatch-blue.svg: { feature: figure, prompt: "sampler-authoring@1", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  assets/img/swatch-brick.svg: { feature: figure, prompt: "sampler-authoring@1", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  assets/img/swatch-cream.svg: { feature: figure, prompt: "sampler-authoring@1", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  assets/img/swatch-cyan.svg: { feature: figure, prompt: "sampler-authoring@1", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  assets/img/swatch-green.svg: { feature: figure, prompt: "sampler-authoring@1", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  assets/img/swatch-magenta.svg: { feature: figure, prompt: "sampler-authoring@1", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  assets/img/swatch-navy.svg: { feature: figure, prompt: "sampler-authoring@1", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  assets/img/swatch-orange.svg: { feature: figure, prompt: "sampler-authoring@1", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  assets/img/swatch-red.svg: { feature: figure, prompt: "sampler-authoring@1", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  assets/img/swatch-yellow.svg: { feature: figure, prompt: "sampler-authoring@1", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  assets/img/teal-deep.svg: { feature: figure, prompt: "sampler-authoring@1", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  assets/img/teal-grey.svg: { feature: figure, prompt: "sampler-authoring@1", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  assets/interactive/greys.html: { feature: toy, prompt: "sampler-authoring@1", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  assets/interactive/hsl-lightness.html: { feature: toy, prompt: "sampler-authoring@1", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  assets/interactive/hsl-match.html: { feature: toy, prompt: "sampler-authoring@1", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  assets/interactive/hue-wheel.html: { feature: toy, prompt: "sampler-authoring@1", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  assets/interactive/light-mixer.html: { feature: toy, prompt: "sampler-authoring@1", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+  assets/interactive/paint-mixer.html: { feature: toy, prompt: "sampler-authoring@1", provider: anthropic, model: claude-opus-5-5, at: "2026-10-20" }
+reviews: []

@@ -1,0 +1,353 @@
+# yaml-language-server: $schema=../../../schemas/node.schema.json
+id: hsl
+title: "Hue, saturation, lightness"
+tagline: Three dials that describe any color
+estMinutes: 4
+bigIdea: >
+  Any color can be set with three independent dials: hue (where it sits on the color wheel, 0 to
+  360 degrees), saturation (how vivid versus grey) and lightness (how close to black or white).
+  Many color names are really positions on the other two dials: brown is dark, toned-down orange
+  and pink is light red. Turning one dial while holding the others shows which property you are
+  actually changing.
+objectives:
+  - Describe a color by its hue, saturation and lightness
+  - Tell a change in saturation from a change in lightness
+  - Set a target color one dial at a time
+concepts: [color.hsl, color.hue, color.saturation, color.lightness]
+
+misconceptions:
+  brown-own-hue:
+    label: Thinks brown and pink are separate hues on the color wheel
+    hint: "Hold the hue at orange and only turn the lightness down. Watch what the swatch turns into."
+  saturation-is-lightness:
+    label: Confuses saturation (vivid versus grey) with lightness (light versus dark)
+    hint: "Look for grey in it, not darkness. Which swatch looks more like it was mixed with grey?"
+  hue-is-everything:
+    label: Thinks hue alone identifies a color
+    hint: "Orange and brown share a hue. If hue were everything, would they look so different?"
+
+hook:
+  blocks:
+    - type: story
+      text: "Red, orange, yellow, green, blue, violet: the whole rainbow. Your coffee's brown isn't in it."
+  interaction:
+    kind: choice
+    id: hook-q
+    prompt: So where is brown, really?
+    confidence: true
+    options:
+      - { id: own, text: "A hue the rainbow skips", misconception: brown-own-hue }
+      - { id: dark-orange, text: "Orange with the light turned down" }
+      - { id: all, text: "Every hue mixed together", misconception: mix-of-all }
+      - { id: purple, text: "A very dark purple", misconception: hue-is-everything }
+    answer: dark-orange
+  lotsGuess: own
+  style: puzzle
+
+screens:
+  - id: s1-brown
+    newIdea: Lightness can change a color's name without moving its hue
+    blocks:
+      - type: story
+        text: "The hue is locked at 30°, orange, and the saturation at full. Only the lightness dial is yours."
+    interaction:
+      kind: html
+      id: s1-q
+      prompt: Turn the lightness dial until your swatch matches the target.
+      asset: assets/interactive/hsl-lightness.html
+      height: 340
+      alt: "A brown target swatch beside yours, both on the same grey surround, with a lightness slider from 0 to 100 percent. Hue stays at 30 degrees and saturation at 100 percent."
+      goal: { kind: range, min: 22, max: 28 }
+      solution: 25
+      feedbackRight: "About 25%: half of orange's lightness."
+      fallback:
+        kind: choice
+        prompt: "Orange is hsl(30, 100%, 50%). Keep the hue and saturation, drop the lightness to 25%. What do you get?"
+        options:
+          - { id: brown, text: "Brown" }
+          - { id: purple, text: "Purple", misconception: hue-is-everything }
+          - { id: grey, text: "Grey", misconception: saturation-is-lightness }
+        answer: brown
+    reveal:
+      text: >
+        About 25%, and the target was brown all along, at exactly the hue you started with. Half
+        the lightness, a whole new name. Pink is the same trick upward: red with the lightness
+        raised. Lots of color names are really dial positions.
+    alts:
+      simpler: "Brown and orange are the same color family. Make orange darker and you get brown. Make red lighter and you get pink."
+      example: "Tan, rust and chocolate are all orange's hue, set darker or greyer. Paint charts rarely say so."
+    src: [wiki-brown, css-color-4]
+
+  - id: s2-saturation
+    newIdea: Saturation slides a color toward grey without making it darker
+    blocks:
+      - type: story
+        text: "The second dial is the one people mix up with the third. Two teals: one is greyer, the other darker."
+    interaction:
+      kind: widget
+      id: s2-q
+      prompt: Which teal is less saturated?
+      widget:
+        id: ab-compare
+        v: 1
+        props:
+          a: { label: "Teal A", asset: assets/img/teal-grey.svg, caption: "hsl(180, 25%, 50%)" }
+          b: { label: "Teal B", asset: assets/img/teal-deep.svg, caption: "hsl(180, 100%, 30%)" }
+          layout: side-by-side
+        goal: { kind: pick, answer: a }
+      solution: { pick: a }
+      feedbackRight: "A: lighter, but much greyer."
+      onWrong:
+        b: { misconception: saturation-is-lightness, feedback: "B is darker, but fully vivid. Saturation is about grey, not darkness." }
+      fallback:
+        kind: choice
+        prompt: "Which is less saturated: hsl(180, 25%, 50%) or hsl(180, 100%, 30%)?"
+        options:
+          - { id: a, text: "hsl(180, 25%, 50%)" }
+          - { id: b, text: "hsl(180, 100%, 30%)", misconception: saturation-is-lightness }
+        answer: a
+    reveal:
+      text: >
+        A. It's the lighter of the two, and the greyer: saturation measures distance from grey,
+        not darkness. B is darker and fully vivid. Paint charts use both dials: "dusty" means low
+        saturation, "deep" means low lightness.
+    alts:
+      simpler: "Saturation asks how much grey is mixed in. Lightness asks how close to black or white. A color can be pale and vivid, or dark and dull."
+      analogy: "Like a radio: lightness is the volume, saturation is how much static is mixed into the song."
+    src: [css-color-4]
+
+  - id: s3-match
+    newIdea: Any color can be rebuilt one dial at a time
+    blocks:
+      - type: story
+        text: "All three dials are yours now. The target is a muted, mid-dark blue-green, like the sea on a dull day."
+    interaction:
+      kind: html
+      id: s3-q
+      prompt: Match the target. Set the hue first, then the other two.
+      asset: assets/interactive/hsl-match.html
+      height: 340
+      alt: "A target swatch beside yours on a grey surround, with three stepped sliders: hue in 30-degree steps, saturation in 20% steps and lightness in 10% steps."
+      goal: { kind: equals, value: "h180 s40 l40" }
+      solution: "h180 s40 l40"
+      feedbackRight: "hsl(180, 40%, 40%): teal, half-greyed, a bit dark."
+      fallback:
+        kind: choice
+        prompt: Which describes a muted, mid-dark blue-green?
+        options:
+          - { id: right, text: "hsl(180, 40%, 40%)" }
+          - { id: vivid, text: "hsl(180, 100%, 40%)", misconception: saturation-is-lightness }
+          - { id: hue, text: "hsl(30, 40%, 40%)", misconception: hue-is-everything }
+        answer: right
+    reveal:
+      text: >
+        hsl(180, 40%, 40%). Hue found the family, saturation took the shine off, lightness set the
+        depth. Name a color by its three dials and you can rebuild it anywhere: in paint, in CSS,
+        or out loud.
+    alts:
+      simpler: "First pick the color family on the wheel. Then decide how grey it is. Then how dark. Three answers, one color."
+    src: [css-color-4]
+
+close:
+  text: "Orange with the light turned down. Brown is ==orange at low lightness==, usually a little greyed. The rainbow only shows each hue at full strength, so brown never gets a stripe. Hue picks the spot on the wheel; lightness and saturation give it a new name."
+  byGuess:
+    own: "You picked *a hue the rainbow skips*. Lots of people do: it has its own name, after all. But brown is ==orange at low lightness==, at the very same hue. The rainbow only shows hues at full strength, so it never shows brown."
+    all: "You picked *every hue mixed together*. Every hue mixed as light makes white, not brown. Brown needs only one hue: it's ==orange at low lightness==, a little greyed. The rainbow shows hues at full strength, so it skips brown."
+    purple: "You picked *a very dark purple*. Dark, yes. Purple, no: purples sit past blue, on the far side of the wheel. Brown is ==orange at low lightness==, at the same hue as the rainbow's orange stripe."
+    idk: "No guess is fine. Brown is ==orange at low lightness==, usually a little greyed. The rainbow only shows each hue at full strength, so brown never gets a stripe of its own."
+  teaser: "You can catch your eyes lying and set any color with three dials. Ready to prove it on new swatches?"
+
+items:
+  - id: i1
+    kind: match
+    level: recall
+    difficulty: 1
+    prompt: Match each dial to what it controls.
+    left: ["Hue", "Saturation", "Lightness"]
+    right: ["where it sits on the color wheel", "how vivid versus grey", "how close to black or white"]
+    answer: [[0, 0], [1, 1], [2, 2]]
+  - id: i2
+    kind: choice
+    level: recall
+    difficulty: 2
+    prompt: Pink is best described as…
+    options:
+      - { id: light-red, text: "Light red" }
+      - { id: own, text: "Its own hue, between red and violet", misconception: brown-own-hue }
+      - { id: vivid, text: "A more saturated red", misconception: saturation-is-lightness }
+    answer: light-red
+  - id: i3
+    kind: widget
+    level: apply
+    difficulty: 2
+    prompt: "Which dial changed? Sort each color change."
+    widget:
+      id: sorter
+      v: 1
+      props:
+        mode: buckets
+        buckets:
+          - { id: hue, label: "Hue" }
+          - { id: sat, label: "Saturation" }
+          - { id: light, label: "Lightness" }
+        cards:
+          - { id: a, text: "Red becomes orange" }
+          - { id: b, text: "Orange becomes brown" }
+          - { id: c, text: "Red becomes pink" }
+          - { id: d, text: "Vivid teal becomes grey-teal, same lightness" }
+          - { id: e, text: "Blue becomes violet" }
+          - { id: f, text: "Bright yellow becomes mustard-grey, same lightness" }
+      goal: { kind: buckets, assignment: { a: hue, b: light, c: light, d: sat, e: hue, f: sat } }
+    solution: { assignment: { a: hue, b: light, c: light, d: sat, e: hue, f: sat } }
+    fallback:
+      kind: choice
+      prompt: "Orange becomes brown. Which dial moved most?"
+      options:
+        - { id: light, text: "Lightness" }
+        - { id: hue, text: "Hue", misconception: brown-own-hue }
+        - { id: sat, text: "Saturation", misconception: saturation-is-lightness }
+      answer: light
+  - id: i4
+    kind: numeric
+    level: recall
+    difficulty: 2
+    prompt: "In HSL, what saturation, in percent, gives a pure grey whatever the hue?"
+    answer: 0
+    tolerance: 0
+  - id: i5
+    kind: numeric
+    level: recall
+    difficulty: 2
+    prompt: "In HSL, what lightness, in percent, gives pure white whatever the hue and saturation?"
+    answer: 100
+    tolerance: 0
+  - id: i6
+    kind: cloze
+    level: recall
+    difficulty: 2
+    prompt: Fill the gap.
+    text: "Brown is dark, toned-down {{1}}."
+    blanks:
+      "1": { accept: [orange, "red-orange", "orange-red"], tiles: [orange, blue, green, purple] }
+  - id: i7
+    kind: text
+    level: apply
+    difficulty: 3
+    prompt: "Write pure red at full saturation and medium lightness in CSS: hsl(H, S%, L%)."
+    accept: ["hsl(0, 100%, 50%)", "hsl(0,100%,50%)", "hsl(360, 100%, 50%)", "hsl(360,100%,50%)"]
+    normalize: [case, space]
+  - id: i8
+    kind: choice
+    level: transfer
+    difficulty: 3
+    prompt: A designer wants a calmer version of a loud red button. Same hue, and no darker. Which dial?
+    options:
+      - { id: sat, text: "Lower the saturation" }
+      - { id: light, text: "Lower the lightness", misconception: saturation-is-lightness }
+      - { id: hue, text: "Shift the hue toward orange", misconception: hue-is-everything }
+    answer: sat
+    why: "Saturation takes the shout out without moving lightness or hue."
+  - id: i11
+    kind: choice
+    level: transfer
+    difficulty: 3
+    prompt: "A paint chart sells Chocolate, Rust and Tan. Where do all three sit on the hue wheel?"
+    options:
+      - { id: orange, text: "Around orange, at different lightness and saturation" }
+      - { id: own, text: "In a brown segment of their own", misconception: brown-own-hue }
+      - { id: none, text: "Nowhere: browns have no hue", misconception: saturation-is-lightness }
+    answer: orange
+    why: "All three are orange's hue family, darkened or greyed by different amounts."
+  - id: i12
+    kind: choice
+    level: transfer
+    difficulty: 3
+    prompt: "A button is hsl(210, 80%, 50%), a strong blue. You want a pale tint of the same blue for its hover background. Which change?"
+    options:
+      - { id: light, text: "Raise the lightness to about 92%" }
+      - { id: sat, text: "Drop the saturation to 10%", misconception: saturation-is-lightness }
+      - { id: hue, text: "Shift the hue to 180°", misconception: hue-is-everything }
+    answer: light
+    why: "Pale means close to white: that's the lightness dial. Hue and saturation keep it the same blue."
+  - id: i9
+    kind: numeric
+    level: apply
+    difficulty: 3
+    prompt: "A swatch is hsl({h}, 80%, {l}%). Drop its saturation to 0%. What lightness, in percent, does the resulting grey have?"
+    params:
+      vars: { h: [30, 200, 120, 300], l: [50, 30, 70, 85] }
+      answerExpr: "l"
+    answer: 50
+    tolerance: 0
+    onWrong:
+      default: { misconception: saturation-is-lightness, feedback: "Saturation and lightness are separate dials. Draining color leaves lightness alone." }
+    why: "The dials are independent: draining saturation keeps lightness."
+  - id: i10
+    kind: explain
+    level: transfer
+    difficulty: 3
+    prompt: "In one sentence: why isn't brown on the rainbow?"
+    keyPoints:
+      - { id: orange, text: "brown is orange's hue", keywords: [orange, same hue, hue] }
+      - { id: dark, text: "at low lightness and saturation", keywords: [dark, darker, lightness, greyed, grayed, saturation, low] }
+    minHits: 1
+    exemplar: "Brown isn't a separate hue: it's orange at low lightness and a bit of grey, so the rainbow, which shows only hues, skips it."
+    offline:
+      kind: choice
+      prompt: Which is right?
+      options:
+        - { id: right, text: "Brown is dark, toned-down orange; the rainbow shows only bright hues" }
+        - { id: own, text: "Brown is a hue the rainbow is too narrow to show", misconception: brown-own-hue }
+        - { id: all, text: "Brown is every hue mixed, so it can't appear", misconception: saturation-is-lightness }
+      answer: right
+
+flashcards:
+  - id: c1
+    kind: qa
+    front: "What is brown, in hue, saturation and lightness?"
+    back: "Orange's hue at low lightness, usually a little desaturated."
+  - id: c2
+    kind: qa
+    front: "Saturation vs lightness?"
+    back: "Saturation: vivid versus grey. Lightness: light versus dark. Independent dials."
+  - id: c3
+    kind: cloze
+    front: "In HSL, saturation {{0%}} is grey whatever the hue."
+    back: "No saturation, no color: only lightness remains."
+  - id: c4
+    kind: qa
+    front: "Pink is…?"
+    back: "Light red: red's hue at high lightness."
+
+toy:
+  prompt: "Compare the greyed teal and the deep teal. Name the one dial that separates them."
+  widget:
+    id: ab-compare
+    v: 1
+    props:
+      a: { label: "Teal A", asset: assets/img/teal-grey.svg, caption: "hsl(180, 25%, 50%)" }
+      b: { label: "Teal B", asset: assets/img/teal-deep.svg, caption: "hsl(180, 100%, 30%)" }
+      layout: toggle
+
+underTheHood:
+  title: HSL is screen maths, not perception
+  body: >
+    HSL is a rearrangement of a screen's red, green and blue values into a cylinder: hue is the
+    angle, saturation the distance from the grey axis, lightness the height. It's what CSS uses
+    (hsl(30, 100%, 50%) is orange) and it's handy for adjusting one property at a time. It is not
+    a model of what eyes see: yellow and blue at the same HSL lightness look very different in
+    brightness, a gap the value card digs into. Painters' systems (Munsell's hue, chroma and
+    value) and perceptual spaces such as CIELAB and OKLCH were built to fix exactly that.
+
+faq:
+  - q: Is HSL the same as HSV or HSB?
+    a: "Close cousins. Both use hue and saturation, but HSV's 'value' tops out at the pure color, while HSL's lightness goes on to white."
+  - q: Why does hue go to 360?
+    a: "It's an angle round a circle: 0° red, 120° green, 240° blue, and 360° back to red."
+
+sources:
+  - { id: css-color-4, title: "CSS Color Module Level 4: HSL colors", by: "W3C", year: 2024, url: "https://www.w3.org/TR/css-color-4/#the-hsl-notation" }
+  - { id: wiki-hsl, title: "HSL and HSV", by: "Wikipedia contributors", url: "https://en.wikipedia.org/wiki/HSL_and_HSV", license: "CC-BY-SA-4.0" }
+  - { id: wiki-brown, title: "Brown", by: "Wikipedia contributors", url: "https://en.wikipedia.org/wiki/Brown", license: "CC-BY-SA-4.0", note: "Brown as dark, low-saturation orange; not a spectral hue." }
+
+status: draft

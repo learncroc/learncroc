@@ -1,0 +1,346 @@
+# yaml-language-server: $schema=../../../schemas/node.schema.json
+id: light-vs-paint
+title: Mixing light vs mixing paint
+tagline: Screens add light; ink takes it away
+estMinutes: 4
+bigIdea: >
+  Light mixes additively: overlapping red and green light sends both to your eye, which reads the
+  combination as yellow, and red, green and blue together make white. Ink and paint mix
+  subtractively: each pigment absorbs part of the light, so every addition removes more. The
+  subtractive primaries are cyan, magenta and yellow, each of which removes one of red, green or
+  blue; together they head toward black. An object's color depends on the light falling on it.
+objectives:
+  - Predict the color made by overlapping red, green and blue light
+  - Predict what overlapping cyan, magenta and yellow inks leave
+  - Say whether a device or medium mixes by adding or subtracting light
+concepts: [color.additive, color.subtractive, color.rgb, color.cmy]
+
+misconceptions:
+  light-mixes-like-paint:
+    label: Expects lights to mix like paint, toward dark or brown
+    hint: "Each spotlight adds more light to the wall. Can adding light make a patch darker?"
+  paint-primaries-rgb:
+    label: Thinks red, green and blue are the primaries for ink as well as for light
+    hint: "An ink works by soaking up light. Which ink soaks up only red: a red one, or a cyan one?"
+  mixing-brightens:
+    label: Thinks adding pigment makes a mix brighter, as it does with light
+    hint: "Each ink you print takes some light away. What happens to the overlap as you stack more?"
+  color-in-object:
+    label: Thinks an object's color lives in the object, whatever light falls on it
+    hint: "A white shirt reflects whatever light reaches it. What reaches it under a red lamp?"
+
+hook:
+  blocks:
+    - type: story
+      text: "A red spotlight and a green spotlight hit the same patch of white wall."
+  interaction:
+    kind: choice
+    id: hook-q
+    prompt: What color is the overlap?
+    confidence: true
+    options:
+      - { id: brown, text: "A muddy brown, like mixing paint", misconception: light-mixes-like-paint }
+      - { id: yellow, text: "Yellow" }
+      - { id: grey, text: "Dimmer grey: the lights cancel", misconception: light-mixes-like-paint }
+    answer: yellow
+  lotsGuess: brown
+
+screens:
+  - id: s1-lights
+    newIdea: Light adds, so pairs of lights make brighter colors and all three make white
+    blocks:
+      - type: story
+        text: "Three spotlights: red, green and blue. Switch them on and off and watch the overlaps."
+    interaction:
+      kind: html
+      id: s1-q
+      prompt: Leave on only the pair of lights whose overlap is cyan, the blue-green of a swimming pool.
+      asset: assets/interactive/light-mixer.html
+      height: 520
+      alt: "Three overlapping spotlight circles, red, green and blue, on a dark wall, with an on/off button for each light and a caption naming the color where the lit beams overlap."
+      goal: { kind: equals, value: "green+blue" }
+      solution: "green+blue"
+      feedbackRight: "Green and blue make cyan."
+      fallback:
+        kind: choice
+        prompt: Which two lights overlap to make cyan?
+        options:
+          - { id: gb, text: "Green and blue" }
+          - { id: rb, text: "Red and blue", misconception: light-mixes-like-paint }
+          - { id: rg, text: "Red and green", misconception: light-mixes-like-paint }
+        answer: gb
+    reveal:
+      text: >
+        Green and blue. Each pair of lights makes a brighter color: yellow, cyan, magenta. All
+        three make white. Your screen builds every color you see from these three, adding light.
+
+  - id: s2-inks
+    newIdea: Ink subtracts, so each pigment removes light and mixes head toward dark
+    blocks:
+      - type: story
+        text: "On paper it runs backwards. White paper reflects everything, and each ink soaks up part of the light."
+    interaction:
+      kind: html
+      id: s2-q
+      prompt: Leave on only the pair of inks whose overlap is red.
+      asset: assets/interactive/paint-mixer.html
+      height: 540
+      alt: "Three overlapping transparent ink circles, cyan, magenta and yellow, on white paper, with a button for each ink and a caption naming the color where the inks overlap."
+      goal: { kind: equals, value: "magenta+yellow" }
+      solution: "magenta+yellow"
+      feedbackRight: "Magenta and yellow leave red."
+      fallback:
+        kind: choice
+        prompt: Which two inks overlap to leave red?
+        options:
+          - { id: my, text: "Magenta and yellow" }
+          - { id: cm, text: "Cyan and magenta", misconception: paint-primaries-rgb }
+          - { id: cy, text: "Cyan and yellow", misconception: paint-primaries-rgb }
+        answer: my
+    reveal:
+      text: >
+        Magenta and yellow. Magenta soaks up green, yellow soaks up blue, so only red bounces back.
+        Every ink you add removes more light, which is why all three together head toward black.
+
+  - id: s3-printer
+    blocks:
+      - type: story
+        text: "A printer runs out of yellow ink halfway through a photo of a green lawn."
+    visual:
+      kind: html
+      asset: assets/interactive/paint-mixer.html
+      height: 540
+      alt: "The ink mixer: cyan, magenta and yellow circles on white paper, with buttons to add or remove each ink."
+    interaction:
+      kind: choice
+      id: s3-q
+      prompt: What color does the lawn print now?
+      options:
+        - { id: cyan, text: "Cyan: a blue-green" }
+        - { id: green, text: "Still green: the printer has a green ink", misconception: paint-primaries-rgb }
+        - { id: white, text: "White: without yellow there's no color", misconception: mixing-brightens }
+      answer: cyan
+      feedbackRight: "Printed green is cyan plus yellow. Lose the yellow, keep the cyan."
+    reveal:
+      text: >
+        Cyan. Printed green is cyan plus yellow: cyan removes red, yellow removes blue, green is
+        left. Lose the yellow and blue light escapes too, so the lawn turns pool-blue.
+
+close:
+  text: "Yellow. ==Light adds==: the overlap sends red and green light to your eye at once, and your eye reads that pair as yellow. Paint works the other way, each pigment soaking light up, which is why red and green paint make mud."
+  byGuess:
+    brown: "You picked *a muddy brown, like mixing paint*. Lots of people do: that's what paint does. But ==light adds==. The overlap sends red and green light at once, and your eye reads that pair as yellow. Paint soaks light up; spotlights pile it on."
+    grey: "You picked *dimmer grey: the lights cancel*. Lights never cancel on a wall: ==light adds==. The overlap gets red and green at once, more light than either beam alone, and your eye reads that pair as yellow."
+    idk: "No guess is fine. It's yellow. ==Light adds==: the overlap sends red and green light to your eye at once, and your eye reads that pair as yellow. Paint soaks light up, so the same pair in paint makes mud."
+  teaser: "Red and green light make yellow. Which hue, set beside orange, makes it glow hardest?"
+
+items:
+  - id: i1
+    kind: widget
+    level: apply
+    difficulty: 2
+    prompt: Does each one make color by adding light or by subtracting it?
+    widget:
+      id: sorter
+      v: 1
+      props:
+        mode: buckets
+        buckets:
+          - { id: add, label: "Adds light (red, green, blue)" }
+          - { id: sub, label: "Subtracts light (cyan, magenta, yellow)" }
+        cards:
+          - { id: a, text: "A phone screen" }
+          - { id: b, text: "Stage spotlights" }
+          - { id: c, text: "An inkjet printer" }
+          - { id: d, text: "A watercolor painting" }
+          - { id: e, text: "A projector" }
+          - { id: f, text: "A magazine page" }
+      goal: { kind: buckets, assignment: { a: add, b: add, c: sub, d: sub, e: add, f: sub } }
+    solution: { assignment: { a: add, b: add, c: sub, d: sub, e: add, f: sub } }
+    fallback:
+      kind: choice
+      prompt: A projector makes color by…
+      options:
+        - { id: add, text: "Adding light" }
+        - { id: sub, text: "Subtracting light", misconception: light-mixes-like-paint }
+      answer: add
+  - id: i2
+    kind: match
+    level: recall
+    difficulty: 2
+    prompt: Match each pair of lights to the color where they overlap.
+    left: ["Red + green light", "Green + blue light", "Red + blue light", "All three lights"]
+    right: ["yellow", "cyan", "magenta", "white"]
+    answer: [[0, 0], [1, 1], [2, 2], [3, 3]]
+  - id: i3
+    kind: match
+    level: apply
+    difficulty: 3
+    prompt: Match each pair of inks to the color they leave on white paper.
+    left: ["Cyan + yellow ink", "Magenta + yellow ink", "Cyan + magenta ink", "All three inks"]
+    right: ["green", "red", "blue", "near black"]
+    answer: [[0, 0], [1, 1], [2, 2], [3, 3]]
+  - id: i4
+    kind: choice
+    level: recall
+    difficulty: 2
+    prompt: Why do printers use cyan, magenta and yellow inks rather than red, green and blue?
+    options:
+      - { id: one, text: "Each removes just one of red, green or blue, so together they can make a wide range of colors" }
+      - { id: bright, text: "Red, green and blue inks would be too bright", misconception: mixing-brightens }
+      - { id: any, text: "No reason: red, green and blue inks would work just as well", misconception: paint-primaries-rgb }
+    answer: one
+  - id: i5
+    kind: numeric
+    level: apply
+    difficulty: 3
+    prompt: "A screen pixel has three lights, red, green and blue, each with {n} brightness levels. How many different colors can it show?"
+    params:
+      vars: { n: [256, 4, 16, 2] }
+      answerExpr: "n^3"
+    answer: 16777216
+    tolerance: 0
+    why: "Every combination of the three: n × n × n. With 256 levels that's about 16.8 million."
+  - id: i6
+    kind: text
+    level: recall
+    difficulty: 1
+    prompt: Red, green and blue light, all at full brightness on one spot. What color is the spot?
+    accept: [white]
+    onWrong:
+      default: { misconception: light-mixes-like-paint, feedback: "Light adds. All three together add up to the brightest thing there is." }
+  - id: i7
+    kind: choice
+    level: transfer
+    difficulty: 3
+    prompt: A white shirt is lit only by a red stage light. What color does it look?
+    options:
+      - { id: red, text: "Red" }
+      - { id: white, text: "White: the shirt is white", misconception: color-in-object }
+      - { id: black, text: "Black", misconception: light-mixes-like-paint }
+    answer: red
+    why: "A white surface reflects whatever arrives. Only red arrives."
+  - id: i8
+    kind: cloze
+    level: recall
+    difficulty: 2
+    prompt: Fill the gaps.
+    text: "Mixing light is {{1}}; mixing paint or ink is {{2}}."
+    blanks:
+      "1": { accept: [additive, adding], tiles: [additive, subtractive, neutral, random] }
+      "2": { accept: [subtractive, subtracting], tiles: [subtractive, additive, neutral, random] }
+  - id: i9
+    kind: order
+    level: apply
+    difficulty: 2
+    prompt: "Print inks one at a time on white paper, in the order listed. Order what you see, from the first stage to the last."
+    items: ["White paper", "Yellow (yellow ink)", "Red (add magenta)", "Near black (add cyan)"]
+    answer: [0, 1, 2, 3]
+  - id: i10
+    kind: explain
+    level: transfer
+    difficulty: 3
+    prompt: "In one sentence: why does mixing lights get brighter while mixing paints gets darker?"
+    keyPoints:
+      - { id: add, text: "lights add more light to what reaches your eye", keywords: [add, adds, more light, additive, combine] }
+      - { id: absorb, text: "each paint absorbs, or subtracts, some light", keywords: [absorb, absorbs, subtract, soak, removes, take away, subtractive] }
+    minHits: 2
+    exemplar: "Each light adds more light to what reaches your eye, while each paint absorbs some of it, so lights build toward white and paints toward black."
+    offline:
+      kind: choice
+      prompt: Which is right?
+      options:
+        - { id: right, text: "Lights add light; paints absorb it" }
+        - { id: same, text: "They mix the same way; paints are just thicker", misconception: light-mixes-like-paint }
+        - { id: obj, text: "Paint colors live in the paint, so they can only dull", misconception: color-in-object }
+      answer: right
+  - kind: widget
+    id: st4-files
+    prompt: "The poster goes out four ways. Sort each by how it makes color: adding light, or subtracting it with ink."
+    widget:
+      id: sorter
+      v: 1
+      props:
+        mode: buckets
+        buckets:
+          - { id: add, label: Adds light (RGB file) }
+          - { id: sub, label: Subtracts with ink (CMYK file) }
+        cards:
+          - { id: a, text: The gallery's website }
+          - { id: b, text: The printed poster }
+          - { id: c, text: The lobby's video screen }
+          - { id: d, text: The paper flyers }
+          - { id: e, text: A projector at the opening }
+      goal:
+        kind: buckets
+        assignment: { a: add, b: sub, c: add, d: sub, e: add }
+    solution:
+      assignment: { a: add, b: sub, c: add, d: sub, e: add }
+    fallback:
+      kind: choice
+      prompt: The printed poster mixes color by…
+      options:
+        - { id: sub, text: "Subtracting light with cyan, magenta and yellow ink" }
+        - { id: add, text: "Adding red, green and blue light" }
+      answer: sub
+    why: "Screens and projectors add light: RGB. Paper subtracts with ink: CMYK. Every version will look right."
+    level: transfer
+    difficulty: 3
+
+flashcards:
+  - id: c1
+    kind: qa
+    front: "Red light plus green light makes…?"
+    back: "Yellow. Light mixes by adding."
+  - id: c2
+    kind: qa
+    front: "The three subtractive primaries?"
+    back: "Cyan, magenta and yellow. Each removes one of red, green or blue."
+  - id: c3
+    kind: cloze
+    front: "Magenta ink plus yellow ink leaves {{red}}."
+    back: "Magenta absorbs green, yellow absorbs blue; red bounces back."
+  - id: c4
+    kind: qa
+    front: "Why do printers add black ink?"
+    back: "Real cyan, magenta and yellow inks only reach a muddy dark brown together."
+
+toy:
+  prompt: "Sort a few more: which of these add light, and which take it away?"
+  widget:
+    id: sorter
+    v: 1
+    props:
+      mode: buckets
+      buckets:
+        - { id: add, label: "Adds light" }
+        - { id: sub, label: "Subtracts light" }
+      cards:
+        - { id: a, text: "A phone screen" }
+        - { id: b, text: "A stained-glass window" }
+        - { id: c, text: "Theatre lights" }
+        - { id: d, text: "Oil paint" }
+
+underTheHood:
+  title: Primaries, cones and the fine print
+  body: >
+    Your retina has three kinds of cone, most sensitive to long, medium and short wavelengths.
+    Red, green and blue lights are chosen to stimulate them fairly separately, so mixing the three
+    can mimic most colors you see; that's additive mixing. Cyan, magenta and yellow are the
+    subtractive opposites: cyan absorbs red, magenta absorbs green, yellow absorbs blue. Real
+    pigments absorb messily, so painters' mixes are less predictable than ideal inks, and printers
+    add black (the K in CMYK) for crisp darks. The traditional painters' primaries, red, yellow and
+    blue, are an older, approximate version of the same subtractive idea.
+
+faq:
+  - q: Then why did school teach red, yellow and blue?
+    a: "It's the traditional painters' set, and it works roughly. Cyan, magenta and yellow are the cleaner subtractive primaries, which is why printers use them."
+  - q: Is yellow light really just red plus green?
+    a: "Light of a single yellow wavelength exists too. Your eyes can't tell it from a suitable red-green mix, which is how screens get away with it."
+
+sources:
+  - { id: openstax-color, title: "College Physics 2e, 26.3 Color and Color Vision", by: "OpenStax", year: 2022, url: "https://openstax.org/books/college-physics-2e/pages/26-3-color-and-color-vision", license: "CC-BY-4.0" }
+  - { id: wiki-cmyk, title: "CMYK color model", by: "Wikipedia contributors", url: "https://en.wikipedia.org/wiki/CMYK_color_model", license: "CC-BY-SA-4.0" }
+  - { id: wiki-additive, title: "Additive color", by: "Wikipedia contributors", url: "https://en.wikipedia.org/wiki/Additive_color", license: "CC-BY-SA-4.0" }
+
+status: draft

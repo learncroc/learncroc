@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A crowd of 1,000: who tests positive?</title>
+<style>
+  :root {
+    --c-bg: #FFFFFF; --c-ink: #1C1A3D; --c-ink2: #4A4870; --c-line: #B9BDD0; --c-sunk: #F6F7FB;
+    --c-sick: #5E48D6; --c-well: #2F6FB0; --c-focus: #12877A;
+    color-scheme: light;
+  }
+  :root[data-theme="dark"] {
+    --c-bg: #1D1C3D; --c-ink: #ECEBFA; --c-ink2: #B6B4DA; --c-line: #4A4990; --c-sunk: #232249;
+    --c-sick: #A493FF; --c-well: #86B6F0; --c-focus: #7FE3D5;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    font: 15px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--surface, var(--c-bg)); color: var(--ink, var(--c-ink));
+    padding: 12px 14px;
+  }
+  .layout { display: grid; grid-template-columns: minmax(190px, 220px) 1fr; gap: 14px 18px; align-items: start; }
+  .side { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .controls { display: flex; flex-direction: column; gap: 2px; }
+  .control label { display: block; font-weight: 600; font-size: 13px; line-height: 1.3; }
+  .control input { width: 100%; margin: 2px 0; accent-color: var(--c-sick); }
+  output { font-variant-numeric: tabular-nums; font-weight: 700; }
+  .actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  button {
+    font: inherit; font-weight: 600; padding: 6px 12px; border-radius: 12px; cursor: pointer;
+    border: 1.5px solid var(--ink, var(--c-ink)); background: var(--surface-2, var(--c-sunk)); color: inherit;
+    box-shadow: 0 3px 0 var(--key-edge, var(--c-ink)); transition: transform 80ms, box-shadow 80ms;
+  }
+  button[aria-pressed="true"] { transform: translateY(2px); box-shadow: 0 1px 0 var(--key-edge, var(--c-ink)); }
+  :focus-visible { outline: 3px solid var(--focus, var(--c-focus)); outline-offset: 2px; }
+  .stage { min-width: 0; }
+  .stage { display: flex; flex-direction: column; gap: 6px; }
+  .stage > svg { display: block; width: 100%; max-height: 250px; height: auto; }
+  .p { transition: opacity 220ms, fill 220ms; }
+  .sick { stroke: var(--c-sick); fill: var(--c-sick); stroke-width: 1.2; }
+  .well { stroke: var(--c-well); fill: none; stroke-width: 1.2; opacity: .55; }
+  .tested .p.neg { fill: none; opacity: .22; }
+  .tested .p.pos { opacity: 1; }
+  .tested .well.pos { fill: var(--c-well); }
+  :root[data-rm="true"] .p, :root[data-rm="true"] button { transition: none; }
+  .legend { display: flex; gap: 4px 12px; flex-wrap: wrap; font-size: 12px; line-height: 1.3; color: var(--ink-2, var(--c-ink2)); }
+  .legend svg { display: inline-block; width: 14px; height: 14px; vertical-align: -2px; margin-right: 4px; }
+  .readout { padding: 8px 10px; border-radius: 12px; background: var(--surface-2, var(--c-sunk)); font-size: 14px; line-height: 1.35; }
+  .tally { display: grid; grid-template-columns: repeat(2, auto); gap: 0 12px; font-size: 12px; color: var(--ink-2, var(--c-ink2)); }
+  .tally b { color: var(--ink, var(--c-ink)); font-variant-numeric: tabular-nums; }
+  .answer { margin-top: 4px; font-weight: 600; min-height: 1.35em; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+</style>
+</head>
+<body>
+<div class="layout">
+<div class="side">
+<div class="controls">
+  <div class="control">
+    <label for="base">Have the condition: <output id="baseOut" for="base">10</output> in 1,000</label>
+    <input id="base" type="range" min="1" max="500" step="1" value="10">
+  </div>
+  <div class="control">
+    <label for="hit">Test catches: <output id="hitOut" for="hit">90</output>% of them</label>
+    <input id="hit" type="range" min="50" max="100" step="1" value="90">
+  </div>
+  <div class="control">
+    <label for="fa">False alarms: <output id="faOut" for="fa">9</output>% of healthy</label>
+    <input id="fa" type="range" min="0" max="30" step="0.1" value="9">
+  </div>
+</div>
+<div class="actions">
+  <button id="test" type="button" aria-pressed="false">Test everyone</button>
+  <span class="sr" id="crowdHelp">A grid of 1,000 people. Diamonds have the condition, circles are healthy. After testing, filled shapes tested positive.</span>
+</div>
+<div class="readout" aria-live="polite">
+  <div class="tally" id="tally"></div>
+  <div class="answer" id="answer"></div>
+</div>
+</div>
+<div class="stage">
+<svg id="crowd" role="img" aria-describedby="crowdHelp" aria-label="A crowd of 1,000 people"></svg>
+<div class="legend" aria-hidden="true">
+  <span><svg aria-hidden="true" viewBox="0 0 14 14"><rect x="3" y="3" width="8" height="8" transform="rotate(45 7 7)" class="sick"/></svg>has the condition</span>
+  <span><svg aria-hidden="true" viewBox="0 0 14 14"><circle cx="7" cy="7" r="4.5" class="well" style="opacity:1"/></svg>healthy</span>
+  <span>filled = tested positive</span>
+</div>
+</div>
+</div>
+
+<script>
+(() => {
+  "use strict";
+  /* The learncroc host injects a frozen window.lm bridge (ready, report, resize, announce, onInit,
+     onReveal, onTest). makeShim() gives the same API when this file is opened on its own. */
+  const lm = window.lm || makeShim();
+  let root = document.documentElement, mode = "explore", announceTimer = 0;
+  function report(v) { if (mode === "answer") lm.report(v); }
+  function announce(text) {
+    clearTimeout(announceTimer);
+    announceTimer = setTimeout(() => { lm.announce(String(text).slice(0, 120)); }, 300);
+  }
+  function fit() { lm.resize(Math.ceil(root.scrollHeight)); }
+  function applyEnv(s) {
+    mode = s.mode === "answer" || s.mode === "review" ? s.mode : "explore";
+    root.setAttribute("data-theme", s.theme === "dark" ? "dark" : "light");
+    root.setAttribute("data-rm", s.reducedMotion ? "true" : "false");
+  }
+  function makeShim() {
+    let P = window.parent, initFns = [], revealFns = [], testFn = null;
+    const framed = !!P && P !== window;
+    function post(m) { if (framed) { try { P.postMessage(m, "*"); } catch (e) { /* not framed */ } } }
+    window.addEventListener("message", (e) => {
+      if (!framed || e.source !== P) return;
+      const d = e.data;
+      if (!d || typeof d !== "object") return;
+      if (d.type === "init") {
+        const t = d.tokens || {};
+        for (const k in t) {
+          if (Object.hasOwn(t, k) && /^--[a-z0-9-]{1,40}$/.test(k) && typeof t[k] === "string" && !/[;{}<>]/.test(t[k])) root.style.setProperty(k, t[k]);
+        }
+        const snap = { mode: d.mode, theme: d.theme, reducedMotion: d.reducedMotion === true, value: d.value, solution: d.solution };
+        initFns.forEach((fn) => { fn(snap); });
+      } else if (d.type === "reveal") {
+        revealFns.forEach((fn) => { fn(d.solution); });
+      } else if (d.type === "selftest") {
+        const el = document.querySelector("input[type=range]");
+        const before = document.body.textContent;
+        const old = el ? el.value : "";
+        if (el) { el.stepUp(); if (el.value === old) el.stepDown(); el.dispatchEvent(new Event("input", { bubbles: true })); }
+        const ok = !!el && document.body.textContent !== before;
+        if (el) { el.value = old; el.dispatchEvent(new Event("input", { bubbles: true })); }
+        post({ type: "selftest", ok: ok });
+      }
+    });
+    return {
+      ready: () => { post({ type: "ready", v: 1 }); },
+      report: (v) => { post({ type: "report", value: v }); },
+      resize: (h) => { post({ type: "resize", height: h }); },
+      announce: (t) => { post({ type: "announce", text: String(t).slice(0, 120) }); },
+      onInit: (fn) => { initFns.push(fn); },
+      onReveal: (fn) => { revealFns.push(fn); },
+      onTest: (fn) => { testFn = fn; },
+      test: (v) => { if (testFn) testFn(v); }
+    };
+  }
+
+  const TOTAL = 1000, COLS = 40, CELL = 14;
+  const base = document.getElementById("base"), hit = document.getElementById("hit"), fa = document.getElementById("fa");
+  const baseOut = document.getElementById("baseOut"), hitOut = document.getElementById("hitOut"), faOut = document.getElementById("faOut");
+  const testBtn = document.getElementById("test"), crowd = document.getElementById("crowd");
+  const tally = document.getElementById("tally"), answer = document.getElementById("answer");
+  const NS = crowd.namespaceURI;
+  const people = [];
+
+  crowd.setAttribute("viewBox", `0 0 ${COLS * CELL} ${(TOTAL / COLS) * CELL}`);
+  for (let i = 0; i < TOTAL; i++) {
+    const x = (i % COLS) * CELL + CELL / 2, y = Math.floor(i / COLS) * CELL + CELL / 2;
+    const g = document.createElementNS(NS, "g");
+    const d = document.createElementNS(NS, "rect");
+    d.setAttribute("x", x - 3.6); d.setAttribute("y", y - 3.6); d.setAttribute("width", 7.2); d.setAttribute("height", 7.2);
+    d.setAttribute("transform", `rotate(45 ${x} ${y})`);
+    const c = document.createElementNS(NS, "circle");
+    c.setAttribute("cx", x); c.setAttribute("cy", y); c.setAttribute("r", 4.4);
+    g.appendChild(d); g.appendChild(c);
+    crowd.appendChild(g);
+    people.push({ diamond: d, circle: c });
+  }
+
+  /** Spread `k` marks evenly across `n` slots. */
+  function spread(index, k, n) {
+    if (n <= 0 || k <= 0) return false;
+    return Math.floor(((index + 1) * k) / n) > Math.floor((index * k) / n);
+  }
+
+  function counts() {
+    const sick = Number(base.value), healthy = TOTAL - sick;
+    const tp = Math.round((sick * Number(hit.value)) / 100);
+    const fp = Math.round((healthy * Number(fa.value)) / 100);
+    const positives = tp + fp;
+    const share = positives > 0 ? Math.round((1000 * tp) / positives) / 10 : 0;
+    return { sick: sick, healthy: healthy, tp: tp, fn: sick - tp, fp: fp, tn: healthy - fp, positives: positives, share: share };
+  }
+
+  function render() {
+    const n = counts();
+    baseOut.textContent = String(n.sick);
+    hitOut.textContent = String(Number(hit.value));
+    faOut.textContent = Number(fa.value).toFixed(1).replace(/\.0$/, "");
+    const tested = testBtn.getAttribute("aria-pressed") === "true";
+    crowd.classList.toggle("tested", tested);
+    for (let i = 0; i < TOTAL; i++) {
+      const p = people[i], isSick = i < n.sick;
+      const pos = isSick ? spread(i, n.tp, n.sick) : spread(i - n.sick, n.fp, n.healthy);
+      p.diamond.style.display = isSick ? "" : "none";
+      p.circle.style.display = isSick ? "none" : "";
+      const el = isSick ? p.diamond : p.circle;
+      el.setAttribute("class", `p ${isSick ? "sick" : "well"}${pos ? " pos" : " neg"}`);
+    }
+    crowd.setAttribute("aria-label", `A crowd of 1,000: ${n.sick} have the condition, ${n.healthy} are healthy.`);
+    if (tested) {
+      tally.innerHTML = "";
+      [["True hits", n.tp], ["Missed", n.fn], ["False alarms", n.fp], ["All-clear", n.tn]].forEach((row) => {
+        const cell = document.createElement("span");
+        cell.appendChild(document.createTextNode(`${row[0]}: `));
+        const b = document.createElement("b"); b.textContent = String(row[1]); cell.appendChild(b);
+        tally.appendChild(cell);
+      });
+      answer.textContent = `${n.tp} of ${n.positives} positives have it: ${n.share}%.`;
+    } else {
+      tally.textContent = `${n.sick} have the condition, ${n.healthy} are healthy.`;
+      answer.textContent = "Press Test everyone.";
+    }
+    fit();
+    return answer.textContent;
+  }
+
+  /**
+   * The value reported to the host: state tags, so a screen's goal can say which sliders must stay
+   * put and what the crowd must show (graded on the host with a "set" goal).
+   *   base-default  the base rate is still 10 in 1,000
+   *   test-default  the test is still "catches 90%, flags 9%"
+   *   real-majority more than half the positives have the condition
+   *   real-half     between 47% and 54% of the positives have the condition
+   */
+  const TAGS = ["base-default", "test-default", "real-majority", "real-half"];
+  function tags() {
+    const n = counts(), out = [];
+    if (Number(base.value) === 10) out.push("base-default");
+    if (Number(hit.value) === 90 && Number(fa.value) === 9) out.push("test-default");
+    if (n.positives > 0 && n.share > 50) out.push("real-majority");
+    if (n.positives > 0 && n.share >= 47 && n.share <= 54) out.push("real-half");
+    return out;
+  }
+  function hasAll(want) {
+    const got = tags();
+    for (let i = 0; i < want.length; i++) if (got.indexOf(want[i]) < 0) return false;
+    return true;
+  }
+  /** Move the sliders to the first state whose tags include every wanted tag (review and tests). */
+  function seek(want) {
+    want = want.filter((t) => TAGS.indexOf(t) >= 0);
+    if (hasAll(want)) return true;
+    const keepBase = want.indexOf("base-default") >= 0, keepTest = want.indexOf("test-default") >= 0;
+    let bases = keepBase ? [10] : [Number(base.value), 92], b, f, h;
+    if (!keepBase) for (b = 1; b <= 500; b++) bases.push(b);
+    const hits = keepTest ? [90] : [Number(hit.value), 90, 100];
+    for (let i = 0; i < bases.length; i++) {
+      base.value = String(bases[i]);
+      for (h = 0; h < hits.length; h++) {
+        hit.value = String(hits[h]);
+        if (keepTest) { fa.value = "9"; if (hasAll(want)) return true; continue; }
+        for (f = 300; f >= 0; f--) {
+          fa.value = (f / 10).toFixed(1);
+          if (hasAll(want)) return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  function onInput() {
+    const text = render();
+    report(tags());
+    announce(text);
+  }
+  base.addEventListener("input", onInput);
+  hit.addEventListener("input", onInput);
+  fa.addEventListener("input", onInput);
+  testBtn.addEventListener("click", () => {
+    testBtn.setAttribute("aria-pressed", testBtn.getAttribute("aria-pressed") === "true" ? "false" : "true");
+    announce(render());
+  });
+
+  function showSolution(solution) {
+    if (Array.isArray(solution)) seek(solution.map(String));
+    testBtn.setAttribute("aria-pressed", "true");
+    render();
+  }
+  lm.onInit((m) => {
+    applyEnv(m);
+    if (m.mode === "review") showSolution(m.solution); else render();
+  });
+  lm.onReveal((solution) => { showSolution(solution); announce(answer.textContent); });
+  lm.onTest((value) => {
+    seek(Array.isArray(value) ? value.map(String) : []);
+    render();
+    lm.report(tags());
+  });
+
+  render();
+  lm.ready();
+})();
+</script>
+</body>
+</html>
