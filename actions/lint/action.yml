@@ -1,0 +1,44 @@
+name: learncroc lint
+description: Lint a learncroc pack (schema, structure and the pack rules) and annotate the pull request.
+author: learncroc
+branding:
+  icon: map
+  color: purple
+inputs:
+  path:
+    description: Pack folder to lint (the folder holding pack.yaml), or a folder of pack folders with `all`.
+    required: false
+    default: "."
+  all:
+    description: Lint every pack folder directly under `path`.
+    required: false
+    default: "false"
+  profile:
+    description: Override the lint profile (curated, sampler, community, pocket). Default: the pack's own.
+    required: false
+    default: ""
+  learncroc-version:
+    description: learncroc version (npm dist-tag or semver) used to lint.
+    required: false
+    default: latest
+outputs:
+  errors:
+    description: Total lint errors.
+    value: ${{ steps.lint.outputs.errors }}
+  warnings:
+    description: Total lint warnings.
+    value: ${{ steps.lint.outputs.warnings }}
+runs:
+  using: composite
+  steps:
+    - uses: oven-sh/setup-bun@v2
+      with:
+        bun-version: latest
+    - id: lint
+      shell: bash
+      env:
+        LM_PATH: ${{ inputs.path }}
+        LM_ALL: ${{ inputs.all }}
+        LM_PROFILE: ${{ inputs.profile }}
+        LM_VERSION: ${{ inputs.learncroc-version }}
+      run: bun "${{ github.action_path }}/run.ts"

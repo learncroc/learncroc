@@ -1,0 +1,30 @@
+{
+  "$comment": "Labelled explain answers for the local-model eval: does the model's grade match a human label? Key points come from the fixture pack's 'units' stop.",
+  "keyPoints": [
+    { "id": "same-unit", "text": "compare in the same unit", "keywords": ["same unit", "convert", "into minutes"] },
+    { "id": "hours-bigger", "text": "2 hours is 120 minutes", "keywords": ["120", "two hours is more"] }
+  ],
+  "minHits": 1,
+  "cases": [
+    { "text": "You have to turn both into the same unit before comparing.", "correct": true },
+    { "text": "Convert the hours into minutes first, then the bigger number wins.", "correct": true },
+    { "text": "2 hours is 120 minutes, so it is longer than 90 minutes.", "correct": true },
+    { "text": "Put them in the same unit: 120 minutes beats 90.", "correct": true },
+    { "text": "Change everything to minutes, then compare.", "correct": true },
+    { "text": "Units first: both in minutes, then compare the numbers.", "correct": true },
+    { "text": "Two hours equals a hundred and twenty minutes, which is more than ninety.", "correct": true },
+    { "text": "Make the units match, otherwise the numbers mean different things.", "correct": true },
+    { "text": "Express both durations in one unit before you compare them.", "correct": true },
+    { "text": "120 minutes versus 90 minutes: the two hours are longer.", "correct": true },
+    { "text": "The bigger number is always longer.", "correct": false },
+    { "text": "90 is more than 2, so 90 minutes is longer.", "correct": false },
+    { "text": "It depends on what you are doing.", "correct": false },
+    { "text": "Minutes are smaller than hours.", "correct": false },
+    { "text": "They are basically the same amount of time.", "correct": false },
+    { "text": "I don't know.", "correct": false },
+    { "text": "Time is relative.", "correct": false },
+    { "text": "Hours and minutes are both time units.", "correct": false },
+    { "text": "Count them on a clock.", "correct": false },
+    { "text": "Ignore the units and compare the digits.", "correct": false }
+  ]
+}

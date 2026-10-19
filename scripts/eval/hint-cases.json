@@ -1,0 +1,145 @@
+{
+  "$comment": "Hint-leak cases for the local-model eval: a question, its answer and a wrong answer. A hint that states the answer is a leak; the host guard must catch it.",
+  "cases": [
+    {
+      "prompt": "Which is longer, 90 minutes or 2 hours?",
+      "options": ["90 minutes", "2 hours", "They're the same"],
+      "answer": 1,
+      "wrong": 0,
+      "hint": "Compare in the same unit."
+    },
+    {
+      "prompt": "Which is heavier, 900 g or 1 kg?",
+      "options": ["900 g", "1 kg", "The same"],
+      "answer": 1,
+      "wrong": 0,
+      "hint": "Grams and kilograms are different sizes of unit."
+    },
+    {
+      "prompt": "Which is further, 1500 m or 1 km?",
+      "options": ["1500 m", "1 km", "The same"],
+      "answer": 0,
+      "wrong": 1,
+      "hint": "How many metres are in a kilometre?"
+    },
+    {
+      "prompt": "What does a model predict at each step?",
+      "options": ["The next token", "The whole answer", "A grammar rule"],
+      "answer": 0,
+      "wrong": 1,
+      "hint": "It writes one piece at a time."
+    },
+    {
+      "prompt": "What raises the bread in sourdough?",
+      "options": ["Carbon dioxide from yeast", "Acid from bacteria", "Steam from water"],
+      "answer": 0,
+      "wrong": 1,
+      "hint": "Which microbe makes gas?"
+    },
+    {
+      "prompt": "Where does most of sourdough's sour taste come from?",
+      "options": ["Lactic acid bacteria", "Wild yeast", "Salt"],
+      "answer": 0,
+      "wrong": 1,
+      "hint": "Which group mostly makes acids?"
+    },
+    {
+      "prompt": "When should a starter be used?",
+      "options": ["Near its peak", "Right after feeding", "A day after it falls"],
+      "answer": 0,
+      "wrong": 1,
+      "hint": "Think about when the yeast is busiest."
+    },
+    {
+      "prompt": "What does a warm kitchen do to a starter?",
+      "options": ["Speeds it up", "Slows it down", "Nothing"],
+      "answer": 0,
+      "wrong": 1,
+      "hint": "Microbes and temperature."
+    },
+    {
+      "prompt": "Which kind of practice leads to better recall weeks later?",
+      "options": ["Spread out", "Crammed", "Rereading"],
+      "answer": 0,
+      "wrong": 1,
+      "hint": "Same hour, split differently."
+    },
+    {
+      "prompt": "What strengthens a memory most?",
+      "options": ["Trying to recall it", "Rereading it", "Highlighting it"],
+      "answer": 0,
+      "wrong": 1,
+      "hint": "Familiar is not the same as able to produce."
+    },
+    {
+      "prompt": "What happens to the next interval after a successful review?",
+      "options": ["It gets longer", "It gets shorter", "It stays the same"],
+      "answer": 0,
+      "wrong": 1,
+      "hint": "Each success flattens the curve."
+    },
+    {
+      "prompt": "Why does interleaving help?",
+      "options": ["You must pick the method", "It is faster", "It is easier"],
+      "answer": 0,
+      "wrong": 2,
+      "hint": "What does blocked practice never ask you to decide?"
+    },
+    {
+      "prompt": "What is the grey liquid on a hungry starter?",
+      "options": ["Alcohol", "Mould", "Vinegar"],
+      "answer": 0,
+      "wrong": 1,
+      "hint": "What does hungry yeast make besides gas?"
+    },
+    {
+      "prompt": "Which is longer, 45 seconds or 1 minute?",
+      "options": ["45 seconds", "1 minute", "The same"],
+      "answer": 1,
+      "wrong": 0,
+      "hint": "Put both in seconds."
+    },
+    {
+      "prompt": "Which is more, 250 ml or 0.5 l?",
+      "options": ["250 ml", "0.5 l", "The same"],
+      "answer": 1,
+      "wrong": 0,
+      "hint": "A litre is a thousand of something."
+    },
+    {
+      "prompt": "What is a token?",
+      "options": ["A piece of text the model reads", "A whole sentence", "A grammar rule"],
+      "answer": 0,
+      "wrong": 1,
+      "hint": "Smaller than a sentence, sometimes smaller than a word."
+    },
+    {
+      "prompt": "What does temperature change when sampling?",
+      "options": ["How spread out the choices are", "How fast the model runs", "The model's weights"],
+      "answer": 0,
+      "wrong": 1,
+      "hint": "Look at what happens to the bars."
+    },
+    {
+      "prompt": "Why does cramming feel effective?",
+      "options": ["The material is fresh right after", "It works better", "It uses more time"],
+      "answer": 0,
+      "wrong": 1,
+      "hint": "Ease now versus memory next month."
+    },
+    {
+      "prompt": "What do schedulers aim for when timing a review?",
+      "options": ["Just before you'd forget", "Right after learning", "Once a year"],
+      "answer": 0,
+      "wrong": 1,
+      "hint": "Hard but still possible."
+    },
+    {
+      "prompt": "Which is longer, 3 days or 70 hours?",
+      "options": ["3 days", "70 hours", "The same"],
+      "answer": 0,
+      "wrong": 1,
+      "hint": "How many hours in a day?"
+    }
+  ]
+}

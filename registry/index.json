@@ -1,0 +1,1242 @@
+{
+  "registry": 1,
+  "name": "learncroc builtin",
+  "updated": "2026-10-20T09:23:58Z",
+  "packs": [
+    {
+      "id": "climate-science",
+      "title": "Climate science",
+      "subtitle": "Read the planet's thermostat, from first principles",
+      "tagline": "CO₂ is 0.04% of the air. Build the thermostat and see why it matters.",
+      "publisher": "learncroc",
+      "tier": "official",
+      "category": "science",
+      "tags": [
+        "climate",
+        "greenhouse effect",
+        "carbon cycle",
+        "keeling curve",
+        "energy balance",
+        "earth science"
+      ],
+      "lang": "en",
+      "profile": "sampler",
+      "review": "draft",
+      "customInteractives": true,
+      "theme": {
+        "renderer": "metro",
+        "world": "The Ice Core",
+        "mode": "light",
+        "ground": "#EEF4F8",
+        "texture": "ice",
+        "lines": [
+          "#2A5E9E",
+          "#6B47A6",
+          "#2D7542",
+          "#94407F",
+          "#4A5A6E"
+        ],
+        "token": "lantern"
+      },
+      "outcomes": [
+        "Explain why a planet settles at the temperature it does, and what shifts it",
+        "Explain how 0.04% of the air can warm the whole planet",
+        "Read the Keeling Curve and answer \"it snowed today\" with evidence"
+      ],
+      "sketch": {
+        "width": 672,
+        "height": 896,
+        "nodes": [
+          {
+            "id": "energy-balance",
+            "x": 84,
+            "y": 840,
+            "line": "energy",
+            "kind": "node",
+            "status": "playable"
+          },
+          {
+            "id": "carbon-cycle",
+            "x": 252,
+            "y": 840,
+            "line": "carbon",
+            "kind": "node",
+            "status": "playable"
+          },
+          {
+            "id": "weather-vs-climate",
+            "x": 420,
+            "y": 840,
+            "line": "evidence",
+            "kind": "node",
+            "status": "playable"
+          },
+          {
+            "id": "greenhouse",
+            "x": 84,
+            "y": 728,
+            "line": "energy",
+            "kind": "node",
+            "status": "playable"
+          },
+          {
+            "id": "keeling",
+            "x": 252,
+            "y": 728,
+            "line": "carbon",
+            "kind": "node",
+            "status": "playable"
+          },
+          {
+            "id": "boss-dinner-debate",
+            "x": 84,
+            "y": 616,
+            "line": "energy",
+            "kind": "checkpoint",
+            "status": "playable"
+          },
+          {
+            "id": "molecules",
+            "x": 84,
+            "y": 504,
+            "line": "energy",
+            "kind": "node",
+            "status": "planned"
+          },
+          {
+            "id": "fingerprints",
+            "x": 84,
+            "y": 392,
+            "line": "evidence",
+            "kind": "node",
+            "status": "planned"
+          },
+          {
+            "id": "ice-cores",
+            "x": 252,
+            "y": 504,
+            "line": "evidence",
+            "kind": "node",
+            "status": "planned"
+          },
+          {
+            "id": "ocean",
+            "x": 420,
+            "y": 504,
+            "line": "carbon",
+            "kind": "node",
+            "status": "planned"
+          },
+          {
+            "id": "feedbacks",
+            "x": 588,
+            "y": 504,
+            "line": "next",
+            "kind": "node",
+            "status": "planned"
+          },
+          {
+            "id": "sensitivity",
+            "x": 588,
+            "y": 392,
+            "line": "next",
+            "kind": "node",
+            "status": "planned"
+          },
+          {
+            "id": "ice-sea-level",
+            "x": 420,
+            "y": 392,
+            "line": "next",
+            "kind": "node",
+            "status": "planned"
+          },
+          {
+            "id": "carbon-budget",
+            "x": 588,
+            "y": 280,
+            "line": "action",
+            "kind": "node",
+            "status": "planned"
+          },
+          {
+            "id": "solutions",
+            "x": 588,
+            "y": 168,
+            "line": "action",
+            "kind": "node",
+            "status": "planned"
+          },
+          {
+            "id": "boss-planet-2100",
+            "x": 420,
+            "y": 56,
+            "line": "next",
+            "kind": "checkpoint",
+            "status": "planned"
+          }
+        ],
+        "edges": [
+          {
+            "from": "energy-balance",
+            "to": "greenhouse",
+            "kind": "line"
+          },
+          {
+            "from": "carbon-cycle",
+            "to": "keeling",
+            "kind": "line"
+          },
+          {
+            "from": "greenhouse",
+            "to": "boss-dinner-debate",
+            "kind": "line"
+          },
+          {
+            "from": "keeling",
+            "to": "boss-dinner-debate",
+            "kind": "interchange"
+          },
+          {
+            "from": "weather-vs-climate",
+            "to": "boss-dinner-debate",
+            "kind": "transfer"
+          },
+          {
+            "from": "boss-dinner-debate",
+            "to": "molecules",
+            "kind": "line"
+          },
+          {
+            "from": "molecules",
+            "to": "fingerprints",
+            "kind": "interchange"
+          },
+          {
+            "from": "boss-dinner-debate",
+            "to": "ice-cores",
+            "kind": "interchange"
+          },
+          {
+            "from": "boss-dinner-debate",
+            "to": "ocean",
+            "kind": "interchange"
+          },
+          {
+            "from": "boss-dinner-debate",
+            "to": "feedbacks",
+            "kind": "transfer"
+          },
+          {
+            "from": "feedbacks",
+            "to": "sensitivity",
+            "kind": "line"
+          },
+          {
+            "from": "ocean",
+            "to": "ice-sea-level",
+            "kind": "interchange"
+          },
+          {
+            "from": "sensitivity",
+            "to": "carbon-budget",
+            "kind": "interchange"
+          },
+          {
+            "from": "carbon-budget",
+            "to": "solutions",
+            "kind": "line"
+          },
+          {
+            "from": "carbon-budget",
+            "to": "boss-planet-2100",
+            "kind": "interchange"
+          },
+          {
+            "from": "feedbacks",
+            "to": "boss-planet-2100",
+            "kind": "line"
+          },
+          {
+            "from": "ice-sea-level",
+            "to": "boss-planet-2100",
+            "kind": "line"
+          },
+          {
+            "from": "solutions",
+            "to": "boss-planet-2100",
+            "kind": "interchange"
+          }
+        ],
+        "lines": [
+          {
+            "id": "energy",
+            "color": 1
+          },
+          {
+            "id": "carbon",
+            "color": 2
+          },
+          {
+            "id": "evidence",
+            "color": 3
+          },
+          {
+            "id": "next",
+            "color": 4
+          },
+          {
+            "id": "action",
+            "color": 5
+          }
+        ]
+      },
+      "latest": "0.1.0",
+      "versions": [
+        {
+          "version": "0.1.0",
+          "engine": ">=0.1.0 <1.0.0",
+          "url": "dist/climate-science-0.1.0.lmpack",
+          "sha256": "437ac0429e35fc40d1fb6c360da04b3be1ab6b5b61f64693eeac60b2577dd4e8",
+          "size": 32319,
+          "nodes": 16,
+          "playable": 6,
+          "estMinutes": 30,
+          "license": "CC-BY-SA-4.0",
+          "published": "2026-10-20T09:23:46Z",
+          "tryUrl": "dist/climate-science-0.1.0.try.json"
+        }
+      ]
+    },
+    {
+      "id": "color-theory",
+      "title": "Color theory",
+      "subtitle": "See like a painter, and like a screen",
+      "tagline": "Two identical greys look different. Learn why color lies, and how to make it sing.",
+      "publisher": "learncroc",
+      "tier": "official",
+      "category": "arts",
+      "tags": [
+        "color",
+        "colour",
+        "design",
+        "painting",
+        "perception",
+        "hsl",
+        "rgb"
+      ],
+      "lang": "en",
+      "profile": "sampler",
+      "review": "draft",
+      "customInteractives": true,
+      "theme": {
+        "renderer": "sketchbook",
+        "world": "The Prism Studio",
+        "mode": "light",
+        "ground": "#F7F3EA",
+        "texture": "watercolour",
+        "lines": [
+          "#2F5DA8",
+          "#8A3FA0",
+          "#B0306A",
+          "#4F7A1E",
+          "#6B4E2E"
+        ],
+        "token": "paper-plane"
+      },
+      "outcomes": [
+        "Describe any color with hue, saturation and lightness, and change one without the others",
+        "Predict what mixing lights or inks will make, and pick a color's complement",
+        "Use value and simultaneous contrast to make a design read, and spot when your eyes are fooled"
+      ],
+      "sketch": {
+        "width": 1008,
+        "height": 560,
+        "nodes": [
+          {
+            "id": "contrast-illusions",
+            "x": 84,
+            "y": 56,
+            "line": "seeing",
+            "kind": "node",
+            "status": "playable"
+          },
+          {
+            "id": "hsl",
+            "x": 84,
+            "y": 168,
+            "line": "dials",
+            "kind": "node",
+            "status": "playable"
+          },
+          {
+            "id": "light-vs-paint",
+            "x": 84,
+            "y": 280,
+            "line": "mixing",
+            "kind": "node",
+            "status": "playable"
+          },
+          {
+            "id": "value",
+            "x": 252,
+            "y": 56,
+            "line": "seeing",
+            "kind": "node",
+            "status": "playable"
+          },
+          {
+            "id": "wheel",
+            "x": 252,
+            "y": 280,
+            "line": "mixing",
+            "kind": "node",
+            "status": "playable"
+          },
+          {
+            "id": "boss-poster-rescue",
+            "x": 420,
+            "y": 56,
+            "line": "seeing",
+            "kind": "checkpoint",
+            "status": "playable"
+          },
+          {
+            "id": "light-spectrum",
+            "x": 588,
+            "y": 56,
+            "line": "seeing",
+            "kind": "node",
+            "status": "planned"
+          },
+          {
+            "id": "harmonies",
+            "x": 588,
+            "y": 168,
+            "line": "designing",
+            "kind": "node",
+            "status": "planned"
+          },
+          {
+            "id": "temperature",
+            "x": 588,
+            "y": 280,
+            "line": "designing",
+            "kind": "node",
+            "status": "planned"
+          },
+          {
+            "id": "digital-color",
+            "x": 588,
+            "y": 392,
+            "line": "dials",
+            "kind": "node",
+            "status": "planned"
+          },
+          {
+            "id": "accessibility",
+            "x": 588,
+            "y": 504,
+            "line": "everyone",
+            "kind": "node",
+            "status": "planned"
+          },
+          {
+            "id": "constancy",
+            "x": 756,
+            "y": 56,
+            "line": "seeing",
+            "kind": "node",
+            "status": "planned"
+          },
+          {
+            "id": "palette",
+            "x": 756,
+            "y": 168,
+            "line": "designing",
+            "kind": "node",
+            "status": "planned"
+          },
+          {
+            "id": "meaning",
+            "x": 756,
+            "y": 280,
+            "line": "designing",
+            "kind": "node",
+            "status": "planned"
+          },
+          {
+            "id": "boss-ugly-poster",
+            "x": 924,
+            "y": 280,
+            "line": "designing",
+            "kind": "checkpoint",
+            "status": "planned"
+          },
+          {
+            "id": "boss-brand-palette",
+            "x": 924,
+            "y": 504,
+            "line": "everyone",
+            "kind": "checkpoint",
+            "status": "planned"
+          }
+        ],
+        "edges": [
+          {
+            "from": "hsl",
+            "to": "value",
+            "kind": "interchange"
+          },
+          {
+            "from": "light-vs-paint",
+            "to": "wheel",
+            "kind": "line"
+          },
+          {
+            "from": "hsl",
+            "to": "wheel",
+            "kind": "interchange"
+          },
+          {
+            "from": "value",
+            "to": "boss-poster-rescue",
+            "kind": "line"
+          },
+          {
+            "from": "wheel",
+            "to": "boss-poster-rescue",
+            "kind": "interchange"
+          },
+          {
+            "from": "contrast-illusions",
+            "to": "boss-poster-rescue",
+            "kind": "line"
+          },
+          {
+            "from": "boss-poster-rescue",
+            "to": "light-spectrum",
+            "kind": "line"
+          },
+          {
+            "from": "boss-poster-rescue",
+            "to": "harmonies",
+            "kind": "interchange"
+          },
+          {
+            "from": "boss-poster-rescue",
+            "to": "temperature",
+            "kind": "transfer"
+          },
+          {
+            "from": "boss-poster-rescue",
+            "to": "digital-color",
+            "kind": "transfer"
+          },
+          {
+            "from": "boss-poster-rescue",
+            "to": "accessibility",
+            "kind": "transfer"
+          },
+          {
+            "from": "light-spectrum",
+            "to": "constancy",
+            "kind": "line"
+          },
+          {
+            "from": "harmonies",
+            "to": "palette",
+            "kind": "line"
+          },
+          {
+            "from": "temperature",
+            "to": "meaning",
+            "kind": "line"
+          },
+          {
+            "from": "harmonies",
+            "to": "boss-ugly-poster",
+            "kind": "line"
+          },
+          {
+            "from": "temperature",
+            "to": "boss-ugly-poster",
+            "kind": "line"
+          },
+          {
+            "from": "constancy",
+            "to": "boss-ugly-poster",
+            "kind": "transfer"
+          },
+          {
+            "from": "palette",
+            "to": "boss-brand-palette",
+            "kind": "interchange"
+          },
+          {
+            "from": "accessibility",
+            "to": "boss-brand-palette",
+            "kind": "line"
+          },
+          {
+            "from": "digital-color",
+            "to": "boss-brand-palette",
+            "kind": "interchange"
+          },
+          {
+            "from": "meaning",
+            "to": "boss-brand-palette",
+            "kind": "interchange"
+          }
+        ],
+        "lines": [
+          {
+            "id": "seeing",
+            "color": 1
+          },
+          {
+            "id": "mixing",
+            "color": 2
+          },
+          {
+            "id": "dials",
+            "color": 3
+          },
+          {
+            "id": "designing",
+            "color": 4
+          },
+          {
+            "id": "everyone",
+            "color": 5
+          }
+        ]
+      },
+      "latest": "0.1.0",
+      "versions": [
+        {
+          "version": "0.1.0",
+          "engine": ">=0.1.0 <1.0.0",
+          "url": "dist/color-theory-0.1.0.lmpack",
+          "sha256": "d9f48ebd37f8134d09fd4f93acdde9549377cefae009a8db0eabd51061010dbd",
+          "size": 33553,
+          "nodes": 16,
+          "playable": 6,
+          "estMinutes": 28,
+          "license": "CC-BY-SA-4.0",
+          "published": "2026-10-20T09:23:46Z",
+          "tryUrl": "dist/color-theory-0.1.0.try.json"
+        }
+      ]
+    },
+    {
+      "id": "how-the-internet-works",
+      "title": "How the internet works",
+      "subtitle": "Follow one packet from your laptop to the other side of the world",
+      "tagline": "Your photo travels as two thousand numbered postcards. Follow one.",
+      "publisher": "learncroc",
+      "tier": "official",
+      "category": "tech-ai",
+      "tags": [
+        "internet",
+        "networking",
+        "packets",
+        "ip",
+        "tcp",
+        "routing",
+        "cables"
+      ],
+      "lang": "en",
+      "profile": "sampler",
+      "review": "draft",
+      "customInteractives": true,
+      "theme": {
+        "renderer": "metro",
+        "world": "The Wire World",
+        "mode": "dark",
+        "ground": "#0B1626",
+        "texture": "world",
+        "lines": [
+          "#6FC0FF",
+          "#B99CFF",
+          "#FF8FB6",
+          "#9BDD7A",
+          "#DDE3EA"
+        ],
+        "token": "packet"
+      },
+      "outcomes": [
+        "Explain why a file crosses the internet as thousands of numbered packets",
+        "Read an IP address and say how routers pass a packet hop by hop",
+        "Work out how long light takes to carry your data under an ocean"
+      ],
+      "sketch": {
+        "width": 1176,
+        "height": 560,
+        "nodes": [
+          {
+            "id": "packets",
+            "x": 84,
+            "y": 168,
+            "line": "delivery",
+            "kind": "node",
+            "status": "playable"
+          },
+          {
+            "id": "ip-addresses",
+            "x": 84,
+            "y": 280,
+            "line": "addresses",
+            "kind": "node",
+            "status": "playable"
+          },
+          {
+            "id": "physical",
+            "x": 84,
+            "y": 392,
+            "line": "cables",
+            "kind": "node",
+            "status": "playable"
+          },
+          {
+            "id": "routing",
+            "x": 252,
+            "y": 280,
+            "line": "addresses",
+            "kind": "node",
+            "status": "playable"
+          },
+          {
+            "id": "tcp",
+            "x": 252,
+            "y": 168,
+            "line": "delivery",
+            "kind": "node",
+            "status": "playable"
+          },
+          {
+            "id": "boss-deliver",
+            "x": 420,
+            "y": 168,
+            "line": "delivery",
+            "kind": "checkpoint",
+            "status": "playable"
+          },
+          {
+            "id": "dns",
+            "x": 588,
+            "y": 168,
+            "line": "web",
+            "kind": "node",
+            "status": "planned"
+          },
+          {
+            "id": "ports",
+            "x": 588,
+            "y": 280,
+            "line": "web",
+            "kind": "node",
+            "status": "planned"
+          },
+          {
+            "id": "http",
+            "x": 756,
+            "y": 280,
+            "line": "web",
+            "kind": "node",
+            "status": "planned"
+          },
+          {
+            "id": "latency",
+            "x": 588,
+            "y": 56,
+            "line": "cables",
+            "kind": "node",
+            "status": "planned"
+          },
+          {
+            "id": "cdn",
+            "x": 924,
+            "y": 56,
+            "line": "cables",
+            "kind": "node",
+            "status": "planned"
+          },
+          {
+            "id": "home-network",
+            "x": 588,
+            "y": 504,
+            "line": "addresses",
+            "kind": "node",
+            "status": "planned"
+          },
+          {
+            "id": "encryption",
+            "x": 588,
+            "y": 392,
+            "line": "security",
+            "kind": "node",
+            "status": "planned"
+          },
+          {
+            "id": "https",
+            "x": 924,
+            "y": 392,
+            "line": "security",
+            "kind": "node",
+            "status": "planned"
+          },
+          {
+            "id": "boss-type-a-url",
+            "x": 1092,
+            "y": 280,
+            "line": "web",
+            "kind": "checkpoint",
+            "status": "planned"
+          }
+        ],
+        "edges": [
+          {
+            "from": "packets",
+            "to": "routing",
+            "kind": "interchange"
+          },
+          {
+            "from": "ip-addresses",
+            "to": "routing",
+            "kind": "line"
+          },
+          {
+            "from": "packets",
+            "to": "tcp",
+            "kind": "line"
+          },
+          {
+            "from": "routing",
+            "to": "boss-deliver",
+            "kind": "interchange"
+          },
+          {
+            "from": "tcp",
+            "to": "boss-deliver",
+            "kind": "line"
+          },
+          {
+            "from": "physical",
+            "to": "boss-deliver",
+            "kind": "transfer"
+          },
+          {
+            "from": "boss-deliver",
+            "to": "dns",
+            "kind": "interchange"
+          },
+          {
+            "from": "boss-deliver",
+            "to": "ports",
+            "kind": "interchange"
+          },
+          {
+            "from": "dns",
+            "to": "http",
+            "kind": "line"
+          },
+          {
+            "from": "ports",
+            "to": "http",
+            "kind": "line"
+          },
+          {
+            "from": "boss-deliver",
+            "to": "latency",
+            "kind": "interchange"
+          },
+          {
+            "from": "latency",
+            "to": "cdn",
+            "kind": "line"
+          },
+          {
+            "from": "http",
+            "to": "cdn",
+            "kind": "interchange"
+          },
+          {
+            "from": "boss-deliver",
+            "to": "home-network",
+            "kind": "interchange"
+          },
+          {
+            "from": "boss-deliver",
+            "to": "encryption",
+            "kind": "transfer"
+          },
+          {
+            "from": "http",
+            "to": "https",
+            "kind": "interchange"
+          },
+          {
+            "from": "encryption",
+            "to": "https",
+            "kind": "line"
+          },
+          {
+            "from": "https",
+            "to": "boss-type-a-url",
+            "kind": "interchange"
+          },
+          {
+            "from": "cdn",
+            "to": "boss-type-a-url",
+            "kind": "interchange"
+          },
+          {
+            "from": "home-network",
+            "to": "boss-type-a-url",
+            "kind": "transfer"
+          }
+        ],
+        "lines": [
+          {
+            "id": "delivery",
+            "color": 1
+          },
+          {
+            "id": "addresses",
+            "color": 2
+          },
+          {
+            "id": "cables",
+            "color": 3
+          },
+          {
+            "id": "web",
+            "color": 4
+          },
+          {
+            "id": "security",
+            "color": 5
+          }
+        ]
+      },
+      "latest": "0.1.0",
+      "versions": [
+        {
+          "version": "0.1.0",
+          "engine": ">=0.1.0 <1.0.0",
+          "url": "dist/how-the-internet-works-0.1.0.lmpack",
+          "sha256": "d3ae48771cd4539642b5d0bbb66ad93631cf3ae0a7dc4f38592057b1101a31c0",
+          "size": 33156,
+          "nodes": 15,
+          "playable": 6,
+          "estMinutes": 30,
+          "license": "CC-BY-SA-4.0",
+          "published": "2026-10-20T09:23:46Z",
+          "tryUrl": "dist/how-the-internet-works-0.1.0.try.json"
+        }
+      ]
+    },
+    {
+      "id": "thinking-traps",
+      "title": "Thinking traps",
+      "subtitle": "Cognitive biases that survived replication, felt from the inside",
+      "tagline": "Get tricked by five famous traps, then learn which findings held up.",
+      "publisher": "learncroc",
+      "tier": "official",
+      "category": "thinking",
+      "tags": [
+        "psychology",
+        "cognitive biases",
+        "decision making",
+        "replication",
+        "reasoning"
+      ],
+      "lang": "en",
+      "profile": "sampler",
+      "review": "draft",
+      "customInteractives": true,
+      "theme": {
+        "renderer": "atlas",
+        "world": "The Carnival of Minds",
+        "mode": "dark",
+        "ground": "#16122B",
+        "texture": "night-fair",
+        "lines": [
+          "#8EC1FF",
+          "#D49CFF",
+          "#FF92BE",
+          "#A8E07F",
+          "#EDE6F5"
+        ],
+        "token": "lantern"
+      },
+      "outcomes": [
+        "Spot an anchor, an availability trap and a frame, and defuse each one",
+        "Test a hunch by looking for what would break it",
+        "Say which famous biases replicated robustly and which did not"
+      ],
+      "sketch": {
+        "width": 1176,
+        "height": 560,
+        "nodes": [
+          {
+            "id": "anchoring",
+            "x": 84,
+            "y": 280,
+            "line": "feel",
+            "kind": "node",
+            "status": "playable"
+          },
+          {
+            "id": "availability",
+            "x": 84,
+            "y": 168,
+            "line": "shortcuts",
+            "kind": "node",
+            "status": "playable"
+          },
+          {
+            "id": "confirmation",
+            "x": 84,
+            "y": 392,
+            "line": "yes",
+            "kind": "node",
+            "status": "playable"
+          },
+          {
+            "id": "heuristics",
+            "x": 252,
+            "y": 168,
+            "line": "shortcuts",
+            "kind": "node",
+            "status": "playable"
+          },
+          {
+            "id": "framing-loss",
+            "x": 252,
+            "y": 280,
+            "line": "feel",
+            "kind": "node",
+            "status": "playable"
+          },
+          {
+            "id": "boss-carnival",
+            "x": 420,
+            "y": 280,
+            "line": "feel",
+            "kind": "checkpoint",
+            "status": "playable"
+          },
+          {
+            "id": "sunk-cost",
+            "x": 588,
+            "y": 56,
+            "line": "feel",
+            "kind": "node",
+            "status": "planned"
+          },
+          {
+            "id": "survivorship",
+            "x": 588,
+            "y": 168,
+            "line": "shortcuts",
+            "kind": "node",
+            "status": "planned"
+          },
+          {
+            "id": "base-rate-neglect",
+            "x": 588,
+            "y": 280,
+            "line": "shortcuts",
+            "kind": "node",
+            "status": "planned"
+          },
+          {
+            "id": "overconfidence",
+            "x": 588,
+            "y": 392,
+            "line": "yes",
+            "kind": "node",
+            "status": "planned"
+          },
+          {
+            "id": "hindsight",
+            "x": 756,
+            "y": 392,
+            "line": "yes",
+            "kind": "node",
+            "status": "planned"
+          },
+          {
+            "id": "replication",
+            "x": 588,
+            "y": 504,
+            "line": "held-up",
+            "kind": "node",
+            "status": "planned"
+          },
+          {
+            "id": "bias-blind-spot",
+            "x": 924,
+            "y": 392,
+            "line": "better",
+            "kind": "node",
+            "status": "planned"
+          },
+          {
+            "id": "debiasing",
+            "x": 756,
+            "y": 280,
+            "line": "better",
+            "kind": "node",
+            "status": "planned"
+          },
+          {
+            "id": "boss-decision-room",
+            "x": 1092,
+            "y": 280,
+            "line": "better",
+            "kind": "checkpoint",
+            "status": "planned"
+          }
+        ],
+        "edges": [
+          {
+            "from": "anchoring",
+            "to": "heuristics",
+            "kind": "interchange"
+          },
+          {
+            "from": "availability",
+            "to": "heuristics",
+            "kind": "line"
+          },
+          {
+            "from": "anchoring",
+            "to": "framing-loss",
+            "kind": "line"
+          },
+          {
+            "from": "heuristics",
+            "to": "boss-carnival",
+            "kind": "interchange"
+          },
+          {
+            "from": "framing-loss",
+            "to": "boss-carnival",
+            "kind": "line"
+          },
+          {
+            "from": "confirmation",
+            "to": "boss-carnival",
+            "kind": "interchange"
+          },
+          {
+            "from": "boss-carnival",
+            "to": "sunk-cost",
+            "kind": "line"
+          },
+          {
+            "from": "boss-carnival",
+            "to": "survivorship",
+            "kind": "interchange"
+          },
+          {
+            "from": "boss-carnival",
+            "to": "base-rate-neglect",
+            "kind": "interchange"
+          },
+          {
+            "from": "boss-carnival",
+            "to": "overconfidence",
+            "kind": "interchange"
+          },
+          {
+            "from": "overconfidence",
+            "to": "hindsight",
+            "kind": "line"
+          },
+          {
+            "from": "boss-carnival",
+            "to": "replication",
+            "kind": "transfer"
+          },
+          {
+            "from": "hindsight",
+            "to": "bias-blind-spot",
+            "kind": "interchange"
+          },
+          {
+            "from": "overconfidence",
+            "to": "debiasing",
+            "kind": "interchange"
+          },
+          {
+            "from": "base-rate-neglect",
+            "to": "debiasing",
+            "kind": "interchange"
+          },
+          {
+            "from": "sunk-cost",
+            "to": "debiasing",
+            "kind": "transfer"
+          },
+          {
+            "from": "debiasing",
+            "to": "boss-decision-room",
+            "kind": "line"
+          },
+          {
+            "from": "replication",
+            "to": "boss-decision-room",
+            "kind": "interchange"
+          },
+          {
+            "from": "bias-blind-spot",
+            "to": "boss-decision-room",
+            "kind": "line"
+          }
+        ],
+        "lines": [
+          {
+            "id": "feel",
+            "color": 1
+          },
+          {
+            "id": "shortcuts",
+            "color": 2
+          },
+          {
+            "id": "yes",
+            "color": 3
+          },
+          {
+            "id": "better",
+            "color": 4
+          },
+          {
+            "id": "held-up",
+            "color": 5
+          }
+        ]
+      },
+      "latest": "0.1.0",
+      "versions": [
+        {
+          "version": "0.1.0",
+          "engine": ">=0.1.0 <1.0.0",
+          "url": "dist/thinking-traps-0.1.0.lmpack",
+          "sha256": "ab7eeae3ac6daf7a8acc331a38d61222638afa3c1ee881d5cec8e201939c15d6",
+          "size": 31930,
+          "nodes": 15,
+          "playable": 6,
+          "estMinutes": 30,
+          "license": "CC-BY-SA-4.0",
+          "published": "2026-10-20T09:23:46Z",
+          "tryUrl": "dist/thinking-traps-0.1.0.try.json"
+        }
+      ]
+    }
+  ]
+}
