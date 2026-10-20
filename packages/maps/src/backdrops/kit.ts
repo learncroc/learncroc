@@ -1,7 +1,7 @@
 /**
  * Shared bits for backdrop illustrations: the props every drawing takes and a few seeded helpers.
  *
- * Colour rules (02 §1.2): only world colours. Secondary ink and grid at 6–14% opacity, line colours at
+ * Colour rules: only world colours. Secondary ink and grid at 6–14% opacity, line colours at
  * ≤ 10%. Never Lumen, Sea or Ember: those are state colours.
  */
 import type { BackdropId } from "@learncroc/core";

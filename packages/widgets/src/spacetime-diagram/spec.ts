@@ -1,6 +1,6 @@
 /**
  * spacetime-diagram: Minkowski diagram; drag events and worldlines, boost slider tilts the axes,
- * light cones, proper-time readout, "who flashed first?" (CONTRACTS §7.2 #11).
+ * light cones, proper-time readout, "who flashed first?".
  * x and t in the same units, c = 1, light lines at 45°.
  */
 import { fmt, orderInFrame, properTime, regionOf } from "../light-clock/relativity";

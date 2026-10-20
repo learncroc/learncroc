@@ -1,5 +1,5 @@
 /**
- * Run sounds (craft, not research; PLAN §6.5) through the design system's WebAudio engine, gated by
+ * Run sounds (craft, not research) through the design system's WebAudio engine, gated by
  * Settings → Sound (off by default). A muted knock when a guess is locked in, a wooden "tok" rising along
  * a pentatonic scale within a run, a curious "hm?" on a miss, two warm notes when a card closes, the gate
  * chord when a gate opens, an arpeggio when a map is finished. No buzzer, no assets.

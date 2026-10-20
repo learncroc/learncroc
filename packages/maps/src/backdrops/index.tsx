@@ -1,5 +1,5 @@
 /**
- * Backdrops: one code-drawn illustration per world (02 §1.2), drawn between the ground and the texture.
+ * Backdrops: one code-drawn illustration per world, drawn between the ground and the texture.
  *
  * - Self-contained SVG (no <img>), so poster export works offline and never taints the canvas.
  * - World colours only, at low opacity; never Lumen, Sea or Ember.
@@ -21,6 +21,7 @@ import { IceCoreArt } from "./ice-core";
 import type { BackdropArtProps, BackdropColors, DrawnBackdropId } from "./kit";
 import { LightConesArt } from "./light-cones";
 import { MountainArt } from "./mountain";
+import { PondArt } from "./pond";
 import { PrismArt } from "./prism";
 import { SketchbookArt } from "./sketchbook";
 import { StaffTownArt } from "./staff-town";
@@ -46,6 +47,7 @@ export const BACKDROPS: Partial<Record<DrawnBackdropId, ComponentType<BackdropAr
   fairground: FairgroundArt,
   "case-board": CaseBoardArt,
   prism: PrismArt,
+  pond: PondArt,
 };
 
 /** The renderer's own backdrop when a theme names none. */
@@ -54,6 +56,7 @@ export const DEFAULT_BACKDROP: Record<RendererId, DrawnBackdropId> = {
   metro: "transit-grid",
   atlas: "terrain",
   sketchbook: "sketchbook",
+  trail: "pond",
 };
 
 /**

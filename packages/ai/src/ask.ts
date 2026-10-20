@@ -1,5 +1,5 @@
 /**
- * Ask (PLAN §5.6, D6): the always-reachable tutor. Mode comes from the Socratic gate; the reply is
+ * Ask: the always-reachable tutor. Mode comes from the Socratic gate; the reply is
  * guarded (word cap, action ending, answer leak) before the learner sees it.
  *
  * Socratic replies are generated whole, checked, then streamed out, because a leak can't be
@@ -66,7 +66,7 @@ export interface AskRun {
   threads: ThreadStore;
   /** Socratic reply streaming pace (ms per word); 0 in tests. */
   paceMs?: number;
-  /** Called when full mode is used on an unanswered interaction (gate off): marks it assisted (R9). */
+  /** Called when full mode is used on an unanswered interaction (gate off): marks it assisted. */
   onAssist?(interactionId: string): Promise<void>;
   signal?: AbortSignal;
 }
@@ -112,7 +112,7 @@ function moveFor(d: GateDecision): string {
     : "try the current task, then tell me what you noticed.";
 }
 
-/** A safe Socratic reply when the model's reply leaks twice (R7 last resort). */
+/** A safe Socratic reply when the model's reply leaks twice (last resort). */
 function fallbackSocratic(d: GateDecision): string {
   const hint = d.interactionId && d.node ? Object.values(d.node.misconceptions)[0]?.hint : undefined;
   if (d.hintLevel >= 1 && hint) return enforceCap(`${hint} What would you try first?`, SOCRATIC_MAX_WORDS);

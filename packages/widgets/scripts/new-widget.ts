@@ -89,7 +89,7 @@ function grade({ goal, answer }: { props: ${P}Props; goal: ${P}Goal; answer: ${P
 }
 
 export const ${C}Spec: WidgetSpec<${P}Props, ${P}Goal, ${P}Answer> = {
-  // Register the id in WIDGET_IDS (packages/core, via a contract request) before shipping.
+  // Register the id in WIDGET_IDS (packages/core) before shipping.
   id: "${id}" as WidgetSpec<${P}Props, ${P}Goal, ${P}Answer>["id"],
   version: 1,
   title: "${T}",
@@ -319,7 +319,7 @@ Use it from a node:
   const C = camel(id);
   console.log(`
 Next:
-  1. Add "${id}" to WIDGET_IDS in packages/core/src/schema/primitives.ts (frozen: file a contract request).
+  1. Add "${id}" to WIDGET_IDS in packages/core/src/schema/primitives.ts.
   2. Register it: WIDGET_VIEW_LOADERS and WIDGET_SPEC_LOADERS in packages/widgets/src/registry.ts,
      WIDGET_SPECS in packages/widgets/src/host/specs.ts (${C}Spec), and export it from src/spec.ts.
   3. Regenerate the AI catalogue: bun packages/widgets/scripts/gen-catalog.ts

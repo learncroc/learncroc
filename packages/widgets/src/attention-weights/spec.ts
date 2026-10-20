@@ -1,6 +1,6 @@
 /**
  * attention-weights: arcs from a focus token. Edit weights that share a budget of 1, tap the words
- * that matter, swap a word and watch the arcs redraw, see a causal mask (CONTRACTS §7.2 #3).
+ * that matter, swap a word and watch the arcs redraw, see a causal mask.
  */
 import type { GradeResult } from "@learncroc/core";
 import { clamp, setMatch, sum } from "../shared/math";

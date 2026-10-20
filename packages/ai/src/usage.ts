@@ -1,5 +1,5 @@
 /**
- * The spend meter and monthly cap (PLAN §15.1). Every call's usage is priced with prices.json and
+ * The spend meter and monthly cap. Every call's usage is priced with prices.json and
  * stored per month and feature in <home>/ai/usage.json. Cloud providers only: local models cost 0.
  * At 100% of the cap AI pauses and every feature takes its offline path.
  */

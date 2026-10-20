@@ -4,7 +4,7 @@
  * A codemod deletes a file by removing it from the file map.
  *
  * - 0 → 1: drafts written before the format was frozen (no `schema` key) used snake_case keys
- *   (`renamed_from`, `on_wrong`, `feedback_right`…). Keys become camelCase (D21) except inside
+ *   (`renamed_from`, `on_wrong`, `feedback_right`…). Keys become camelCase except inside
  *   records keyed by authored ids or values (vars, blanks, misconceptions, onWrong, replies…), and
  *   `schema: 1` is added.
  * - 1 → 2: the card loop (revision 3). The mechanical half only: `hook.reveal` becomes `close.text`
@@ -367,7 +367,7 @@ export const PACK_CODEMODS: readonly PackCodemod[] = [
     name: "snake-to-camel",
     from: 0,
     to: 1,
-    description: "camelCase keys (D21) and schema: 1",
+    description: "camelCase keys and schema: 1",
     apply(files) {
       const changes: string[] = [];
       for (const [file, text] of files) {

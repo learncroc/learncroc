@@ -495,7 +495,7 @@ function median(xs: readonly number[]): number | null {
 const round1 = (n: number | null) => (n === null ? null : Math.round(n * 10) / 10);
 
 /**
- * GET /numbers: the local success metrics (CPO §6), derived only from attempts, runs, progress, the
+ * GET /numbers: the local success metrics, derived only from attempts, runs, progress, the
  * review log and kv `numbers:create:*` / `numbers:croc`. Nothing here touches the network.
  */
 export async function numbers(ctx: Ctx): Promise<LocalNumbers> {

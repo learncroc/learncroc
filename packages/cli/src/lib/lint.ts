@@ -1,5 +1,5 @@
 /**
- * `learncroc lint`: core's rule set (PLAN §11.3) over a source folder, with the widget specs for
+ * `learncroc lint`: core's rule set over a source folder, with the widget specs for
  * props/goal/solution checks and the server's SVG safety check. `--fix` applies core's mechanical
  * fixes to the YAML files first (comments and layout preserved), then lints the result.
  */

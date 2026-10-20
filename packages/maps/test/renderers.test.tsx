@@ -55,7 +55,7 @@ describe("every world renders in its renderer", () => {
   }
 });
 
-// rev3 speed mode: asserts revision-2 behaviour (sparked, termini, hop fog, stops); rewrite for gates/sections in wave 2.
+// Asserts revision-2 behaviour (sparked, termini, hop fog, stops); to be rewritten for gates and sections.
 describe.skip("state sheets", () => {
   for (const r of RENDERER_IDS) {
     test(`${r}: every state is drawn with its own shape`, () => {
@@ -153,7 +153,7 @@ describe("ambient motion only on lit track", () => {
   });
 });
 
-// rev3 speed mode: asserts revision-2 behaviour (sparked, termini, hop fog, stops); rewrite for gates/sections in wave 2.
+// Asserts revision-2 behaviour (sparked, termini, hop fog, stops); to be rewritten for gates and sections.
 describe.skip("fog and dawn", () => {
   test("silhouettes dim under fog; termini stay visible", () => {
     const pack = galleryPacks().find((p) => p.manifest.id === "how-llms-work") as GalleryPack;

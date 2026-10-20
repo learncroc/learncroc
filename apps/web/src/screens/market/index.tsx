@@ -2,7 +2,7 @@
  * /market: the marketplace grid of posters (Handpicked, then Community), filtered by category and
  * search. /market/:pack: map detail with "Try the first card" (the player's CardEmbed: a try-run
  * that writes no progress), "11 cards · 4 checkpoints · about 45 minutes", install with SSE progress
- * and the poster drawing in, review badges and reviewer credits (03 §4.11).
+ * and the poster drawing in, review badges and reviewer credits.
  */
 import type { PackCategory, RegistryView } from "@learncroc/core";
 import { MapPoster } from "@learncroc/maps";
@@ -54,7 +54,7 @@ const latestOf = (p: RegistryEntry) => p.versions.find((v) => v.version === p.la
 const checkpointsOf = (p: RegistryEntry) =>
   p.sketch.nodes.filter((n) => n.kind === "checkpoint" && n.status === "playable").length;
 
-/** "11 cards · 4 checkpoints · about 45 minutes" (03 §4.11). */
+/** "11 cards · 4 checkpoints · about 45 minutes". */
 export function mapSizeLine(p: RegistryEntry): string {
   const latest = latestOf(p);
   const cards = latest?.playable ?? p.sketch.nodes.filter((n) => n.kind === "node" && n.status === "playable").length;

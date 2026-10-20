@@ -1,5 +1,5 @@
 /**
- * Grading for every built-in interaction kind (CONTRACTS §6), html goals, explain answers
+ * Grading for every built-in interaction kind, html goals, explain answers
  * (offline keyword matching and self-rating) and delegation to widget specs through the injected
  * WidgetSpecRegistry. Pure and synchronous; the server is the only caller that records results.
  *

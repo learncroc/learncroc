@@ -1,5 +1,5 @@
 /**
- * The AiPorts implementation handed to createServer (CONTRACTS §9.2). Every method resolves null on
+ * The AiPorts implementation handed to createServer. Every method resolves null on
  * any failure, so core always has its offline path: authored hints, self-rating, authored Nib lines,
  * the item bank.
  */
@@ -157,7 +157,7 @@ export function aiPortsFor(client: AiClient, onError?: (where: string, e: unknow
 
 const VARIANT_KINDS = new Set(["choice", "numeric", "order", "text"]);
 
-/** Bank items to vary: quiz-eligible, built-in kinds, interleaved across nodes (A4). */
+/** Bank items to vary: quiz-eligible, built-in kinds, interleaved across nodes. */
 function pickBank(pack: CompiledPack, nodeIds: NodeId[], count: number): { item: Item; nodeId: NodeId }[] {
   const perNode = nodeIds.map((id) =>
     (pack.nodes[id]?.items ?? [])
@@ -210,7 +210,7 @@ async function variantFor(
   return agrees ? { ...variant, use: ["checkpoint"], nodeId } : null;
 }
 
-/** The fast tier answers the variant without the key; it must match (PLAN §15.4). */
+/** The fast tier answers the variant without the key; it must match. */
 async function blindSolve(client: AiClient, it: Item): Promise<boolean> {
   const input: SolveInput = {
     kind: "solve",

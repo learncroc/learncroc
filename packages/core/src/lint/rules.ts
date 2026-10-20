@@ -1,6 +1,6 @@
 /**
  * Lint rule catalogue. Ids are stable forever; every message carries why the rule exists (one line,
- * pointing at PRINCIPLES) and a one-line fix example. Retired rules stay listed and are never emitted.
+ * pointing at the learning principle behind it) and a one-line fix example. Retired rules stay listed and are never emitted.
  */
 import type { LintProfile } from "../schema/index";
 
@@ -23,13 +23,13 @@ export const RULES = {
   L001: {
     id: "L001",
     title: "Word caps per card part",
-    why: "Rule zero: reading comes in short bursts, after the learner has done something (PRINCIPLES, Never #1).",
+    why: "Rule zero: reading comes in short bursts, after the learner has done something.",
     example: "Hook ≤ 30 words, beat ≤ 120, close and each byGuess ≤ 60, teaser ≤ 20; move overflow into alts.simpler.",
   },
   L001b: {
     id: "L001b",
     title: "Card length: 100–500 learner-facing words",
-    why: "Rule zero: a card is 2–4 minutes of doing, not an article (PRINCIPLES, Never #1).",
+    why: "Rule zero: a card is 2–4 minutes of doing, not an article.",
     example: "Cut repeated setup; let the canvas show what a sentence describes.",
   },
   L002: {
@@ -47,31 +47,31 @@ export const RULES = {
   L004: {
     id: "L004",
     title: "A picture on every beat, with alt text",
-    why: "A5: one idea per beat, with a picture (dual coding); alt text keeps it accessible.",
+    why: "One idea per beat, with a picture (dual coding); alt text keeps it accessible.",
     example: 'visual: { kind: figure, asset: assets/img/x.svg, alt: "A clock beside a road" }',
   },
   L005: {
     id: "L005",
     title: "A guess-first hook that doesn't give the close away",
-    why: "A2 + B1: open with a question the learner can't answer yet, not a definition.",
+    why: "Open with a question the learner can't answer yet, not a definition.",
     example: 'prompt: "Which is longer, 90 minutes or 2 hours?"',
   },
   L006: {
     id: "L006",
     title: "Card shape: 2–3 beats, at least one with an action",
-    why: "D43: a card is hook → 2–3 beats → close, and the learner does something in at least one beat.",
+    why: "A card is hook → 2–3 beats → close, and the learner does something in at least one beat.",
     example: "Give one beat an interaction and its reveal; a read-only beat has neither.",
   },
   L007: {
     id: "L007",
     title: "A healthy prerequisite graph",
-    why: "C1–C3 + B3: the map is a DAG with real choices; planned cards never block playable ones.",
+    why: "The map is a DAG with real choices; planned cards never block playable ones.",
     example: "Give the first section two roots, or two cards that open after the first one.",
   },
   L008: {
     id: "L008",
     title: "Misconceptions resolve",
-    why: "C5: a checkpoint miss points back to the card that teaches it, so an upstream must be an ancestor card.",
+    why: "A checkpoint miss points back to the card that teaches it, so an upstream must be an ancestor card.",
     example: "upstream: units   # an ancestor card id, or omit it",
   },
   L009: {
@@ -89,25 +89,25 @@ export const RULES = {
   L011: {
     id: "L011",
     title: "Enough items, enough new situations",
-    why: "A1 + A3: checkpoints and Relight need a bank with fresh, transfer-level questions.",
+    why: "Checkpoints and Relight need a bank with fresh, transfer-level questions.",
     example: "Add items with level: transfer (curated, sampler and pocket: ≥ 6 items, ≥ 3 transfer).",
   },
   L012: {
     id: "L012",
     title: "Banned words and patterns",
-    why: "Never #3 and #4, the honesty rule (D16) and the house voice: no streaks, XP, learning styles or hype.",
+    why: "The honesty rule and the house voice: no streaks, XP, learning styles or hype.",
     example: '"Lots of people guess …" instead of "Most people …"',
   },
   L013: {
     id: "L013",
     title: "Assets are local, allowed and safe",
-    why: "Packs are data (PLAN §17): no remote URLs, no unsafe files, nothing outside the pack.",
+    why: "Packs are data: no remote URLs, no unsafe files, nothing outside the pack.",
     example: "asset: assets/img/clock.svg   # lowercase, inside assets/, ≤ 2 MB",
   },
   L014: {
     id: "L014",
     title: "Theme contrast and colour distance",
-    why: "Line colours must read on the ground and never look like Lumen (mastery), Ember or Sea (PLAN §6.1).",
+    why: "Line colours must read on the ground and never look like Lumen (mastery), Ember or Sea.",
     example: 'lines: ["#7FB2FF", …]   # ≥ 3:1 on the ground, ΔE2000 ≥ 15 from Lumen/Ember/Sea',
   },
   L015: {
@@ -127,7 +127,7 @@ export const RULES = {
   L017: {
     id: "L017",
     title: "Reviewed means a named human reviewed it",
-    why: 'D37 honesty rule: "reviewed" needs a recorded human sign-off in pack.lock.yaml.',
+    why: 'Honesty rule: "reviewed" needs a recorded human sign-off in pack.lock.yaml.',
     example: "reviews: [{ name: Ada, role: subject expert, date: 2026-10-20, files: [nodes/x.yaml] }]",
   },
   L018: {
@@ -139,37 +139,37 @@ export const RULES = {
   L019: {
     id: "L019",
     title: "Choice options act out on the canvas",
-    why: "Choice answers make the canvas show what the chosen answer would mean (PLAN §5.3).",
+    why: "Choice answers make the canvas show what the chosen answer would mean.",
     example: 'options: [{ id: a, text: …, visualState: { props: { v: 20 }, note: "too slow" } }]',
   },
   L020: {
     id: "L020",
     title: "HTML interactives are small, offline and bridged",
-    why: "D30 + PLAN §17: pack HTML runs sandboxed with no network and reports through window.lm.",
+    why: "Pack HTML runs sandboxed with no network and reports through window.lm.",
     example: "Use lm.report(value) and inline every script and style; no fetch, no remote src.",
   },
   L021: {
     id: "L021",
     title: "Rendered audio where it matters",
-    why: "D36: language packs play pre-rendered audio, because many systems have no voice for the language.",
+    why: "Language packs play pre-rendered audio, because many systems have no voice for the language.",
     example: "Run `bun run packs:audio` so every phrase gets a src.",
   },
   L022: {
     id: "L022",
     title: "Language packs are mostly production",
-    why: "Producing language (typing, building, saying) teaches more than recognising it (PLAN §12).",
+    why: "Producing language (typing, building, saying) teaches more than recognising it.",
     example: "Turn choice items into text, cloze or tile-builder items.",
   },
   L023: {
     id: "L023",
     title: "The close answers the hook and names the guess",
-    why: "D42: the close resolves the exact question the learner guessed at, and names their guess.",
+    why: "The close resolves the exact question the learner guessed at, and names their guess.",
     example: 'close: { text: "…", byGuess: { b: "You picked *Train B*. …", idk: "…" }, teaser: "…?" }',
   },
   L024: {
     id: "L024",
     title: "Checkpoints gate the map",
-    why: "D44 + D45: every card lights at a checkpoint every 2–3 cards, and the map ends in one.",
+    why: "Every card lights at a checkpoint every 2–3 cards, and the map ends in one.",
     example: "checkpoint-basics: { requires: [unit-conversion], line: basics, kind: checkpoint }",
   },
   L025: {

@@ -1,5 +1,5 @@
 /**
- * Map contracts (CONTRACTS §9.3). Renderers draw decorative SVG only; interaction lives in StopLayer.
+ * Map contracts. Renderers draw decorative SVG only; interaction lives in StopLayer.
  */
 import type { CompiledPack, NodeId, NodeView, PackTheme, RendererId } from "@learncroc/core";
 import type { ReactNode } from "react";

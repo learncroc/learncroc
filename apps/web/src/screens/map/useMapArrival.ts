@@ -1,5 +1,5 @@
 /**
- * What Moss says when a map opens (00 §3.4), at most one line:
+ * What Moss says when a map opens, at most one line:
  * 1. first visit to this map (nothing started, never greeted here): "This is the map. Pick any Ready card."
  * 2. back after 3+ days: "Welcome back. The map kept your place." (never a count of days)
  * 3. cards fading, once per local day per map: "{card} is fading. A short Relight brings it back."
@@ -14,7 +14,7 @@ import { localDay, type MapPack, store } from "./mapLogic";
 
 const DAY = 24 * 60 * 60 * 1000;
 export const BACK_AFTER_MS = 3 * DAY;
-/** The croc walks in (UX §1.9) before it speaks. */
+/** The croc walks in before it speaks. */
 const ARRIVAL_MS = 1_300;
 
 export const arrivalKeys = (packId: string) => ({

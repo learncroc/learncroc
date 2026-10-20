@@ -1,5 +1,5 @@
 /**
- * Pack manifest (pack.yaml) and lock file (pack.lock.yaml) (CONTRACTS §2).
+ * Pack manifest (pack.yaml) and lock file (pack.lock.yaml).
  */
 import { z } from "zod";
 import { Provenance } from "./common";
@@ -10,6 +10,7 @@ import {
   IsoDate,
   LandmarkGlyph,
   LintProfile,
+  MapDesignId,
   NodeId,
   PackCategory,
   PackId,
@@ -34,6 +35,8 @@ export const PackOrigin = z.discriminatedUnion("kind", [
 
 export const PackTheme = z.strictObject({
   renderer: RendererId,
+  /** The design preset this theme was made from (AI-drafted maps). Absent: an authored world. */
+  design: MapDesignId.optional(),
   /** "The Machine" */
   world: z.string().min(1),
   /** The world's ground is always this, regardless of the app theme. */

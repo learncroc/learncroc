@@ -1,5 +1,5 @@
 /**
- * Readability on linkedom → paragraphs p1…pn (PLAN §15.5). The paragraph ids are what stops cite,
+ * Readability on linkedom → paragraphs p1…pn. The paragraph ids are what stops cite,
  * what the highlighter sweeps and what "See in article" scrolls to.
  */
 import { Readability } from "@mozilla/readability";
@@ -87,6 +87,6 @@ export function extractFromText(text: string, title: string): Article {
   return finish(title.trim() || "Pasted text", paras);
 }
 
-/** Limits from PLAN §15.5: under 300 words → paste instead; very long → ask for a section. */
+/** Limits from Under 300 words → paste instead; very long → ask for a section. */
 export const MIN_ARTICLE_WORDS = 300;
 export const MAX_ARTICLE_WORDS = 15_000;

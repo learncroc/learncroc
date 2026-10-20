@@ -10,6 +10,8 @@ export {
   LIVE_REPEAT_MS,
   resetLiveRegion,
 } from "./a11y/live";
+export { Logo, type LogoProps, WORDMARK, Wordmark, type WordmarkProps } from "./brand/Logo";
+export { WORDMARK_ADVANCE, WORDMARK_PATH } from "./brand/wordmark";
 export { cn } from "./cn";
 export {
   contrast,
@@ -22,7 +24,7 @@ export {
   worldInk,
   worldVars,
 } from "./color";
-export { CROC_SIZES, CROC_STATES, Croc, type CrocProps, type CrocState } from "./croc/Croc";
+export { CROC_SIZES, CROC_STATES, Croc, type CrocPose, type CrocProps, type CrocState } from "./croc/Croc";
 export { CrocBubble, type CrocBubbleProps } from "./croc/CrocBubble";
 export { isTypingTarget } from "./keys";
 export {

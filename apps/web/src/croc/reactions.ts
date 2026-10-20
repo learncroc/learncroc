@@ -1,8 +1,8 @@
 /**
- * Moss's reaction bus (00 §3.4): client-side, canned, offline. Anything in the app emits an event;
+ * Moss's reaction bus: client-side, canned, offline. Anything in the app emits an event;
  * the croc corner (map) and the croc pane (modals) listen and show one short line with a croc state.
  *
- * Caps (UX §7.3) are applied by the listener, not the emitter: ≤ 1 line per moment, ≤ 1 unsolicited
+ * Caps are applied by the listener, not the emitter: ≤ 1 line per moment, ≤ 1 unsolicited
  * bubble per 45 s, never while typing or dragging, never on idle, bubbles fade after about 4 s.
  * "Quiet" (settings.croc.reactions) keeps animations and chat and drops unsolicited bubbles.
  */

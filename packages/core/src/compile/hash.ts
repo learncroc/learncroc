@@ -25,7 +25,7 @@ export async function sha256Hex(data: string | Uint8Array): Promise<string> {
   return [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
-/** sha256 of the canonical pack.json without its `contentHash` field (CONTRACTS §8). */
+/** sha256 of the canonical pack.json without its `contentHash` field. */
 export async function contentHashOf(pack: Record<string, unknown>): Promise<string> {
   const { contentHash: _omit, ...rest } = pack;
   return sha256Hex(canonicalJson(rest));

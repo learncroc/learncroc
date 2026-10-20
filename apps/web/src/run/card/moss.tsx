@@ -1,5 +1,5 @@
 /**
- * The pieces of the card conversation (docs/design/teach-first.md): Moss's bubbles with a mood, the
+ * The pieces of the card conversation: Moss's bubbles with a mood, the
  * learner's replies, the article passage, the typing dots, the reply bar and read-aloud. Moss speaks in
  * the guide voice; the article speaks in its own words, in green, with its source.
  */

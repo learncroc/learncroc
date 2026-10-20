@@ -1,5 +1,5 @@
 /**
- * Create screens (03 §4.8): the hub with the article-map gallery, the "Map an article" intake and
+ * Create screens: the hub with the article-map gallery, the "Map an article" intake and
  * the live building view that hands off at card 1.
  */
 import { Hub } from "./Hub";

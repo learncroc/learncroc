@@ -1,5 +1,5 @@
 /**
- * Seeded randomness and parametric item instances (PLAN §16 "Parametric items").
+ * Seeded randomness and parametric item instances.
  *
  * Numeric and estimate items may declare `params`: candidate values per variable plus an
  * `answerExpr`. The server draws an instance from the run seed, renders the prompt ({name}

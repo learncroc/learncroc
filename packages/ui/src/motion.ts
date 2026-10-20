@@ -1,5 +1,5 @@
 /**
- * Motion presets (PLAN §6.4, craft not research). Springs for `motion`; durations mirror tokens.css.
+ * Motion presets (craft not research). Springs for `motion`; durations mirror tokens.css.
  *
  * Reduced motion comes from the OS (`prefers-reduced-motion`) unless the app overrides it with
  * `data-motion="reduced" | "full"` on <html> (Settings → Appearance → Reduce motion). Under reduced

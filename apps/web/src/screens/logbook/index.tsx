@@ -1,5 +1,5 @@
 /**
- * /logbook: what you can do now, without guilt mechanics (03 §4.11). "What you can now explain"
+ * /logbook: what you can do now, without guilt mechanics. "What you can now explain"
  * (every lit card, by the question it answers), the finished-map badge shelf, "You can now" (line
  * outcomes), "Things I used to think", older field notes if you have any, and quiet activity dots
  * (no streak; gaps are just gaps).

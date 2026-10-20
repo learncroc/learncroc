@@ -2,7 +2,7 @@
 
 One folder per pack (`packs/<id>/`), plus `packs/_pocket/<slug>/` for the article-map gallery.
 Every folder here that has a `pack.yaml` is bundled and installed on first run; there is no list to
-update. Layout and rules: `docs/PLAN.md` §11 and the generated reference in `docs/reference/`.
+update. Layout and rules: the generated reference in `docs/reference/`.
 
 ```
 packs/<id>/

@@ -1,5 +1,5 @@
 /**
- * Interactions, items, answers and grading (CONTRACTS §6).
+ * Interactions, items, answers and grading.
  */
 import { z } from "zod";
 import { KeyPoint, requiredUnknown, VisualState, WidgetRef } from "./common";

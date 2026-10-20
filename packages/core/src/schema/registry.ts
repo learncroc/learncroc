@@ -1,5 +1,5 @@
 /**
- * Registry index.json and install records (CONTRACTS §13).
+ * Registry index.json and install records.
  */
 import { z } from "zod";
 import { PackManifest, PackTheme } from "./manifest";

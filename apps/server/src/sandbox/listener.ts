@@ -1,5 +1,5 @@
 /**
- * The sandbox origin (PLAN D30, §17): a second listener on 127.0.0.1:<port+1> serving only
+ * The sandbox origin: a second listener on 127.0.0.1:<port+1> serving only
  * GET /frame/:token — one-time HTML documents registered in memory by the main server via
  * POST /api/frames (pack html interactives and generated toys, wrapped with the bridge script).
  * No cookie, no API; any other Host, method or path is a 404. Tokens are single-use and expire

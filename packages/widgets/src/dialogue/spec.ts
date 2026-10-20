@@ -1,7 +1,6 @@
 /**
  * dialogue: branching scripted conversation with a character (line, translation toggle, audio).
- * Choices can set state (Lola's speed). Typed-reply nodes accept accent-tolerant answers
- * (CONTRACTS §7.2 #13).
+ * Choices can set state (Lola's speed). Typed-reply nodes accept accent-tolerant answers.
  */
 import { graded } from "../shared/spec-helpers";
 import { AssetPath, GuideGlyph, Normalize, type WidgetSpec, z } from "../shared/zod";

@@ -1,5 +1,5 @@
 /**
- * "Your route" (C21, 03 §4.3.1): the scannable, accessible path through the map. 320 px, collapsible
+ * "Your route": the scannable, accessible path through the map. 320 px, collapsible
  * with `]` (persisted), open by default at ≥ 1280 px. Progress beads (lit count), then the sections in
  * map order: the current section is expanded, earlier open sections fold to one line ("Open"), later
  * ones read "3 cards · Later" and expand on click. Card rows show the state word (and "Beat 2 of 3"

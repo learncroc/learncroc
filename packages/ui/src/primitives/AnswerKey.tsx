@@ -18,7 +18,7 @@ export interface AnswerKeyProps {
 }
 
 /**
- * The signature control (PLAN §6.3): 56 px tall, 12 px radius, a 1.5 px ink border, a 3 px hard bottom
+ * The signature control: 56 px tall, 12 px radius, a 1.5 px ink border, a 3 px hard bottom
  * edge and a number badge. On press it drops 2 px in 80 ms; in `down` it stays pressed.
  */
 export function AnswerKey({

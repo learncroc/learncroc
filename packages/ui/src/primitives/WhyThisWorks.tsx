@@ -7,7 +7,7 @@ export interface WhyThisWorksProps {
   title: string;
   /** One line of explanation. */
   line: string;
-  /** The honesty label (PLAN §8: craft is labelled craft). */
+  /** The honesty label. */
   evidence: "strong" | "moderate" | "weak (theory)" | "experimental" | "craft";
   citation: string;
   href?: string;

@@ -1,5 +1,5 @@
 /**
- * IdbRepo: core's Repo over IndexedDB for the static demo (PLAN D24, D34). One object store per
+ * IdbRepo: core's Repo over IndexedDB for the static demo. One object store per
  * table. IndexedDB transactions can't stay open across the services' other awaits, so `tx()`
  * serialises callers instead (one learner, one tab); each individual write is atomic.
  */

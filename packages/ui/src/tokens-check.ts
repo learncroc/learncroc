@@ -1,5 +1,5 @@
 /**
- * Contrast check for the design tokens (PLAN §6.1): body text ≥ 7:1, meta text ≥ 4.5:1, non-text
+ * Contrast check for the design tokens: body text ≥ 7:1, meta text ≥ 4.5:1, non-text
  * UI ≥ 3:1, in the light and the dark theme. Pure: give it the text of tokens.css.
  * The CLI wrapper is scripts/tokens-check.ts (`bun run tokens:check`).
  */
@@ -41,12 +41,11 @@ export const TOKEN_PAIRS: TokenPair[] = [
   ...SURFACES.map((bg) => ({ fg: "iris", bg, kind: "ui" as const, use: "AI text border, ◆" })),
   ...SURFACES.map((bg) => ({ fg: "ink-3", bg, kind: "ui" as const, use: "Later / Planned glyph, control borders" })),
   { fg: "sea", bg: "surface-sunk", kind: "ui", use: "switch on" },
-  // Moss: the outline, mouth and nostrils on the body; the belly lines; the body against its halo.
-  { fg: "croc-ink", bg: "croc", kind: "meta", use: "Moss outline and mouth on the body" },
-  { fg: "croc-ink", bg: "croc-belly", kind: "meta", use: "Moss lines on the belly" },
-  { fg: "croc-ink", bg: "croc-eye", kind: "body", use: "Moss pupils" },
-  // The halo is --surface on every world ground, so the body only ever meets --surface at its edge.
-  { fg: "croc", bg: "surface", kind: "ui", use: "Moss body against its surface halo" },
+  // The croc: mouth, eyes and nostrils on the body and jaw; the pupils; the shaded edge on the surface.
+  { fg: "croc-ink", bg: "croc", kind: "meta", use: "The croc's mouth, eyes and nostrils on the body" },
+  { fg: "croc-ink", bg: "croc-belly", kind: "meta", use: "The croc's mouth line over the jaw" },
+  { fg: "croc-ink", bg: "croc-eye", kind: "body", use: "The croc's pupils against the glint" },
+  { fg: "croc-shade", bg: "surface", kind: "ui", use: "The croc's shaded edge against the surface" },
   // Checkpoint pips and the gate charge: Sea discs and dashed ink-3 rings on the modal surface.
   { fg: "ink-3", bg: "surface-sunk", kind: "ui", use: "missed pip ring on its sunk disc" },
 ];

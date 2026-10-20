@@ -1,5 +1,5 @@
 /**
- * Every fixed line Moss's surfaces show (03 §9 copy deck, 00 §3.3). Dry, warm, adult; no exclamation
+ * Every fixed line Moss's surfaces show. Dry, warm, adult; no exclamation
  * marks; never "Most people", never a streak, never guilt. Reaction lines live in reactions.ts.
  */
 import { CROC_NAME } from "@learncroc/core";
@@ -29,7 +29,7 @@ export const CROC_COPY = {
   restore: `Show ${CROC_NAME}`,
 } as const;
 
-/** The input placeholder per moment (03 §4.6.3). */
+/** The input placeholder per moment. */
 export function placeholderFor(context: CrocContext, cardTitle?: string): string {
   switch (context) {
     case "map":

@@ -1,5 +1,5 @@
 /**
- * The Continue hero (03 §4.2): the most recently opened map with anything left to do, drawn live
+ * The Continue hero: the most recently opened map with anything left to do, drawn live
  * as a MiniMap, and the way back in: "You left off with:" plus the teaser of the last card you
  * closed (a question, not a progress bar). The primary button opens the next card in map order
  * directly, the checkpoint when the section is complete, or resumes an open run at its beat.
@@ -36,7 +36,7 @@ export function lastClosed(pack: CompiledPack, progress: PackProgress): string |
   return best?.id;
 }
 
-/** What the hero's primary button does (03 §9 home.continue.*). */
+/** What the hero's primary button does. */
 export function continueTarget(
   summary: InstalledPackSummary,
   pack: CompiledPack | undefined,

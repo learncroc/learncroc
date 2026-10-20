@@ -1,5 +1,5 @@
 /**
- * The 64 px left rail (01 §3.2): the Learncroc logo (Moss), Library, Current map, Relight (an ember
+ * The 64 px left rail: the Learncroc logo (Moss), Library, Current map, Relight (an ember
  * dot when anything is fading, never a number), Create, Logbook, Flashcards; then the command
  * palette, the AI status dot and Settings. Tooltips show the label and shortcut on hover (after
  * 400 ms) and on focus.
@@ -94,7 +94,7 @@ export function Rail({ currentMap }: { currentMap: { href: string; title: string
         aria-label="Learncroc, go to the Library"
         className="group relative mb-3 grid size-11 place-items-center rounded-key"
       >
-        <Croc size={38} decorative />
+        <Croc pose="head" still size={44} decorative />
         <Tip label="Learncroc" />
       </Link>
       <ul className="flex flex-col items-center gap-1.5">

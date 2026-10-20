@@ -123,7 +123,7 @@ describe("map and manifest", () => {
     expect(PackManifest.safeParse({ ...m, theme: { ...m.theme, terminusName: "x" } }).success).toBe(false);
   });
 
-  test("BackdropId has the 16 backdrops", () => {
+  test("BackdropId has the 17 backdrops", () => {
     expect(BackdropId.options).toEqual([
       "circuit-board",
       "factory-floor",
@@ -140,6 +140,7 @@ describe("map and manifest", () => {
       "sketchbook",
       "transit-grid",
       "terrain",
+      "pond",
       "none",
     ]);
   });

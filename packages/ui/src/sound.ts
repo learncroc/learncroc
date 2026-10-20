@@ -18,10 +18,10 @@
 
 export type SoundCue = "tok" | "hm" | "commit" | "done" | "gate" | "unlock" | "finish";
 
-/** Every cue, in the order UX §10 lists them. `claim` and `spark` are gone (now `gate` and `done`). */
+/** Every cue. `claim` and `spark` are gone (now `gate` and `done`). */
 export const SOUND_CUES: readonly SoundCue[] = ["commit", "tok", "hm", "done", "unlock", "gate", "finish"];
 
-/** Approximate length of each cue in ms (UX §10), for callers that chain visuals to sound. */
+/** Approximate length of each cue in ms, for callers that chain visuals to sound. */
 export const CUE_MS: Record<SoundCue, number> = {
   commit: 90,
   tok: 120,

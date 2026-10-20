@@ -83,7 +83,7 @@ export function lintGraph(ctx: LintContext): void {
         ctx.rules.choiceOfPath,
         "map.yaml",
         ["nodes"],
-        "give the learner a choice: ≥ 2 roots, or ≥ 2 cards that open after the first root (B3)",
+        "give the learner a choice: ≥ 2 roots, or ≥ 2 cards that open after the first root",
       );
   }
   if (roots.length === 0 && playable.length) emit(ctx, "L007", "error", "map.yaml", ["nodes"], "no playable root card");

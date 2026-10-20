@@ -2,7 +2,7 @@
 /**
  * bun run build:static [--base /learncroc/] [--out dist/static] [--packs packs] [--skip-vite]
  *
- * The keyless static demo (PLAN D24, 01-cpo AC-OFF-2): the whole card loop (card → checkpoint →
+ * The keyless static demo: the whole card loop (card → checkpoint →
  * gate, Moss answering offline) in a browser with no server.
  *
  * 1. Builds apps/web with VITE_LM_STATIC=1, so every route is answered in the page by api/local

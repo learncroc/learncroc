@@ -2,7 +2,7 @@
  * SandboxFrame: mounts a sandbox-origin frame (URL from POST /api/frames) for a pack html
  * interactive or a generated toy, and speaks the bridge protocol with it.
  *
- * Security (PLAN §17): sandbox="allow-scripts" without allow-same-origin (the frame cannot read the
+ * Security: sandbox="allow-scripts" without allow-same-origin (the frame cannot read the
  * parent), allow="" and no referrer. A message is accepted only when event.source is this iframe's
  * window (and, for URL frames, the origin matches); it is then zod-validated and capped. The frame
  * only reports values; grading happens on the host from the last report.

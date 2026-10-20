@@ -1,4 +1,4 @@
-<!-- Paste into AGENTS.md as the "Authoring packs with an agent" section (see docs/contract-requests.md). -->
+<!-- Paste into your pack repo's AGENTS.md as the "Authoring packs with an agent" section. -->
 
 ## Authoring packs with an agent
 

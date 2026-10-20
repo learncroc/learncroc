@@ -57,7 +57,7 @@ export function CheckpointModal(p: CheckpointModalProps) {
   shellRef.current = shell;
   const autoStarted = useRef(false);
 
-  // An attempt already under way resumes at its question (C9): no rule card in between.
+  // An attempt already under way resumes at its question: no rule card in between.
   useEffect(() => {
     if (!autoStarted.current && view?.state === "in-progress") {
       autoStarted.current = true;
@@ -620,7 +620,7 @@ function Questions(p: RunProps & { run: RunState; session: RunSession }) {
 }
 
 /**
- * H: hint level 1 (free), then level 2 behind the C24 warning, then nothing (no worked solution in a
+ * H: hint level 1 (free), then level 2 behind a warning, then nothing (no worked solution in a
  * checkpoint). The level is `run.hints[item]`, shared with Moss: a hint taken in the croc pane counts.
  */
 function HintControl(p: { run: RunState; itemId: string; session: RunSession; packId: string; keysActive: boolean }) {

@@ -1,5 +1,5 @@
 /**
- * In-browser API adapter for the static demo (PLAN D24, D34): core's app services over an
+ * In-browser API adapter for the static demo: core's app services over an
  * IndexedDB Repo and the compiled packs bundled with the site, answering the same RouteKeys as the
  * server, so the whole card loop (card → checkpoint → gate) plays with no server.
  *
@@ -81,7 +81,7 @@ const SETTINGS_KEY = "settings";
 export const LEARNER_REV_KEY = "learner-rev";
 export const LEARNER_REV = 3;
 
-/** Free text with no FAQ match, no AI (§3.3, the demo wording: there is no key to add here). */
+/** Free text with no FAQ match, no AI (the demo wording: there is no key to add here). */
 export const OFFLINE_FREE_TEXT =
   "Without AI I can only use what's written for this card. Try a button above, or ask about the map.";
 

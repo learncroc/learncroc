@@ -739,7 +739,7 @@ function claimArrival(packId: string): boolean {
 }
 
 /**
- * First visit (02 §1.9): the map wipes in left to right, then cards pop in reading order (gates last).
+ * First visit: the map wipes in left to right, then cards pop in reading order (gates last).
  * Reduced motion: one 220 ms fade.
  */
 function playArrival(layer: HTMLElement | null, reduced: boolean): void {

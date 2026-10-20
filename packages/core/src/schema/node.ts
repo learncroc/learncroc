@@ -76,7 +76,7 @@ export const Screen = z.strictObject({
   confidence: z.enum(["sourced", "model"]).optional(),
 });
 
-// ── typed cards (teach-first): when a node has `cards`, they ARE the stop, played in order.
+// ── typed cards: when a node has `cards`, they ARE the stop, played in order.
 
 export const CARD_ID_RE = /^[a-z][a-z0-9-]*$/;
 const cardId = z.string().regex(CARD_ID_RE, "card id: lowercase letters, digits and dashes, starting with a letter");

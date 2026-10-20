@@ -1,5 +1,5 @@
 /**
- * `learncroc build <dir>` (PLAN §15.6, minimal): author-plan (the DAG, with a review step, and a
+ * `learncroc build <dir>` (minimal): author-plan (the DAG, with a review step, and a
  * checkpoint every 2–3 cards) → author-node per card → author-practice → card lint → repair
  * (≤ 2 rounds) → write `status: draft` YAML and pack.lock.yaml provenance. Agents never write
  * `reviews`; humans sign off later.

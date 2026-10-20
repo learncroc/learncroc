@@ -1,5 +1,5 @@
 /**
- * The card modal (C3): 960 px max, centred over the map, one focus trap. The header holds the typed
+ * The card modal: 960 px max, centred over the map, one focus trap. The header holds the typed
  * card's place on the map (eyebrow), the stop title, this stop's progress dots, ⋯ and Back to
  * map. Moss talks in the player's thread; typed questions
  * to Moss go through the croc pane, folded into a footer bar. Esc, Back to map and a scrim click close

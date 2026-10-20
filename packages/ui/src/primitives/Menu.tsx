@@ -70,15 +70,13 @@ export function Menu({ label, trigger, placement = "bottom-end", triggerClassNam
       {open ? (
         <FloatingPortal>
           <FloatingFocusManager context={context} modal={false} initialFocus={0} returnFocus>
-            <div
-              ref={refs.setFloating}
-              style={floatingStyles}
-              className="lm-pop-in z-40 min-w-56 rounded-md border border-line bg-surface p-1.5 text-ink shadow-2"
-              {...getFloatingProps()}
-            >
-              <Ctx.Provider value={{ activeIndex, getItemProps, close: () => setOpen(false) }}>
-                <FloatingList elementsRef={elementsRef}>{children}</FloatingList>
-              </Ctx.Provider>
+            {/* Position on the outer box, animate the inner one: the pop-in's transform would otherwise replace the placement. */}
+            <div ref={refs.setFloating} style={floatingStyles} className="z-40" {...getFloatingProps()}>
+              <div className="lm-pop-in min-w-56 rounded-md border border-line bg-surface p-1.5 text-ink shadow-2">
+                <Ctx.Provider value={{ activeIndex, getItemProps, close: () => setOpen(false) }}>
+                  <FloatingList elementsRef={elementsRef}>{children}</FloatingList>
+                </Ctx.Provider>
+              </div>
             </div>
           </FloatingFocusManager>
         </FloatingPortal>

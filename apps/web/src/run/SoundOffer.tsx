@@ -1,5 +1,5 @@
 /**
- * The one-time sound offer (C13: after the first gate opens). Sound stays off by default; this asks once,
+ * The one-time sound offer (after the first gate opens). Sound stays off by default; this asks once,
  * inline, and remembers the answer in `settings.sound.offered`. Renders nothing once offered.
  */
 import { Button } from "@learncroc/ui";

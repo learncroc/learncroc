@@ -1,6 +1,6 @@
 /**
  * `learncroc registry build` / `bun run registry:build`: compile every pack source folder into an
- * .lmpack, write a TryBundle per version, and write index.json (CONTRACTS §13) with poster sketches.
+ * .lmpack, write a TryBundle per version, and write index.json with poster sketches.
  * The same output is the local `builtin` registry (registry/) and the published official registry.
  *
  * URLs in index.json are relative ("dist/<id>-<version>.lmpack") so the folder works from disk, from

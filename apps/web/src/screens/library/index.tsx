@@ -1,5 +1,5 @@
 /**
- * /library: Home (03 §4.1, §4.2, C16).
+ * /library: Home.
  *
  * First run (nothing opened, nothing closed, no article map of your own): "Learn anything by its
  * map.", the paste bar, the flagship's first hook as a live question, three subject posters (each
@@ -35,7 +35,7 @@ import { Poster } from "./ShelfPoster";
 
 export { homeTarget } from "../../app/HomeRedirect";
 
-/** The three subjects on the first-run library (01 §3.1), in order. */
+/** The three subjects on the first-run library, in order. */
 export const FEATURED_SUBJECTS = ["how-llms-work", "spanish-tapas-bar", "special-relativity"] as const;
 
 const PROFILE_RANK: Record<InstalledPackSummary["profile"], number> = {

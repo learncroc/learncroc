@@ -16,7 +16,7 @@ if (!llm) throw new Error("gallery pack missing");
 
 const stopButtons = (c: HTMLElement) => [...c.querySelectorAll<HTMLButtonElement>("button[data-stop]")];
 
-// rev3 speed mode: asserts revision-2 behaviour (sparked, termini, hop fog, stops); rewrite for gates/sections in wave 2.
+// Asserts revision-2 behaviour (sparked, termini, hop fog, stops); to be rewritten for gates and sections.
 describe.skip("MapView", () => {
   test("renders the fixture map with one accessible button per stop", () => {
     const { container } = render(

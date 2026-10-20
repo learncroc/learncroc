@@ -1,5 +1,5 @@
 /**
- * hotspot: tap parts of an SVG, or drag labels onto hotspots (CONTRACTS §7.2 #7).
+ * hotspot: tap parts of an SVG, or drag labels onto hotspots.
  */
 import type { GradeResult } from "@learncroc/core";
 import { setMatch } from "../shared/math";

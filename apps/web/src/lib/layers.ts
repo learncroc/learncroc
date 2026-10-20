@@ -1,5 +1,5 @@
 /**
- * The layer stack (03 §3.1): one at a time, top wins.
+ * The layer stack: one at a time, top wins.
  *
  *   5 toast · 4 modal (card, checkpoint, finished, share, confirm) · 3 croc panel · 2 peek · 1 map · 0 rail
  *

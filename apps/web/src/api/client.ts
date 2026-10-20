@@ -1,5 +1,5 @@
 /**
- * Typed client for every route in CONTRACTS §11 (one function per route).
+ * Typed client for every API route (one function per route).
  *
  * JSON routes resolve to the response type from ApiRoutes; errors throw ApiClientError carrying the
  * ApiError code and AI fallback hint. SSE routes return an async iterator of validated events; text

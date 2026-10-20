@@ -27,6 +27,7 @@ export const ROUTE_STYLE: Record<RendererId, RouteStyle> = {
   circuit: "manhattan",
   atlas: "smooth",
   sketchbook: "sketch",
+  trail: "smooth",
 };
 
 export interface SceneNode {

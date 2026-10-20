@@ -1,5 +1,5 @@
 /**
- * Generated HTML toys (PLAN §15.5 step 4). Static checks run on the server without executing
+ * Generated HTML toys. Static checks run on the server without executing
  * anything (the same pre-scan as lint L020); the behaviour check (posts `ready` within 2 s, the
  * bridge's self-test sees the DOM react) runs in a hidden sandbox frame in the learner's browser,
  * on the sandbox origin, and reports back. A toy that fails either is dropped.

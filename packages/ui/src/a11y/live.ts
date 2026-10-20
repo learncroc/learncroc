@@ -1,5 +1,5 @@
 /**
- * One shared, rate-limited polite live region for the whole app (02-game-ux §7.3). Moss's bubbles, the
+ * One shared, rate-limited polite live region for the whole app. Moss's bubbles, the
  * map's change descriptions (`describeChanges`) and moment summaries all speak through `announce()`, so a
  * screen reader never hears two announcements for one event (a gate opening used to say it twice).
  *

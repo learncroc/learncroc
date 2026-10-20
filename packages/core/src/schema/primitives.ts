@@ -1,5 +1,5 @@
 /**
- * Primitives (CONTRACTS §1) and the shared enums used across schemas.
+ * Primitives and the shared enums used across schemas.
  *
  * Ids and semvers are checked against these regexes BEFORE any filesystem use
  * (route params, query strings, archive entries).
@@ -84,7 +84,14 @@ export const ModelTier = z.enum(["fast", "smart", "deep"]);
 export const Effort = z.enum(["low", "medium", "high"]);
 export const AiFeature = z.enum(["ask", "hint", "grade", "quiz", "cards", "teach", "create", "build", "test"]);
 
-export const RendererId = z.enum(["metro", "circuit", "atlas", "sketchbook"]);
+export const RendererId = z.enum(["metro", "circuit", "atlas", "sketchbook", "trail"]);
+/**
+ * Map designs: named presets of a whole theme (renderer, ground, texture, backdrop, palette, token) that
+ * any map can wear. The presets themselves live in `designs.ts`.
+ */
+export const MapDesignId = z.enum(["pond", "paper", "metro", "circuit", "atlas"]);
+/** A learner's design pick for one map: a design, or the map's own theme ("original"). */
+export const MapDesignChoice = z.union([MapDesignId, z.literal("original")]);
 export const TextureId = z.enum([
   "none",
   // metro
@@ -104,6 +111,8 @@ export const TextureId = z.enum([
   "paper",
   "corkboard",
   "watercolour",
+  // trail
+  "meadow",
 ]);
 export const TokenGlyph = z.enum([
   "train",
@@ -154,6 +163,7 @@ export const BackdropId = z.enum([
   "sketchbook",
   "transit-grid",
   "terrain",
+  "pond",
   "none",
 ]);
 export const PackCategory = z.enum(["languages", "science", "tech-ai", "thinking", "arts", "practical"]);
@@ -180,6 +190,8 @@ export type ModelTier = z.infer<typeof ModelTier>;
 export type Effort = z.infer<typeof Effort>;
 export type AiFeature = z.infer<typeof AiFeature>;
 export type RendererId = z.infer<typeof RendererId>;
+export type MapDesignId = z.infer<typeof MapDesignId>;
+export type MapDesignChoice = z.infer<typeof MapDesignChoice>;
 export type TextureId = z.infer<typeof TextureId>;
 export type TokenGlyph = z.infer<typeof TokenGlyph>;
 export type LandmarkGlyph = z.infer<typeof LandmarkGlyph>;

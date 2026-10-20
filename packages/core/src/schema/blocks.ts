@@ -1,5 +1,5 @@
 /**
- * Blocks, visuals and the sandbox bridge (CONTRACTS §5).
+ * Blocks, visuals and the sandbox bridge.
  */
 import { z } from "zod";
 import { Provenance, WidgetRef } from "./common";

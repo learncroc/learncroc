@@ -87,7 +87,7 @@ function stopFrom(node: PlanNode, order: number): SurveyStop {
 
 type CheckEvent = Extract<JobEvent, { type: "check" }>;
 
-/** The note a quality check leaves on its card row (03 §4.8.2), or null when nothing changed. */
+/** The note a quality check leaves on its card row, or null when nothing changed. */
 export function checkNote(check: CheckEvent["check"], action: CheckEvent["action"]): string | null {
   if (action === "kept") return null;
   if (action === "split") return "Split into two cards";
@@ -250,7 +250,7 @@ const merge = (a: "idle" | "active" | "done", b: "idle" | "active" | "done") =>
         ? "active"
         : "idle";
 
-/** The checklist on the right (03 §4.8.2): Read, Plan, Write the cards, Pictures, Checkpoint questions, Save. */
+/** The checklist on the right: Read, Plan, Write the cards, Pictures, Checkpoint questions, Save. */
 export function stageLines(s: SurveyState): StageLine[] {
   const figs = s.stops.reduce((n, x) => n + x.figures.filter((f) => f.ok).length, 0);
   const cards = s.stops.length;

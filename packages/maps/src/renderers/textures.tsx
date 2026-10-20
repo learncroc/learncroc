@@ -1,5 +1,5 @@
 /**
- * Ground textures (PLAN §9.2–9.3). Decorative, aria-hidden, seeded per pack so they never shift between
+ * Ground textures. Decorative, aria-hidden, seeded per pack so they never shift between
  * renders. Repeating detail uses <pattern>s to keep the DOM small; one-off features (contours,
  * continents, veins) are generated once per pack and memoised.
  */
@@ -109,6 +109,8 @@ const TextureArt = memo(function TextureArt(p: TextureProps) {
       return <Corkboard {...p} />;
     case "watercolour":
       return <Watercolour {...p} />;
+    case "meadow":
+      return <Meadow {...p} />;
   }
 });
 
@@ -688,5 +690,20 @@ function Watercolour(p: TextureProps) {
         {grain(id, p.ink, 0.1)}
       </Fill>
     </>
+  );
+}
+
+// ── trail
+
+/** Meadow: a garden planner's dot grid on grass. */
+function Meadow(p: TextureProps) {
+  const id = `${p.uid}-tx`;
+  const dot = mix(p.ground, p.lines[3] ?? p.ink, 0.6);
+  return (
+    <Fill p={p} id={id}>
+      <pattern id={id} width={22} height={22} patternUnits="userSpaceOnUse">
+        <circle cx={11} cy={11} r={1.5} fill={dot} fillOpacity={0.6} />
+      </pattern>
+    </Fill>
   );
 }

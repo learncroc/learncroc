@@ -22,15 +22,14 @@ mkdir -p .claude && ln -s ../skills .claude/skills
 ```
 
 For a pack repo made from the template, copy the folders into that repo's `.claude/skills/` (or your
-user-level `~/.claude/skills/`). Other agents can read the `SKILL.md` files as plain instructions;
-`AGENTS.md` points at them.
+user-level `~/.claude/skills/`). Other agents can read the `SKILL.md` files as plain instructions.
 
 ## Commands the skills rely on (no key needed)
 
 | Command | Does |
 |---|---|
 | `learncroc new <id> --title "…"` | Scaffold a pack that already passes lint |
-| `learncroc lint <dir> [--json] [--fix] [--profile community]` | Every rule (PLAN §11.3); `--json` for agents |
+| `learncroc lint <dir> [--json] [--fix] [--profile community]` | Every rule; `--json` for agents |
 | `bun run validate:pack <dir>` | Schema check only (fast) |
 | `learncroc play <dir>` | Open the pack in the app with live reload |
 | `learncroc build --prompt <id>` | Print a versioned prompt (`author-plan`, `author-node`, `author-practice`, `create-skeleton`, `create-node`, `create-figure`, `create-toy`, …) with the shared house style |

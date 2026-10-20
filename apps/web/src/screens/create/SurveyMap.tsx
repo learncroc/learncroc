@@ -1,5 +1,5 @@
 /**
- * The article map assembling on paper (03 §4.8.2): cards appear as dotted pencil outlines as the
+ * The article map assembling on paper: cards appear as dotted pencil outlines as the
  * planner finds them ("Writing…"), edges draw in as order is decided, cards ink in as they pass their
  * checks, figures sketch in beside them, and each checkpoint is a taped barrier across the path.
  * Hand-drawn (seeded wobble), on the sketchbook's fixed cream paper whatever the app theme. Reduced

@@ -1,7 +1,7 @@
 /**
  * ListView (L): the map as an accessible treegrid, one group per section ("Section 1 · Text in"), one
- * row per card and a row for the section's checkpoint, with columns for state, needs and time (03 §3.4,
- * §6). The screen-reader primary view, and handy for planners. Maps without checkpoints group by line.
+ * row per card and a row for the section's checkpoint, with columns for state, needs and time. The
+ * screen-reader primary view, and handy for planners. Maps without checkpoints group by line.
  *
  * Keyboard (treegrid pattern, row focus): ↑/↓ move between visible rows, → expands a section or moves
  * to its first card, ← collapses a section or returns to it, Home/End jump, Enter opens.

@@ -9,6 +9,7 @@ export * from "./checkpoint";
 export * from "./compile/index";
 export * from "./croc";
 export * from "./dag";
+export * from "./designs";
 export * from "./expr";
 export * from "./fsrs";
 export * from "./grade";

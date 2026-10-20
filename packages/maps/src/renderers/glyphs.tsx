@@ -1,8 +1,8 @@
 /**
  * The learner's token (11 kinds) and landmark glyphs (17 kinds), drawn as small flat SVG at the origin.
- * 2 px round strokes, flat fills, light from the top left (PLAN §6.5). Never Lumen: gold is for mastery.
+ * 2 px round strokes, flat fills, light from the top left. Never Lumen: gold is for mastery.
  */
-import type { LandmarkGlyph, TokenGlyph } from "@learncroc/core";
+import type { LandmarkGlyph, RendererId, TokenGlyph } from "@learncroc/core";
 
 interface GlyphProps {
   /** Main ink. */
@@ -258,9 +258,10 @@ export function LandmarkArt({ kind, ink, accent, ground }: GlyphProps & { kind: 
 }
 
 /** Default landmark per renderer when the final gate names none. */
-export const DEFAULT_LANDMARK: Record<"metro" | "circuit" | "atlas" | "sketchbook", LandmarkGlyph> = {
+export const DEFAULT_LANDMARK: Record<RendererId, LandmarkGlyph> = {
   metro: "station",
   circuit: "core",
   atlas: "town",
   sketchbook: "star",
+  trail: "tent",
 };

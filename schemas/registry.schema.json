@@ -391,7 +391,8 @@
         "metro",
         "circuit",
         "atlas",
-        "sketchbook"
+        "sketchbook",
+        "trail"
       ]
     },
     "Hex": {
@@ -415,7 +416,8 @@
         "night-fair",
         "paper",
         "corkboard",
-        "watercolour"
+        "watercolour",
+        "meadow"
       ]
     },
     "TokenGlyph": {

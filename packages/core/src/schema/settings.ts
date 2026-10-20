@@ -1,8 +1,8 @@
 /**
- * Settings and provider config (CONTRACTS §10).
+ * Settings and provider config.
  */
 import { z } from "zod";
-import { AiFeature, Millis, ModelTier, ProviderId } from "./primitives";
+import { AiFeature, MapDesignChoice, Millis, ModelTier, PackId, ProviderId } from "./primitives";
 
 export const ProviderPreset = z.object({
   id: ProviderId.exclude(["none"]),
@@ -58,6 +58,8 @@ const SettingsAppearance = z.object({
   reducedMotion: z.enum(["system", "on", "off"]),
   contrast: z.enum(["normal", "more"]),
   mapLabels: z.enum(["always", "zoom"]),
+  /** Per-map design picks (the map page's Design menu). Absent: the map's own theme. */
+  mapDesigns: z.record(PackId, MapDesignChoice).optional(),
 });
 
 /** Default enabled false, volume 0.6, offered false (the one-time offer after the first gate opens). */
@@ -96,7 +98,7 @@ export const SettingsPatch = z.object({
 
 export const DEFAULT_REGISTRIES = ["builtin", "https://learncroc.github.io/registry/index.json"];
 
-/** Defaults from CONTRACTS §10. */
+/** Settings defaults. */
 export const DEFAULT_SETTINGS: z.infer<typeof Settings> = {
   ai: {
     provider: "none",

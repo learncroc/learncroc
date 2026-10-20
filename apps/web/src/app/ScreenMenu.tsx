@@ -1,5 +1,5 @@
 /**
- * The `⋯` menu every learning screen carries (PLAN §7), with "Report this screen": a prefilled
+ * The `⋯` menu every learning screen carries, with "Report this screen": a prefilled
  * GitHub issue naming the map, version, card, beat and app version. No learner data is sent.
  */
 import { LEARNCROC_VERSION } from "@learncroc/core";

@@ -46,7 +46,7 @@ export function useSoundPrefs(): SoundPrefs {
 }
 
 const SESSION_KEY = "lm.sessionStartedAt";
-/** About 25 minutes of play in one sitting (PLAN §8.20). */
+/** About 25 minutes of play in one sitting. */
 export const NATURAL_ENDING_MS = 25 * 60_000;
 
 /**

@@ -5,7 +5,7 @@
  * Generates JSON Schemas (schemas/*.schema.json, published under CC0 at
  * https://learncroc.github.io/schema/v1/) and reference docs (docs/reference/*.md) from the zod schemas.
  *
- * - Doc comments on schema fields (the CONTRACTS notes) become JSON Schema `description`s, so editors
+ * - Doc comments on schema fields (the contract notes) become JSON Schema `description`s, so editors
  *   show them on hover in pack YAML files.
  * - Widget references get one branch per built-in widget, so `props` and `goal` autocomplete too.
  *

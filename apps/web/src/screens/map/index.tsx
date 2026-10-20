@@ -1,20 +1,20 @@
 /**
  * /p/:pack — the map, home of a pack. The themed map fills the screen with the Route panel on the
- * right; cards and checkpoints open as modals over it from the URL (C8):
+ * right; cards and checkpoints open as modals over it from the URL:
  *
  * - `?card=` opens the card modal (pushed on open; Next replaces it; Back / Esc / scrim go back when
  *   pushed, else replace to the bare map). `?checkpoint=` opens the checkpoint. `?from`, `?guess` and
  *   `?again` pass through to the card. `?finished=1` opens the finished map. A checkpoint id in `?card`
  *   is rewritten to `?checkpoint` (and back). The legacy `?stop=` arrives as `?card` and opens the card
  *   when it can be played, else its peek.
- * - Later, Planned and Writing… cards and Locked or Open gates open a peek anchored to the glyph (C5).
+ * - Later, Planned and Writing… cards and Locked or Open gates open a peek anchored to the glyph.
  * - Moments (cardDone, gateOpen, revisit, the final dawn) come from run summaries, queue, never overlap,
  *   and any key skips them. After the first gate ever opens, the one-time sound offer shows.
  *
  * Keys: ⏎ (nothing focused) or N the suggested card, arrows follow the lines, L list, S share,
  * ] Route panel, ⌘J Moss, M whole map, F fit, +/− zoom, Esc closes the top layer only.
  */
-import type { CompiledPack, NodeId, NodeView, PackProgress, RunSummary } from "@learncroc/core";
+import type { CompiledPack, NodeId, NodeView, PackProgress, PackTheme, RunSummary } from "@learncroc/core";
 import { ListView, MapBadge, MapView, type MapViewProps, tokenPath, viewFor } from "@learncroc/maps";
 import { Button, buttonClass, MenuItem, Modal, StopGlyph } from "@learncroc/ui";
 import {
@@ -33,6 +33,7 @@ import { api } from "../../api/client";
 import { ApiClientError } from "../../api/errors";
 import { errorText } from "../../app/errors";
 import { useScreenKeys } from "../../app/keys";
+import { useDesignedPack } from "../../app/mapDesign";
 import { qk, useSettings } from "../../app/queries";
 import { ScreenMenu } from "../../app/ScreenMenu";
 import { useScreenShortcuts } from "../../app/store";
@@ -43,6 +44,7 @@ import { CardModal, CheckpointModal } from "../../run/index";
 import { useReducedMotion } from "../../run/prefs";
 import { useRunSounds } from "../../run/sound";
 import { CrocCorner } from "../../slots";
+import { DesignMenu } from "./DesignMenu";
 import { FinishedModal } from "./FinishedModal";
 import {
   buildingLine,
@@ -88,6 +90,7 @@ export function PackMapScreen() {
     packQ.data && (packQ.data.provisional || Object.values(packQ.data.map.nodes).some((n) => n.status === "building")),
   );
   useLiveBuild(packId, building);
+  const designed = useDesignedPack(packQ.data);
 
   useEffect(() => {
     if (packId) api.markPackOpened({ id: packId }).catch(() => {});
@@ -114,7 +117,7 @@ export function PackMapScreen() {
       </main>
     );
   }
-  if (!packQ.data) {
+  if (!packQ.data || !designed) {
     return (
       <main aria-busy="true" className="p-10">
         <h1 className="t-title">Map</h1>
@@ -124,7 +127,8 @@ export function PackMapScreen() {
   return (
     <PackMap
       key={packId}
-      pack={packQ.data}
+      pack={designed}
+      ownTheme={packQ.data.manifest.theme}
       views={progressQ.data?.views ?? EMPTY_VIEWS}
       progress={progressQ.data}
       search={search}
@@ -132,7 +136,7 @@ export function PackMapScreen() {
   );
 }
 
-/** Where the open card should sit: the map window left of the centred modal (UX §1.7). */
+/** Where the open card should sit: the map window left of the centred modal. */
 function gutterRect(host: HTMLElement | null): NonNullable<MapViewProps["frame"]>["rect"] | undefined {
   if (!host) return undefined;
   const r = host.getBoundingClientRect();
@@ -151,11 +155,15 @@ function readRouteOpen(): boolean {
 
 function PackMap({
   pack,
+  ownTheme,
   views,
   progress,
   search,
 }: {
+  /** The pack in the learner's chosen design. */
   pack: Pack;
+  /** The map's own theme, before the design pick (for the Design menu). */
+  ownTheme: PackTheme;
   views: Record<NodeId, NodeView>;
   progress: PackProgress | undefined;
   search: MapSearch;
@@ -520,6 +528,7 @@ function PackMap({
           <Button variant="secondary" onClick={() => setShare(true)} icon={<ShareNetwork size={16} />} kbd="S">
             Share
           </Button>
+          <DesignMenu packId={packId} theme={ownTheme} />
           <Button
             variant="ghost"
             onClick={() => setList((v) => !v)}

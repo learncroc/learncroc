@@ -1,4 +1,4 @@
-# Pre-flight checklist (from PRINCIPLES.md)
+# Pre-flight checklist (the learning principles)
 
 Run through this before writing a stop, and again before calling it done.
 

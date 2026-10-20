@@ -1,5 +1,5 @@
 /**
- * The four v0.1 renderers. Each draws decorative SVG only (CONTRACTS §9.3); interaction lives in
+ * The map renderers. Each draws decorative SVG only; interaction lives in
  * StopLayer. MapView falls back to metro when a renderer throws or the graph has more than 60 nodes.
  */
 import type { CompiledMap, RendererId } from "@learncroc/core";
@@ -8,12 +8,14 @@ import { AtlasRenderer } from "./atlas";
 import { CircuitRenderer } from "./circuit";
 import { MetroRenderer } from "./metro";
 import { SketchbookRenderer } from "./sketchbook";
+import { TrailRenderer } from "./trail";
 
 export const RENDERERS: Record<RendererId, RendererComponent> = {
   metro: MetroRenderer,
   circuit: CircuitRenderer,
   atlas: AtlasRenderer,
   sketchbook: SketchbookRenderer,
+  trail: TrailRenderer,
 };
 
 /** Above this many nodes every map uses the metro renderer. */

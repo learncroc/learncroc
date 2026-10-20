@@ -1,5 +1,5 @@
 /**
- * The one-time sound offer (C13): after the first gate ever opens, a small card asks whether to turn
+ * The one-time sound offer: after the first gate ever opens, a small card asks whether to turn
  * sound on. Either answer sets `settings.sound.offered`, so it never asks again.
  */
 import { Button, Croc } from "@learncroc/ui";

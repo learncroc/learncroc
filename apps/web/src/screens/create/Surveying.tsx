@@ -1,5 +1,5 @@
 /**
- * /create/pocket/:job: building an article map (03 §4.8.2, PD14). The map draws itself on paper as
+ * /create/pocket/:job: building an article map. The map draws itself on paper as
  * the plan arrives; the panel on the right lists the real steps (Read, Plan, Write the cards,
  * Pictures, Checkpoint questions, Save) with a row per card: its word count once written and a note
  * whenever a check acted. As soon as card 1 is ready the bar says so, and "Start card 1 ⏎" opens it
@@ -26,7 +26,7 @@ interface Failure {
   action?: { label: string; to: "paste" | "settings" | "intake" };
 }
 
-/** Failure copy (03 §4.8.2), by the job's error code. */
+/** Failure copy, by the job's error code. */
 export function failureCopy(code: string, message: string): Failure {
   switch (code) {
     case "too_short":

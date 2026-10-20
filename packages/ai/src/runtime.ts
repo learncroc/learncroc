@@ -63,7 +63,7 @@ export interface AiRuntimeOptions {
   /** Optional full lint for create (core lint once available). */
   lint?: (pack: CompiledPack, nodeId: string) => { errors: number; warnings: number };
   log?: (msg: string) => void;
-  /** AI calls per minute for learner-initiated features (default 30, PLAN §15.1). */
+  /** AI calls per minute for learner-initiated features (default 30). */
   ratePerMinute?: number;
 }
 
@@ -175,7 +175,7 @@ export class AiRuntime implements AiPorts {
     provider: AIProvider,
     s: Settings,
     onUsage?: (f: AiFeature, u: Usage, usd: number) => void,
-    /** False for a pocket-map job: the job was admitted once, its own calls don't count (PLAN §15.1). */
+    /** False for a pocket-map job: the job was admitted once, its own calls don't count. */
     rateLimit = true,
   ): AiClient {
     return new AiClient({

@@ -1,5 +1,5 @@
 /**
- * Settings and the AI key (PLAN D20, §15.1): ~/.learncroc/config.json, written atomically with mode
+ * Settings and the AI key: ~/.learncroc/config.json, written atomically with mode
  * 0600. Environment variables (ANTHROPIC_API_KEY, OPENAI_API_KEY, LEARNCROC_AI_BASE_URL) win over
  * the file. The key itself never leaves this module except through `aiKey()` (server-side only);
  * GET /settings carries `keySource` and a masked key.
@@ -157,7 +157,7 @@ export class SettingsStore {
     if (!parsed.success) throw new SettingsError(parsed.error.issues[0]?.message ?? "invalid settings");
     const { keySource: _s, keyMasked: _m, ...ai } = parsed.data.ai;
     let key = cur.key;
-    // Changing the base URL clears the stored key (PLAN §15.1).
+    // Changing the base URL clears the stored key.
     if (patch.ai?.baseUrl !== undefined && patch.ai.baseUrl !== cur.settings.ai.baseUrl) key = undefined;
     this.save({ settings: { ...parsed.data, ai }, ...(key ? { key } : {}) });
     return this.get();

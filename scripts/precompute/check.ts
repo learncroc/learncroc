@@ -122,7 +122,7 @@ function ancestors(map: { nodes: Record<string, { requires: string[] }> }, id: s
   return seen;
 }
 
-/** Illustration contract (PLAN §6.5) for authored SVGs. */
+/** Illustration contract for authored SVGs. */
 export function checkSvg(svg: string): string[] {
   const out: string[] = [];
   if (!/viewBox="0 0 (800 500|320 200)"/.test(svg)) out.push('viewBox must be "0 0 800 500" or "0 0 320 200"');

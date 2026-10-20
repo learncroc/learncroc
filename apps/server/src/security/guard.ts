@@ -1,5 +1,5 @@
 /**
- * Request guard for /api (PLAN §17, D27; CONTRACTS §11):
+ * Request guard for /api:
  *
  * - Host must be 127.0.0.1:<port> or localhost:<port> (plus the Vite hosts on 5173 under --dev).
  *   This is the DNS-rebinding guard.

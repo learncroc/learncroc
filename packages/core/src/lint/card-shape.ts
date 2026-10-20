@@ -51,7 +51,7 @@ export const CARD_CAPS = {
 } as const;
 
 /**
- * The map's first card on article maps (teach-first, phase 1): the article's opening and the questions
+ * The map's first card on article maps: the article's opening and the questions
  * the map answers. It teaches nothing new and grades nothing, so it has its own small shape check.
  */
 export const INTRO_NODE_ID = "intro";

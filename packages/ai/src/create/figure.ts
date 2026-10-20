@@ -1,5 +1,5 @@
 /**
- * Generated SVG figures (PLAN §6.5, §15.5 step 3). A figure is kept only if it follows the
+ * Generated SVG figures. A figure is kept only if it follows the
  * illustration contract AND DOMPurify (SVG profile) would leave it unchanged; otherwise it is
  * dropped and the screen keeps its widget visual. Scripts and event handlers never survive.
  */

@@ -14,7 +14,7 @@
  */
 import type { NodeId, RendererId } from "@learncroc/core";
 import { cn, stateLabel } from "@learncroc/ui";
-import { type KeyboardEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { type KeyboardEvent, type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { describeStop, gateHint, listJoin } from "../lib/a11y";
 import {
   finalGate,
@@ -287,21 +287,23 @@ export function StopLayer(props: StopLayerProps) {
                 onMouseEnter={() => hoverIn(id)}
                 onMouseLeave={() => hoverOut(id)}
               >
-                {label.lines.map((l, i) =>
-                  label.gate && i > 0 ? (
-                    <span
-                      key={l}
-                      className="block whitespace-nowrap text-w-ink-2"
-                      style={{ fontSize: GATE_SUB_FONT, fontWeight: 500 }}
-                    >
-                      {l}
-                    </span>
-                  ) : (
-                    <span key={l} className="block whitespace-nowrap">
-                      {l}
-                    </span>
-                  ),
-                )}
+                <LabelFace pill={renderer === "trail"}>
+                  {label.lines.map((l, i) =>
+                    label.gate && i > 0 ? (
+                      <span
+                        key={l}
+                        className="block whitespace-nowrap text-w-ink-2"
+                        style={{ fontSize: GATE_SUB_FONT, fontWeight: 500 }}
+                      >
+                        {l}
+                      </span>
+                    ) : (
+                      <span key={l} className="block whitespace-nowrap">
+                        {l}
+                      </span>
+                    ),
+                  )}
+                </LabelFace>
               </span>
             ) : null}
             {showPeek ? (
@@ -362,4 +364,17 @@ export function StopLayer(props: StopLayerProps) {
     const missing = view.missing.length ? view.missing : (g.prereqs.get(id) ?? []);
     return line(`Opens after ${listJoin(missing.map(title))}`);
   }
+}
+
+/** A stop name's face: bare text on the ground, or a white pill (trail maps). */
+function LabelFace({ pill, children }: { pill: boolean; children: ReactNode }) {
+  if (!pill) return <>{children}</>;
+  return (
+    <span
+      className="inline-block rounded-pill px-2 py-0.5 shadow-1 [text-shadow:none]"
+      style={{ background: "color-mix(in srgb, var(--w-ground) 12%, #ffffff)" }}
+    >
+      {children}
+    </span>
+  );
 }

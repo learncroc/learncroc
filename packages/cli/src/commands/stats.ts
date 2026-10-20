@@ -1,5 +1,5 @@
 /**
- * learncroc stats [--pack <id>] [--json] — your local numbers (CPO §6): next-day explain, first-try
+ * learncroc stats [--pack <id>] [--json] — your local numbers: next-day explain, first-try
  * checkpoint passes, maps finished, coming back, link to first card, plus the supporting numbers, then
  * the checkpoint questions missed most often, per pack. Computed on this machine from your own data;
  * nothing leaves it. Reads GET /numbers through the running server or in-process.

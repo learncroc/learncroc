@@ -90,6 +90,13 @@ const SHEET_LOOK: Record<
     mode: "light",
     lines: ["#2B5FA8", "#7B45AE", "#38782F", "#A23A7E", "#555066"],
   },
+  trail: {
+    texture: "meadow",
+    token: "lantern",
+    ground: "#E4F1D6",
+    mode: "light",
+    lines: ["#5B3FC4", "#2F6DA8", "#A2457A", "#3B7A2E", "#7E5A1E"],
+  },
 };
 
 /** A two-line map with one card per state and one gate per gate state (the last is the final gate). */

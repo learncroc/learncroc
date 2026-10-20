@@ -1,5 +1,5 @@
 /**
- * Run keyboard shortcuts. Single keys never fire inside text fields (PLAN §7); modal layers register
+ * Run keyboard shortcuts. Single keys never fire inside text fields; modal layers register
  * with a higher priority so only the top layer reacts.
  */
 import { useEffect, useRef } from "react";

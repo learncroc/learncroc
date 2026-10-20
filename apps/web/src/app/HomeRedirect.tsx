@@ -1,5 +1,5 @@
 /**
- * "/" (C17): the map opened in the last 14 days, else /library. There is no /welcome: first run is the
+ * "/": the map opened in the last 14 days, else /library. There is no /welcome: first run is the
  * library's first-run variant. `firstRun.completed` turns true at the learner's first card close.
  */
 import type { InstalledPackSummary } from "@learncroc/core";

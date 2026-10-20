@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 /**
- * bun run eval:local — the small fixed suite from PLAN §15.1 against one provider:
+ * bun run eval:local — a small fixed suite against one provider:
  *   1. a pocket map on 2 articles (completes? stops ready, time to the first playable stop, figures)
  *   2. explain grading on 20 labelled answers (agreement with the human label)
  *   3. hint leaks on 20 cases (hints that survive the guard, and how often the guard had to step in)

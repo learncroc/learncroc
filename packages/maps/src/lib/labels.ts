@@ -18,6 +18,7 @@ const CARD_GLYPH: Record<RendererId, { w: number; h: number }> = {
   circuit: { w: 40, h: 30 },
   atlas: { w: 30, h: 36 },
   sketchbook: { w: 32, h: 32 },
+  trail: { w: 28, h: 28 },
 };
 
 /**

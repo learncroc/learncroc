@@ -1,5 +1,5 @@
 /**
- * The calm "server isn't answering / hit a problem" panel (03 §5), shared by the data screens.
+ * The calm "server isn't answering / hit a problem" panel, shared by the data screens.
  * Never an error page: what happened, the one command that fixes it, and Try again.
  */
 import { Button } from "@learncroc/ui";

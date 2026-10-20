@@ -1,5 +1,5 @@
 /**
- * The map's moment queue (04 §4.2 MapMoments), fed by run summaries (`onSummary`, `onOpenGate`), not
+ * The map's moment queue, fed by run summaries (`onSummary`, `onOpenGate`), not
  * by sessionStorage diffs. One moment plays at a time and moments never overlap. They wait for the
  * modal to close, except a `cardDone` marked `behind` (the learner pressed Next: it plays behind the
  * scrim while the next card opens). Any key or click skips the playing moment to its end state.

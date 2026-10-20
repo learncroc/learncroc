@@ -1,5 +1,5 @@
 /**
- * Bounded tutor context (PLAN §15.2 R3): the current screen, the stop's objectives, key points and
+ * Bounded tutor context: the current screen, the stop's objectives, key points and
  * misconceptions, the learner's last answers on this stop, and prerequisite states. Answer keys of
  * unanswered interactions are withheld; the model never sees them, so it can't leak them.
  */

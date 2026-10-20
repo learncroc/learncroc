@@ -33,7 +33,7 @@ const RAYS = Array.from({ length: 8 }, (_, i) => {
 }).join("");
 const TICK = "M8.5 12.2l2.4 2.4 4.6-5";
 
-/** Custom stop-state glyphs (PLAN §6.5). Colour is never the only signal: every state has its own shape. */
+/** Custom stop-state glyphs. Colour is never the only signal: every state has its own shape. */
 export function StopGlyph({
   state,
   kind = "node",
@@ -150,7 +150,7 @@ function leaf(hx: number, dir: 1 | -1, deg: number, len = 6.4): string {
 /**
  * Gate (checkpoint): a frame of two posts and two leaves on hinges. Locked = closed (ink-3), Ready = ajar
  * 12° in Sea with a key notch (and the breathing halo), In progress = Ready plus a quarter arc, Open =
- * swung 80° with short Lumen rays from the opening. No padlock anywhere (C4).
+ * swung 80° with short Lumen rays from the opening. No padlock anywhere.
  */
 function GateShape({ state, breathe, final }: { state: NodeState; breathe?: boolean; final?: boolean }) {
   const open = state === "lit" || state === "fading" || state === "done";

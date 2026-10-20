@@ -1,5 +1,5 @@
 /**
- * Moss's mode, decided on the server from run state, never by the client (00 §3.3):
+ * Moss's mode, decided on the server from run state, never by the client:
  * - no run (map, library) or a finished run: full;
  * - a card before the guess: hint (no answer, no close);
  * - a card's beats and close: full;

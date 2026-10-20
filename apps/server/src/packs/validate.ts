@@ -1,5 +1,5 @@
 /**
- * Validation of a compiled pack's file set before it is installed (PLAN §17): pack.json against the
+ * Validation of a compiled pack's file set before it is installed: pack.json against the
  * schema, id/version regexes, the engine range, every SVG through the safety check, html
  * interactives through the network pre-scan and size caps, and the asset allowlist.
  */

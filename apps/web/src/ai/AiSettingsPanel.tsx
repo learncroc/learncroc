@@ -1,5 +1,5 @@
 /**
- * Settings → AI (design §4.10): pick a provider (listed side by side, no ranking), add or test a key,
+ * Settings → AI: pick a provider (listed side by side, no ranking), add or test a key,
  * choose models per tier, which tier Moss uses, the monthly cap with the spend meter and "What did I
  * send?". Learncroc works fully without any of this. Moss always follows the moment on the server
  * (hints before a guess and during a checkpoint), so there is no guess-gate switch.

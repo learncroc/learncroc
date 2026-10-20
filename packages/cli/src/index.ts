@@ -13,7 +13,7 @@ import { doctor, installApp } from "./commands/system";
 
 type Command = (argv: string[]) => Promise<number>;
 
-/** Every v0.1 command (PLAN §4 Authoring, §18 CLI). */
+/** Every v0.1 command. */
 export const COMMANDS: Record<string, { run: Command; help: string }> = {
   serve: { run: serve, help: "Start the local app (default) [--port N] [--home DIR] [--no-open]" },
   install: { run: install, help: "Install a pack from a registry id or a local .lmpack" },

@@ -1,5 +1,5 @@
 /**
- * The finished map (03 §4.9, UX §9): opens once after the last gate's moment and the dawn wash, and
+ * The finished map: opens once after the last gate's moment and the dawn wash, and
  * again from the header badge ("See the badge") or `?finished=1`. The badge, the finished poster,
  * "You can now" with one line per map line, the sampler note, and Save image / Copy image, made on
  * this computer. No time spent, no streaks, no score.

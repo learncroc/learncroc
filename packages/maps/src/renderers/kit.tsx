@@ -622,6 +622,7 @@ const DEFAULT_GATE_LANDMARK: Record<RendererId, LandmarkGlyph> = {
   circuit: "core",
   atlas: "town",
   sketchbook: "star",
+  trail: "tent",
 };
 
 /** Glyph size for a draw node (card, gate, final gate). */

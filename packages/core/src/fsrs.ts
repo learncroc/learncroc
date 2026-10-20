@@ -1,12 +1,12 @@
 /**
- * Spaced repetition over ts-fsrs: node cards (one per lit card), pack flashcards and user flashcards. FSRS is a scheduler, not a proven intervention (PRINCIPLES amendment A3).
+ * Spaced repetition over ts-fsrs: node cards (one per lit card), pack flashcards and user flashcards. FSRS is a scheduler, not a proven intervention.
  *
  * - request_retention from settings (default 0.90), maximum_interval 365, fuzz on. Short-term
  *   learning steps are off: a card lit at a checkpoint goes straight to review with a stability of a
  *   few days, so it starts fading within days.
  * - A card is lit while retrievability ≥ 0.85, fading below. Done cards get no node card until a
  *   checkpoint lights them.
- * - Credit flows down (C4, experimental, off by default): depth ≤ 3, weight 0.3·0.5^(d−1).
+ * - Credit flows down (experimental, off by default): depth ≤ 3, weight 0.3·0.5^(d−1).
  */
 import {
   type Card,
@@ -177,7 +177,7 @@ export function lightNodeCard(
 }
 
 /**
- * C4 (experimental): move a card's stability a fraction `w` of the way toward what a Good review
+ * Experimental: move a card's stability a fraction `w` of the way toward what a Good review
  * now would give, and reschedule from its last review.
  */
 export function partialReview(card: CardState, w: number, now: Millis, opts: FsrsOptions = {}): CardState {

@@ -1,6 +1,6 @@
 /**
  * plot: function or data chart with parameter sliders, readouts, a draggable marker and
- * "you draw it" prediction (CONTRACTS §7.2 #5). Expressions use core/expr.ts; variables are `x`
+ * "you draw it" prediction. Expressions use core/expr.ts; variables are `x`
  * and the param names; constants pi and e. The AI's main chart output.
  */
 import { compileExpr, ExprError, exprVariables, LineColor, type WidgetSpec } from "@learncroc/core";

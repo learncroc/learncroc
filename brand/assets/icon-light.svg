@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="512" height="512" role="img" aria-label="Learncroc"><title>Learncroc</title><rect width="1000" height="1000" rx="230" fill="#d9f2bd"/><clipPath id="sq-icon-light-18"><rect width="1000" height="1000" rx="230"/></clipPath><g clip-path="url(#sq-icon-light-18)"><g transform="translate(80 273.1578947368421) scale(3.68421052631579) translate(-8 -30)"><defs><filter id="lc17-clay" x="-5%" y="-5%" width="110%" height="115%" color-interpolation-filters="sRGB">
+    <feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="7" result="n"/>
+    <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  .45 0 0 0 -.17" result="dk"/>
+    <feComposite in="dk" in2="SourceAlpha" operator="in" result="dk2"/>
+    <feColorMatrix in="n" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 .6 0 0 -.3" result="lt"/>
+    <feComposite in="lt" in2="SourceAlpha" operator="in" result="lt2"/>
+    <feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="dk2"/><feMergeNode in="lt2"/></feMerge>
+  </filter>
+  <radialGradient id="lc17-hl" cx="34%" cy="24%" r="70%">
+    <stop offset="0" stop-color="#fff" stop-opacity=".4"/>
+    <stop offset=".6" stop-color="#fff" stop-opacity="0"/>
+  </radialGradient>
+  <clipPath id="lc17-headClip"><path d="M30 112C26 80 52 66 92 68C134 70 168 80 200 86C220 90 226 104 222 116C218 132 200 138 176 140C140 144 100 150 70 148C42 146 32 132 30 112Z"/></clipPath>
+  <clipPath id="lc17-openClip"><path d="M96 116C130 121 178 113 216 100C209 138 152 152 96 116Z"/></clipPath></defs><g class="bob"><g class="head">
+      <g class="cr-shade" fill="#2f8a63" transform="translate(3 6)"><path d="M30 112C26 80 52 66 92 68C134 70 168 80 200 86C220 90 226 104 222 116C218 132 200 138 176 140C140 144 100 150 70 148C42 146 32 132 30 112Z"/><circle cx="78" cy="62" r="22"/><circle cx="118" cy="59" r="25"/><circle cx="204" cy="87" r="10"/></g>
+      <g class="cr-base" fill="#5bbf8e"><path d="M30 112C26 80 52 66 92 68C134 70 168 80 200 86C220 90 226 104 222 116C218 132 200 138 176 140C140 144 100 150 70 148C42 146 32 132 30 112Z"/><circle cx="78" cy="62" r="22"/><circle cx="118" cy="59" r="25"/><circle cx="204" cy="87" r="10"/></g>
+      <path class="cr-belly" fill="#d9f2bd" clip-path="url(#lc17-headClip)" d="M20 128C80 141 160 131 232 111L232 175L20 175Z"/>
+      
+      <ellipse class="cr-ink" fill="#1c1a3d" cx="200" cy="84" rx="2.6" ry="1.7" transform="rotate(-20 200 84)"/>
+      <ellipse class="cr-ink" fill="#1c1a3d" cx="209" cy="87.5" rx="2.6" ry="1.7" transform="rotate(-20 209 87.5)"/>
+      <g class="blush"></g>
+      <g class="mouth"><path class="cr-tooth" fill="#fff" stroke="#2f8a63" stroke-width="1" stroke-linejoin="round" d="M174.3 119.4L186.3 117.9L181.1 128.4Z"/><path class="cr-tooth" fill="#fff" stroke="#2f8a63" stroke-width="1" stroke-linejoin="round" d="M191.5 114.7L203.5 113.2L198.3 123.7Z"/><path class="cr-mouth" fill="none" stroke="#1c1a3d" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" d="M96 118C125 130 172 126 212 110 M96 118c-5 -1 -8 -5 -6 -9"/></g>
+      <g class="eyes"><g transform="translate(78 62)"><g class="look"><g transform="translate(2 2) scale(1)"><g class="eyeball"><ellipse class="cr-ink" fill="#1c1a3d" rx="7.4" ry="11"/><circle class="cr-glint" fill="#fff" opacity="0.9" cx="-2.4" cy="-4.6" r="2.2"/></g></g></g></g><g transform="translate(118 59)"><g class="look"><g transform="translate(2 2) scale(1.12)"><g class="eyeball"><ellipse class="cr-ink" fill="#1c1a3d" rx="7.4" ry="11"/><circle class="cr-glint" fill="#fff" opacity="0.9" cx="-2.4" cy="-4.6" r="2.2"/></g></g></g></g></g>
+    </g><g class="fx"></g></g>
+    </g></g></svg>

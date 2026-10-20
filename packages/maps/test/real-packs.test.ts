@@ -24,7 +24,7 @@ import { buildScene, CLEARANCE, ROUTE_STYLE } from "../src/lib/scene";
 
 const PACKS = resolve(import.meta.dir, "../../../packs");
 const RENDERER_IDS: RendererId[] = ["metro", "circuit", "atlas", "sketchbook"];
-/** The v0.1 launch packs (PLAN §12): the acceptance bar for map readability. */
+/** The v0.1 launch packs: the acceptance bar for map readability. */
 const LAUNCH = new Set([
   "how-llms-work",
   "special-relativity",

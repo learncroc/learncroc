@@ -54,7 +54,7 @@ function GhostMap() {
   );
 }
 
-/** Library empty state (03 §4.2): nothing installed. */
+/** Library empty state: nothing installed. */
 export function EmptyShelf() {
   return (
     <section

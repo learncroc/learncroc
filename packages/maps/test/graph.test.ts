@@ -21,7 +21,7 @@ const progress = progressJson as unknown as PackProgress;
 const llm = galleryPack("how-llms-work");
 if (!llm) throw new Error("gallery pack missing");
 
-// rev3 speed mode: asserts revision-2 behaviour (sparked, termini, hop fog, stops); rewrite for gates/sections in wave 2.
+// Asserts revision-2 behaviour (sparked, termini, hop fog, stops); to be rewritten for gates and sections.
 describe.skip("views and fog", () => {
   test("missing views are filled from the map (planned, building, ready roots, locked)", () => {
     expect(viewFor(fixture.map, {}, "units").state).toBe("ready");
@@ -79,7 +79,7 @@ describe.skip("views and fog", () => {
   });
 });
 
-// rev3 speed mode: asserts revision-2 behaviour (sparked, termini, hop fog, stops); rewrite for gates/sections in wave 2.
+// Asserts revision-2 behaviour (sparked, termini, hop fog, stops); to be rewritten for gates and sections.
 describe.skip("navigation", () => {
   test("→ follows a dependent, ← a prerequisite, same line first", () => {
     expect(navigate(llm.map, "next-token", "ArrowRight")).toBe("sampling");
@@ -129,8 +129,8 @@ describe.skip("navigation", () => {
   });
 });
 
-// rev3 speed mode: asserts revision-2 behaviour (sparked, termini, hop fog, stops); rewrite for gates/sections in wave 2.
-describe.skip("accessible names (03 §6)", () => {
+// Asserts revision-2 behaviour (sparked, termini, hop fog, stops); to be rewritten for gates and sections.
+describe.skip("accessible names", () => {
   test("a stop says its title, state, line, needs, opens and time", () => {
     const views = simulateViews(llm, { lit: ["tokens", "embeddings", "next-token"] });
     expect(describeStop(llm.map, views, "attention")).toBe(

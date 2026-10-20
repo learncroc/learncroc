@@ -1,6 +1,6 @@
 /**
- * /create/pocket: Map an article (03 §4.8.1). A link or the text itself, a preview line, the size
- * in cards (Short · about 5 / Standard · about 8 / Thorough · about 12, C18), what you know already,
+ * /create/pocket: Map an article. A link or the text itself, a preview line, the size
+ * in cards (Short · about 5 / Standard · about 8 / Thorough · about 12), what you know already,
  * the provider and cost with "first card in about 20 seconds", and exactly what will be sent.
  * With no AI the form stays visible and Map it becomes Set up AI; offline and the static demo say so
  * in one line. The example article maps below work without any of it.

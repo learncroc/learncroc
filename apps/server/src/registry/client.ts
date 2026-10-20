@@ -1,5 +1,5 @@
 /**
- * Registry client and installer (PLAN D19, §17; CONTRACTS §13).
+ * Registry client and installer.
  *
  * Registries: the literal "builtin" (registry/index.json and registry/dist/ shipped with the app,
  * or, when that hasn't been built, the bundled source packs) and https URLs (http to loopback only

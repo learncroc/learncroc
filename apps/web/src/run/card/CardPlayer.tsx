@@ -1,5 +1,5 @@
 /**
- * CardPlayer: one map stop as a conversation with Moss (docs/design/teach-first.md). A stop is one
+ * CardPlayer: one map stop as a conversation with Moss. A stop is one
  * server-run `card` session (hook → beats → close) played as typed cards: Ask (the hook, an optional
  * hunch), Teach (a beat's words: Moss and the article), Try or Check (a beat's action), Takeaway (the
  * close and what's next). The intro node plays its run on its own behind one Intro card.

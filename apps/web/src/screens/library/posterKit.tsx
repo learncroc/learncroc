@@ -21,6 +21,8 @@ export function textureStyle(texture: PackTheme["texture"]): CSSProperties {
     case "pcb":
     case "night-fair":
       return { backgroundImage: `radial-gradient(${g} 1.2px, transparent 1.6px)`, backgroundSize: "16px 16px" };
+    case "meadow":
+      return { backgroundImage: `radial-gradient(${g} 1.4px, transparent 1.8px)`, backgroundSize: "22px 22px" };
     case "topo":
     case "marble":
     case "snow":
@@ -99,7 +101,7 @@ export function gateCounts(
   return { open, total };
 }
 
-/** "6 of 11 cards lit · 2 of 4 checkpoints open" (C20). */
+/** "6 of 11 cards lit · 2 of 4 checkpoints open". */
 export function progressLine(lit: number, total: number, gates: { open: number; total: number }): string {
   const cards = `${lit} of ${total} ${total === 1 ? "card" : "cards"} lit`;
   return gates.total > 0 ? `${cards} · ${gates.open} of ${gates.total} checkpoints open` : cards;

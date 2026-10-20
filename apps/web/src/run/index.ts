@@ -1,6 +1,6 @@
 /**
  * The player's public surface: the card modal, the checkpoint modal and the card player (also used by
- * the marketplace embed). Prop interfaces are frozen after wave 0 (00 §5); the map mounts the modals
+ * the marketplace embed). Prop interfaces are frozen after wave 0; the map mounts the modals
  * from its URL search (`?card=` / `?checkpoint=`) and turns `onSummary` into map moments.
  */
 import type { NodeId, PackId, RunSummary } from "@learncroc/core";

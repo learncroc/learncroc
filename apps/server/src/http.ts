@@ -1,6 +1,5 @@
 /**
- * Small HTTP helpers shared by routers: typed JSON errors, body validation and param checks
- * (CONTRACTS §11).
+ * Small HTTP helpers shared by routers: typed JSON errors, body validation and param checks.
  */
 import { type ApiError, type ApiErrorCode, NODE_ID_RE, PACK_ID_RE, SEMVER_RE } from "@learncroc/core";
 import { type Context, Hono } from "hono";

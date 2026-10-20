@@ -1,5 +1,5 @@
 /**
- * "Or start with one question" (03 §4.1, C16): the flagship's first hook, live from the compiled
+ * "Or start with one question": the flagship's first hook, live from the compiled
  * pack. Pressing a guess (1–4, or 0 for "No idea yet") opens the card on the map with that guess
  * locked in (`?card=<id>&guess=<optionId|idk>`), so the card lands on its first beat. The hook gives
  * no right or wrong here either; the card's close is where the guess is named.

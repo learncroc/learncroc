@@ -1,5 +1,5 @@
 /**
- * Asset response headers (PLAN §17): an extension → MIME allowlist plus a sandboxing CSP, nosniff
+ * Asset response headers: an extension → MIME allowlist plus a sandboxing CSP, nosniff
  * and same-origin resource policy. HTML is never served from the app origin.
  */
 export const ASSET_MIME: Record<string, string> = {

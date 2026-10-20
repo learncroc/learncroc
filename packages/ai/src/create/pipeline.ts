@@ -1,5 +1,5 @@
 /**
- * The article-map create job (04 §6.1): fetch → extract → streamed plan (cards appear as they close)
+ * The article-map create job: fetch → extract → streamed plan (cards appear as they close)
  * → cards in reading order (≤ 4 in parallel; card i starts once plan node i+1 is known, so its teaser
  * can open that card's question) → per stop: create-card (typed cards) → assembleStop + core
  * card lint → one repair round → card-judge (picks the hook, checks close, grounding, giveaway) →

@@ -1,6 +1,6 @@
 /**
  * tile-builder: build a sentence from tiles with live agreement (gender = shape AND colour), audio on
- * completion. Parsons mode (code lines with indent). Also the "I'm stuck" tiles (CONTRACTS §7.2 #12).
+ * completion. Parsons mode (code lines with indent). Also the "I'm stuck" tiles.
  */
 import { graded } from "../shared/spec-helpers";
 import { type WidgetSpec, z } from "../shared/zod";

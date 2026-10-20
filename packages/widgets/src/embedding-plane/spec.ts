@@ -1,6 +1,6 @@
 /**
  * embedding-plane: drag words onto a 2D meaning map, then the real (projected) positions slide in.
- * Nearest neighbours, analogy arrows (CONTRACTS §7.2 #4).
+ * Nearest neighbours, analogy arrows.
  */
 import type { GradeResult } from "@learncroc/core";
 import type { WidgetCanvas } from "../shared/canvas";

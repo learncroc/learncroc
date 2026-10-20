@@ -2,7 +2,7 @@
 
 /**
  * Developer builds (`bun dev`): invalid maps show in a collapsed "Needs repair" row with their error;
- * everywhere else they are hidden (01 §3.2).
+ * everywhere else they are hidden.
  */
 export const isDevBuild = (): boolean => import.meta.env?.DEV === true;
 

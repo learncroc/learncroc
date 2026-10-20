@@ -1,6 +1,6 @@
 /**
  * light-clock: set the speed, trace the photon path, read the 3-4-5 triangle, switch frame,
- * hit a γ target (CONTRACTS §7.2 #9). Units: c = 1; mirror gap = 4 units.
+ * hit a γ target. Units: c = 1; mirror gap = 4 units.
  */
 import { graded } from "../shared/spec-helpers";
 import { type WidgetSpec, z } from "../shared/zod";

@@ -1,5 +1,5 @@
 /**
- * Inline Markdown for pack text (CONTRACTS Markdown): **bold**, *italic* / _italic_, `code`,
+ * Inline Markdown for pack text: **bold**, *italic* / _italic_, `code`,
  * ==highlight== (the close's highlighter sweep), [links](https://…) or [card](stop:<nodeId>), and $maths$. Rendered to React elements, never to
  * HTML strings, so pack text can't inject markup.
  */

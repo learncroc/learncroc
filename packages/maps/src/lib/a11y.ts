@@ -1,5 +1,5 @@
 /**
- * Accessible names for map entries (03 §6, 02 §1.4) and the polite change announcements.
+ * Accessible names for map entries and the polite change announcements.
  *
  * Cards: "Attention. Ready. Meaning line. Needs Embeddings (lit) and Next token (lit). Opens Transformer.
  * About 5 minutes." Gates: "Checkpoint: The guessing loop. Locked. Close Sampling and Context window to

@@ -4,7 +4,7 @@
  * zooms around the pointer, a plain wheel or a drag on the ground pans. Transform-only updates keep
  * zoom and hover at 60 fps.
  *
- * Auto camera (02 §1.7): `frameBox` fits a layout box into a screen window, `revealIn` places a point in
+ * Auto camera: `frameBox` fits a layout box into a screen window, `revealIn` places a point in
  * a window (beside an open modal). After any manual pan, wheel or zoom, auto moves are suppressed for
  * 6 s unless forced (gate and finish moments always reframe). Every move is one tween of the transform.
  */

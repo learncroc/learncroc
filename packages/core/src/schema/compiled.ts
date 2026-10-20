@@ -1,5 +1,5 @@
 /**
- * Compiled pack, try bundle and lint report (CONTRACTS §8).
+ * Compiled pack, try bundle and lint report.
  */
 import { z } from "zod";
 import { PackManifest } from "./manifest";
@@ -59,7 +59,7 @@ export const LintIssue = z.object({
   /** JSON pointer. */
   path: z.string(),
   message: z.string(),
-  /** One line: why the rule exists (links PRINCIPLES). */
+  /** One line: why the rule exists. */
   why: z.string(),
   /** One-line fix example. */
   example: z.string().optional(),

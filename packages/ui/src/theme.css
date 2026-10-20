@@ -38,6 +38,7 @@
   --color-scrim-card: var(--scrim-card);
   --color-croc: var(--croc);
   --color-croc-belly: var(--croc-belly);
+  --color-croc-shade: var(--croc-shade);
   --color-croc-ink: var(--croc-ink);
   --color-croc-eye: var(--croc-eye);
   --color-transparent: transparent;
@@ -516,155 +517,141 @@
   }
 }
 
-/* ------------------------------------------------------------------------------------- Moss, the croc */
-/* Motion keyed on data-croc-state and data-part (Croc.tsx). Idle only blinks; nothing else loops on idle. */
+/* ----------------------------------------------------------------------------------------- the croc */
+/* Motion keyed on data-croc-state and data-part (Croc.tsx). Idle breathes and blinks; a still croc (the logo) does neither. */
 .lm-croc [data-part] {
-  transform-box: view-box;
+  transform-box: fill-box;
 }
+.lm-croc [data-part="bob"],
 .lm-croc [data-part="head"] {
-  transform-origin: 70px 64px; /* the neck */
-  transition: transform var(--dur-move) var(--ease-out);
+  transform-origin: 50% 100%;
+}
+.lm-croc :is(path, circle, ellipse) {
+  transition: fill 350ms var(--ease-out);
+}
+.lm-croc[data-croc-state="happy"] [data-part="bob"],
+.lm-croc[data-croc-state="cheering"] [data-part="bob"] {
+  animation: lm-croc-hop 700ms cubic-bezier(0.3, 0.7, 0.4, 1) both;
 }
 .lm-croc[data-croc-state="curious"] [data-part="head"] {
-  transform: rotate(-8deg);
+  animation: lm-croc-lean 900ms var(--ease-in-out) both;
 }
-.lm-croc [data-part="brow"] {
-  opacity: 0;
-  transition:
-    opacity var(--dur-quick) var(--ease-out),
-    transform var(--dur-move) var(--ease-out);
+.lm-croc:not([data-still])[data-croc-state="idle"] [data-part="bob"] {
+  animation: lm-croc-breathe 3.8s var(--ease-in-out) infinite;
 }
-.lm-croc[data-croc-state="curious"] [data-part="brow"] {
-  opacity: 1;
-  transform: translateY(-2px);
+.lm-croc:not([data-still]):hover [data-part="head"] {
+  transform: rotate(-2.5deg);
+  transition: transform 300ms var(--ease-out);
 }
-.lm-croc [data-part="pupils"] {
-  transition: transform var(--dur-base) var(--ease-out);
+.lm-croc[data-croc-face="happy"]:not([data-croc-state="happy"]) [data-part="bob"] {
+  animation: lm-croc-snap 420ms var(--ease-out) both;
 }
-.lm-croc[data-croc-state="listening"] [data-part="pupils"] {
-  transform: translate(1.6px, 1.2px);
+.lm-croc [data-part="look"] {
+  transform-box: view-box;
+  transition: translate 140ms var(--ease-out);
 }
-.lm-croc[data-croc-state="thinking"] [data-part="pupils"] {
-  transform: translate(-1.8px, -1.8px);
+.lm-croc [data-part="look"]:not([data-fixed]) {
+  translate: var(--croc-look, 0 0);
 }
-.lm-croc[data-croc-state="curious"] [data-part="pupils"] {
-  transform: translate(0.8px, -1px);
+.lm-croc [data-part="eyeball"] {
+  transform-origin: center;
+  transition: transform 70ms var(--ease-out);
 }
-.lm-croc [data-part="lids"] > * {
-  transform-box: fill-box;
-  transform-origin: 50% 0%;
-  transform: scaleY(0);
-}
-.lm-croc[data-blink] [data-part="lids"] > * {
-  animation: lm-croc-lid 320ms linear both;
-}
-.lm-croc [data-part="tail"] {
-  transform-origin: 88px 96px;
-}
-.lm-croc[data-croc-state="happy"] [data-part="tail"] {
-  animation: lm-croc-tail 600ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
-}
-.lm-croc[data-croc-state="happy"] [data-part="figure"] {
-  animation: lm-croc-bounce 600ms var(--ease-out) both;
-}
-.lm-croc[data-croc-state="cheering"] [data-part="figure"] {
-  animation: lm-hop 720ms linear both;
-}
-.lm-croc[data-croc-state="cheering"] [data-part="arms"] {
-  animation: lm-croc-arms 360ms var(--ease-out) both;
-  transform-origin: 62px 78px;
-}
-.lm-croc [data-part="glow"] {
-  animation: lm-croc-glow 1600ms var(--ease-out) both;
+.lm-croc[data-blink] [data-part="eyeball"] {
+  transform: scaleY(0.1);
 }
 .lm-croc [data-part="dot"] {
-  animation: lm-croc-dot 900ms var(--ease-in-out) infinite;
+  animation: lm-croc-dot 1.2s var(--ease-in-out) infinite;
 }
 .lm-croc[data-hold] [data-part="dot"] {
   animation: none;
   opacity: 1;
 }
-.lm-croc [data-part="confetti"] {
-  animation: lm-croc-confetti 1600ms var(--ease-out) both;
+.lm-croc [data-part="z"] {
+  animation: lm-croc-z 2.4s var(--ease-in-out) infinite;
 }
-@keyframes lm-croc-lid {
-  0% {
-    transform: scaleY(0);
-  }
-  37.5%,
-  62.5% {
-    transform: scaleY(1);
-  }
-  100% {
-    transform: scaleY(0);
-  }
+.lm-croc [data-part="spark"] {
+  transform-origin: center;
+  animation: lm-croc-twinkle 1.6s var(--ease-in-out) infinite;
 }
-@keyframes lm-croc-tail {
-  0% {
-    transform: rotate(0);
-  }
-  35% {
-    transform: rotate(-10deg);
-  }
-  70% {
-    transform: rotate(6deg);
-  }
-  100% {
-    transform: rotate(0);
-  }
-}
-@keyframes lm-croc-bounce {
+@keyframes lm-croc-breathe {
   0%,
   100% {
-    transform: translateY(0);
+    transform: scale(1, 1);
   }
-  40% {
-    transform: translateY(-4px);
+  50% {
+    transform: scale(1.012, 0.985);
   }
 }
-@keyframes lm-croc-arms {
-  from {
-    transform: scale(0.9) translateY(4px);
+@keyframes lm-croc-hop {
+  0% {
+    transform: none;
   }
-  to {
+  20% {
+    transform: scale(1.07, 0.9);
+  }
+  50% {
+    transform: translateY(-16%) scale(0.95, 1.06);
+  }
+  78% {
+    transform: scale(1.05, 0.94);
+  }
+  100% {
     transform: none;
   }
 }
-@keyframes lm-croc-glow {
+@keyframes lm-croc-snap {
   0% {
-    opacity: 0;
+    transform: scale(1.06, 0.93);
   }
-  40% {
-    opacity: 1;
-  }
-  70% {
-    opacity: 0.7;
+  45% {
+    transform: scale(0.97, 1.04);
   }
   100% {
-    opacity: 0.85;
+    transform: none;
+  }
+}
+@keyframes lm-croc-lean {
+  0%,
+  100% {
+    transform: none;
+  }
+  30%,
+  70% {
+    transform: rotate(-5deg) translateX(-2%);
   }
 }
 @keyframes lm-croc-dot {
   0%,
   100% {
-    opacity: 0.3;
+    opacity: 0.35;
   }
-  33% {
+  50% {
     opacity: 1;
   }
 }
-@keyframes lm-croc-confetti {
+@keyframes lm-croc-z {
   0% {
     opacity: 0;
-    translate: 0 14px;
+    transform: translate(0, 4px);
   }
-  15% {
+  30% {
     opacity: 1;
-    translate: 0 -6px;
   }
   100% {
     opacity: 0;
-    translate: 0 40px;
+    transform: translate(6px, -8px);
+  }
+}
+@keyframes lm-croc-twinkle {
+  0%,
+  100% {
+    transform: scale(0.6);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 1;
   }
 }
 
@@ -708,11 +695,8 @@
     transition-duration: 120ms;
     transition-delay: 0ms;
   }
-  :root:not([data-motion="full"]) .lm-croc [data-part="confetti"] {
-    opacity: 0.85;
-  }
-  :root:not([data-motion="full"]) .lm-croc [data-part="glow"] {
-    opacity: 0.85;
+  :root:not([data-motion="full"]) .lm-croc [data-part="spark"] {
+    opacity: 1;
   }
 }
 [data-motion="reduced"] .animate-breathe {
@@ -752,9 +736,6 @@
   transition-duration: 120ms;
   transition-delay: 0ms;
 }
-[data-motion="reduced"] .lm-croc [data-part="confetti"] {
-  opacity: 0.85;
-}
-[data-motion="reduced"] .lm-croc [data-part="glow"] {
-  opacity: 0.85;
+[data-motion="reduced"] .lm-croc [data-part="spark"] {
+  opacity: 1;
 }

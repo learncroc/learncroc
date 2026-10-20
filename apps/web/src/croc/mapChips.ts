@@ -1,5 +1,5 @@
 /**
- * Moss's map chips (00 §3.3, 03 §4.6.3), answered on the client from pack data: no AI, no network.
+ * Moss's map chips, answered on the client from pack data: no AI, no network.
  * Every reply stays short and ends with something to try. A peeked Later card gets no spoilers of its
  * close: only its title, what it needs first and the line it belongs to.
  */

@@ -1,5 +1,5 @@
 /**
- * Colour checks for world themes (PLAN §6.1, lint L014): WCAG contrast, CIE L*, ΔE2000, and the
+ * Colour checks for world themes (lint L014): WCAG contrast, CIE L*, ΔE2000, and the
  * nearest passing colour (`learncroc lint --fix` suggests it).
  */
 

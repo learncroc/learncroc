@@ -8,7 +8,6 @@
       "!**/dist",
       "!schemas",
       "!docs",
-      "!storyboard",
       "!registry/dist",
       "!e2e/shots",
       "!packages/core/test/contracts.ts",

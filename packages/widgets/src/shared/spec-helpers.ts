@@ -23,7 +23,7 @@ export function graded(correct: boolean, score = correct ? 1 : 0, extra: Partial
 
 /**
  * Build a spec whose grade() and validate() are placeholders. The zod props, goal and answer are
- * final (CONTRACTS §7.2); the widget's owner replaces grade, validate, toText and examples.
+ * final; the widget's owner replaces grade, validate, toText and examples.
  */
 export function stubSpec<P, G, A>(
   spec: Omit<WidgetSpec<P, G, A>, "version" | "validate" | "grade" | "toText" | "examples"> &

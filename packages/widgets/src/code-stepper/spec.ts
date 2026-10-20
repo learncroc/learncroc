@@ -1,6 +1,6 @@
 /**
  * code-stepper: step through code with a precomputed trace. At marked steps, predict a variable value
- * or the output before it is shown. Name-tag or box view (CONTRACTS §7.2 #15).
+ * or the output before it is shown. Name-tag or box view.
  */
 import { graded } from "../shared/spec-helpers";
 import { type WidgetSpec, z } from "../shared/zod";

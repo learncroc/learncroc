@@ -1,5 +1,5 @@
 /**
- * The service worker (PLAN §4 PWA), built to `sw.js` at the app's base.
+ * The service worker, built to `sw.js` at the app's base.
  *
  * Local app (served by the learncroc server): caches the app shell so an installed Learncroc opens
  * instantly, and when the local server isn't running it shows a calm page saying how to start it.

@@ -296,6 +296,10 @@
         "renderer": {
           "$ref": "#/$defs/RendererId"
         },
+        "design": {
+          "$ref": "#/$defs/MapDesignId",
+          "description": "The design preset this theme was made from (AI-drafted maps). Absent: an authored world."
+        },
         "world": {
           "type": "string",
           "minLength": 1,
@@ -429,8 +433,20 @@
         "metro",
         "circuit",
         "atlas",
-        "sketchbook"
+        "sketchbook",
+        "trail"
       ]
+    },
+    "MapDesignId": {
+      "type": "string",
+      "enum": [
+        "pond",
+        "paper",
+        "metro",
+        "circuit",
+        "atlas"
+      ],
+      "description": "Map designs: named presets of a whole theme (renderer, ground, texture, backdrop, palette, token) that any map can wear. The presets themselves live in `designs.ts`."
     },
     "Hex": {
       "type": "string",
@@ -453,7 +469,8 @@
         "night-fair",
         "paper",
         "corkboard",
-        "watercolour"
+        "watercolour",
+        "meadow"
       ]
     },
     "TokenGlyph": {
@@ -517,6 +534,7 @@
         "sketchbook",
         "transit-grid",
         "terrain",
+        "pond",
         "none"
       ],
       "description": "Code-drawn map backdrops (theme.backdrop). `transit-grid` and `terrain` are renderer defaults."

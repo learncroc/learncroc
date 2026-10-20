@@ -1,9 +1,9 @@
 /**
- * The .lmpack archive (PLAN D18): a gzip-compressed ustar tarball holding pack.json, assets/,
+ * The .lmpack archive: a gzip-compressed ustar tarball holding pack.json, assets/,
  * MANIFEST.sha256, LICENSE and README.md.
  *
  * Writing is deterministic (sorted entries, mtime 0, uid/gid 0, mode 0644) so the same pack gives
- * the same sha256. Reading is defensive (PLAN §17): only regular files and directories, no absolute
+ * the same sha256. Reading is defensive: only regular files and directories, no absolute
  * paths, `..`, backslashes or NUL, an entry allowlist, ≤ 5,000 entries, ≤ 200 MB unpacked, a
  * compression-ratio cap, and a MANIFEST.sha256 that must cover every file exactly.
  */

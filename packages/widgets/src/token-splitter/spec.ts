@@ -1,6 +1,6 @@
 /**
  * token-splitter: type text and see it split into tokens with ids (cl100k_base via gpt-tokenizer,
- * loaded with the widget chunk). Predict token counts, craft strings, tap a token (CONTRACTS §7.2 #2).
+ * loaded with the widget chunk). Predict token counts, craft strings, tap a token.
  */
 import type { GradeResult } from "@learncroc/core";
 import { graded } from "../shared/spec-helpers";

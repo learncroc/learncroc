@@ -1,5 +1,5 @@
 /**
- * The paste bar (03 §4.1, §4.2, §4.8.1): one field for a link or the text itself, "Map it ⏎". Used
+ * The paste bar: one field for a link or the text itself, "Map it ⏎". Used
  * on the library (first run and returning, `N` focuses it) with the defaults (Standard size, "I know
  * nothing about this"); the full intake at /create/pocket offers the choices.
  *
@@ -58,7 +58,7 @@ export function pasteRequest(
   return null;
 }
 
-/** The server's refusal, in the copy of 03 §4.8.2. */
+/** The server's refusal, in the app's own copy. */
 export function createErrorCopy(err: unknown): string {
   if (err instanceof ApiClientError) {
     const code = err.body.error;

@@ -1,6 +1,6 @@
 /**
  * Filesystem helpers: atomic JSON writes (temp file + rename), safe JSON reads, and the one-writer
- * lock (PLAN §17: when no server answers, the CLI takes ~/.learncroc/.lock and works directly).
+ * lock (when no server answers, the CLI takes ~/.learncroc/.lock and works directly).
  */
 import {
   chmodSync,

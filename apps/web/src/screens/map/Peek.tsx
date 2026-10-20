@@ -1,5 +1,5 @@
 /**
- * The peek popover (C5, 03 §4.3.3, UX §1.8): ≤ 280 px, anchored to the glyph (or the Route panel row),
+ * The peek popover: ≤ 280 px, anchored to the glyph (or the Route panel row),
  * for entries that don't open a modal: Later, Planned and Writing… cards, Locked gates, and an Open gate
  * ("Practise again"). Later cards never show their hook. Esc or a click elsewhere closes it.
  */

@@ -1,5 +1,5 @@
 /**
- * The pocket pack on disk (PLAN §15.5 step 5): a compiled local pack at
+ * The pocket pack on disk: a compiled local pack at
  * <home>/packs/local/<packId>@0.1.0/ (pack.json + assets/ + README.md), rewritten atomically as
  * stops land. While building it is `provisional` and stops still being written are `building`.
  */
@@ -12,6 +12,7 @@ import {
   CompiledPack as CompiledPackSchema,
   checkpointMinutes,
   defaultCheckpointSize,
+  designTheme,
   INTRO_NODE_ID,
   LEARNCROC_VERSION,
   type MinimapSkeleton,
@@ -20,6 +21,7 @@ import {
   type PackNode,
   type PackOrigin,
   sectionSizes,
+  suggestMapDesign,
   type WidgetId,
 } from "@learncroc/core";
 import { layoutMap, POCKET_INKS, POCKET_PAPER } from "../layout";
@@ -107,12 +109,12 @@ export interface PocketPackState {
   assets: Record<string, string>;
   /** True once the plan stream has ended: checkpoints are placed from then on. */
   planComplete?: boolean;
-  /** The article's opening: the map gets an intro card first (teach-first). */
+  /** The article's opening: the map gets an intro card first. */
   intro?: IntroSource;
   now: () => number;
 }
 
-/** Article maps: a checkpoint every 4–6 cards, at least one at the end (D44). */
+/** Article maps: a checkpoint every 4–6 cards, at least one at the end. */
 export const POCKET_CHECKPOINT_EVERY = [4, 6] as const;
 
 export interface PlannedCheckpoint {
@@ -260,20 +262,14 @@ export function buildPocketPack(s: PocketPackState, provisional: boolean): Compi
     engine: ">=0.1.0 <1.0.0",
     widgets,
     profile: "pocket",
-    theme: {
-      renderer: "sketchbook",
+    // The map's design comes from its topic (Pond trail unless the title or gist suggests another).
+    theme: designTheme(suggestMapDesign(sk.title, sk.gist), {
       world: sk.title,
-      mode: "light",
       direction: "lr",
-      ground: POCKET_GROUND,
-      texture: "paper",
-      lines: pocketLines(sk.palette),
-      token: "paper-plane",
       ...(Object.keys(landmarks).length > 0 ? { landmarks } : {}),
       fieldNoteStyle: "card",
       gateName: "Checkpoint",
-      backdrop: "sketchbook",
-    },
+    }),
     entry: { ...(intro ? { suggestedStart: INTRO_NODE_ID } : sk.nodes[0] ? { suggestedStart: sk.nodes[0].id } : {}) },
     outcomes: sk.nodes.slice(0, 3).map((n) => n.objective),
     ai: { tutorNotes: [sk.gist, ...cautions].join(" ") },

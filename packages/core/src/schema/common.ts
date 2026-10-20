@@ -59,7 +59,7 @@ export const Source = z.strictObject({
   note: z.string().optional(),
 });
 
-/** Usage reported by a provider call (CONTRACTS §10). */
+/** Usage reported by a provider call. */
 export const Usage = z.object({
   inputTokens: z.number(),
   outputTokens: z.number(),

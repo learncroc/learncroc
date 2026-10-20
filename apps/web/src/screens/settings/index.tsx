@@ -1,5 +1,5 @@
 /**
- * /settings/:section (03 §4.10, 01 §3.10): AI (the AI panel), Appearance, Learning (Relight size,
+ * /settings/:section: AI (the AI panel), Appearance, Learning (Relight size,
  * target memory, credit flows down, reminder), Moss (reactions: Chatty / Quiet), Sound, Data (export,
  * import, reset, Your numbers), Keyboard and About. Changes save as you make them (PATCH /settings,
  * optimistic). There is no Find my level, no Sparked pill and no guess-gate switch.
@@ -854,7 +854,7 @@ export function numberValue(key: keyof typeof LOCAL_NUMBER_EXPLAIN, n: LocalNumb
   }
 }
 
-/** Settings → Data → Your numbers (01 §6): computed here, shown here, copied only if you choose. */
+/** Settings → Data → Your numbers: computed here, shown here, copied only if you choose. */
 function YourNumbers() {
   const numbers = useNumbers();
   const copy = async () => {

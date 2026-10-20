@@ -1,6 +1,6 @@
 /**
  * train-scene: lamp, lightning or headlight scenario. Frame switch, slow-motion pulses,
- * "subtract light-travel time". Pick front, rear or same (CONTRACTS §7.2 #10).
+ * "subtract light-travel time". Pick front, rear or same.
  */
 import { lampFirstHit, lightningFirstStrike, lightningFirstToPassenger } from "../light-clock/relativity";
 import type { WidgetCanvas } from "../shared/canvas";

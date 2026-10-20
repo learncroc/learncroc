@@ -1,7 +1,6 @@
 /**
  * listen: play a phrase (pre-rendered pack audio; Web Speech fallback) at 0.7× or 1×, then pick or
- * type what was said. `shadow` task: record yourself (in memory, never uploaded), compare, self-rate
- * (CONTRACTS §7.2 #14).
+ * type what was said. `shadow` task: record yourself (in memory, never uploaded), compare, self-rate.
  */
 import { matchText, TYPED_DEFAULT } from "../dialogue/text";
 import { graded } from "../shared/spec-helpers";

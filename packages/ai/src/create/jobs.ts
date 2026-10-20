@@ -1,6 +1,6 @@
 /**
- * In-memory create jobs: an event log per job (replayed to late or reconnecting viewers, PLAN §14
- * "Replays past events on reconnect"), live subscribers, cancellation, and the article paragraphs
+ * In-memory create jobs: an event log per job (replayed to late or reconnecting viewers), live
+ * subscribers, cancellation, and the article paragraphs
  * for the reader pane (discarded after the job; the article text is never stored).
  */
 import { isTerminalEvent, type JobEvent } from "@learncroc/core";

@@ -1,5 +1,5 @@
 /**
- * ab-compare: flip, wipe or compare two panels, then say which (CONTRACTS §7.2 #8). The "why" is
+ * ab-compare: flip, wipe or compare two panels, then say which. The "why" is
  * the interaction's own feedback; the widget makes the contrast easy to see.
  */
 import type { GradeResult } from "@learncroc/core";

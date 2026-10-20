@@ -1,5 +1,5 @@
 /**
- * Content checks for packs/spanish-tapas-bar and packs/art-of-persuasion (PLAN §11.3, §12, §18).
+ * Content checks for packs/spanish-tapas-bar and packs/art-of-persuasion.
  */
 import { describe, expect, test } from "bun:test";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
@@ -115,7 +115,7 @@ describe.skip("art-of-persuasion", () => {
   });
 });
 
-describe("figures follow the illustration contract (PLAN §6.5)", () => {
+describe("figures follow the illustration contract", () => {
   const ALLOWED_ELEMENTS = new Set(["svg", "title", "desc", "g", "rect", "circle", "ellipse", "path", "line", "text"]);
   const COLOUR = /^(none|var\(--(w-[1-5]|ink|lumen|sea)\))$/;
   const svgs = [spanishDir, persuasionDir].flatMap((dir) =>

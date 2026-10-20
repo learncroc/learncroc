@@ -1,5 +1,5 @@
 /**
- * URL guard (PLAN §17): every registry, pack URL and tryUrl must be https (or http to loopback in
+ * URL guard: every registry, pack URL and tryUrl must be https (or http to loopback in
  * --dev). Hosts that are, or resolve to, private, loopback, link-local or metadata addresses are
  * refused, redirects are re-checked hop by hop, and relative URLs keep the base's scheme and origin.
  */

@@ -4,7 +4,7 @@ import { createMemoryHistory, RouterProvider } from "@tanstack/react-router";
 import { render, screen } from "@testing-library/react";
 import { createAppRouter } from "../src/router";
 
-/** Every PLAN §7 route renders its stub screen (heading = the screen's name). */
+/** Every route renders its stub screen (heading = the screen's name). */
 const CASES: [path: string, name: string][] = [
   ["/", "Home"],
   ["/welcome", "Welcome"],

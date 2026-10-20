@@ -1,11 +1,12 @@
 /**
- * MapBadge: the finished-map badge (derived, never revoked; 02 §9.2). A self-contained 240×240 SVG
+ * MapBadge: the finished-map badge (derived, never revoked). A self-contained 240×240 SVG
  * medallion shaped by the renderer:
  *
  * - circuit: a square chip with seven pins a side and a die window;
  * - metro: a roundel with a bar across carrying the world name;
  * - atlas: a wax seal with a scalloped edge and a compass rose;
- * - sketchbook: a die-cut sticker with a peeled corner and a strip of tape.
+ * - sketchbook: a die-cut sticker with a peeled corner and a strip of tape;
+ * - trail: a lily pad with its notch and veins.
  *
  * Inside: the world's token on the ground colour, the final landmark small behind it, the world name on a
  * circular path, the card count and the finish date. The rim is the only Lumen (plus the mint sheen).
@@ -47,6 +48,9 @@ function shapePath(renderer: RendererId): string {
     case "sketchbook":
       // A circle with the top-right corner peeled back (a straight cut).
       return "M190 70A96 96 0 1 1 168 36L190 70Z";
+    case "trail":
+      // A lily pad: a circle with a wedge cut to the centre at the top.
+      return `M${C} ${C - 6}L${C + 16} 23A98 98 0 1 1 ${C - 16} 23Z`;
     default:
       return `M${C} 22A98 98 0 1 1 ${C - 0.01} 22Z`;
   }
@@ -104,6 +108,15 @@ function frameArt(renderer: RendererId, ink: string, ground: string, accent: str
           />
         </>
       );
+    case "trail": {
+      // The pad's veins, from the notch outwards.
+      const veins: string[] = [];
+      for (let i = 1; i < 8; i++) {
+        const a = -Math.PI / 2 + (i / 8) * Math.PI * 2;
+        veins.push(`M${C + Math.cos(a) * 60} ${C + Math.sin(a) * 60}L${C + Math.cos(a) * 92} ${C + Math.sin(a) * 92}`);
+      }
+      return <path d={veins.join("")} stroke={accent} strokeWidth={2.5} strokeLinecap="round" opacity={0.35} />;
+    }
   }
 }
 

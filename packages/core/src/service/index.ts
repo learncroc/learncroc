@@ -1,5 +1,5 @@
 /**
- * App services over the injected seams (D34): Repo (storage), AiPorts (AI), WidgetSpecRegistry,
+ * App services over the injected seams: Repo (storage), AiPorts (AI), WidgetSpecRegistry,
  * PackSource and Clock. The server wraps them in HTTP routes (one method per route, same names
  * as the route map); the static demo wraps them over IndexedDB; "Try the first card" runs them
  * over a MemoryRepo and a one-pack source.

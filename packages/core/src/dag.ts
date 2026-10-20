@@ -1,5 +1,5 @@
 /**
- * Prerequisite-graph helpers (PRINCIPLES C1–C5). A graph is a record from node id to the ids it
+ * Prerequisite-graph helpers. A graph is a record from node id to the ids it
  * requires; insertion order is meaningful (it breaks ties in topological order, so authors control
  * the reading order of the map).
  */

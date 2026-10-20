@@ -1,5 +1,5 @@
 /**
- * Every route (04 §4.1, 03 §2), code-defined. Each screen lives in screens/<area>/ and is lazy-loaded
+ * Every route, code-defined. Each screen lives in screens/<area>/ and is lazy-loaded
  * (widgets and KaTeX stay out of the first chunk). The card and checkpoint play inside the map
  * (`/p/$pack?card=` / `?checkpoint=`); `/relight` is the only focus route. Frozen after wave 0.
  */

@@ -1,5 +1,5 @@
 /**
- * Article fetch with an SSRF guard (PLAN §15.5 step 1): http(s) only, DNS resolved and checked
+ * Article fetch with an SSRF guard: http(s) only, DNS resolved and checked
  * against private, loopback and link-local ranges, 10 s timeout, ≤ 5 redirects each re-guarded,
  * ≤ 5 MB. Articles are untrusted data from here on.
  */

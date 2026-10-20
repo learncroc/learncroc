@@ -1,5 +1,5 @@
 /**
- * View-side widget contracts (CONTRACTS §7.1). Specs (pure) live in "./spec".
+ * View-side widget contracts. Specs (pure) live in "./spec".
  */
 import type { AssetPath } from "@learncroc/core";
 

@@ -77,7 +77,7 @@ describe("gallery maps are readable", () => {
       }
     });
 
-    // rev3 speed mode: gate labels (1.5×/1.8× glyphs) overhang the provisional layout by a few px; the bleed covers it.
+    // Gate labels (1.5×/1.8× glyphs) overhang the provisional layout by a few px; the bleed covers it.
     test.skip(`${id}: labels stay inside the layout`, () => {
       for (const l of placeLabels(map, renderer).values()) {
         expect(l.box.x).toBeGreaterThanOrEqual(-8);
@@ -88,7 +88,7 @@ describe("gallery maps are readable", () => {
     });
   }
 
-  // rev3 speed mode: maps open framed on the current section; the whole-map fit is an overview now.
+  // Maps open framed on the current section; the whole-map fit is an overview now.
   test.skip("a full pack fits 1440×900 at a readable scale", () => {
     // Map viewport at 1440×900: 1440 − 64 rail, 900 − header and footer. Labels stay ≥ 11 px on screen.
     for (const p of galleryPacks()) {

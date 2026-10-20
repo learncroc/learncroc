@@ -187,7 +187,7 @@ export function itemTask(
   };
 }
 
-// ── typed cards (docs/design/teach-first.md)
+// ── typed cards
 
 /** What one card in the path does. A map stop (one node run) plays as several of these. */
 export type CardType = "intro" | "ask" | "teach" | "try" | "check" | "takeaway";

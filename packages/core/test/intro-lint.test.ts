@@ -43,7 +43,7 @@ function intro(over: Partial<PackNode> = {}): PackNode {
   };
 }
 
-describe("the intro card (teach-first)", () => {
+describe("the intro card", () => {
   test("has its own shape: one read-only screen, no items, no picture or misconception rules", () => {
     expect(cardShapeIssues(INTRO_NODE_ID, intro(), "pocket", "en").filter((i) => i.severity === "error")).toEqual([]);
   });

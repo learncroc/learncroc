@@ -30,7 +30,7 @@ const REVISIT = "M4.6 9.2a2.9 2.9 0 1 0 .3-3.7M4.6 3.9l.3 1.7-1.7.3";
 const TICK = "M4.2 7.2l1.9 1.9 3.8-4";
 
 /**
- * Checkpoint progress pips (02-game-ux §4.2). Shape carries the meaning, colour backs it up: a tick for
+ * Checkpoint progress pips. Shape carries the meaning, colour backs it up: a tick for
  * right, a revisit arrow for missed, an empty ring for ahead. On a pass, `sweep` turns every pip Lumen.
  */
 export function Pips({ results, current, sweep, label, size = 14, className }: PipsProps) {
@@ -168,7 +168,7 @@ const FRAME = "M8 42V12q0-4 4-4h24q4 0 4 4v30";
 const GAP = 0.14;
 
 /**
- * The gate charges (02-game-ux §4.2): a small copy of the gate whose frame segments light in Sea, one per
+ * The gate charges: a small copy of the gate whose frame segments light in Sea, one per
  * right answer. Mastery isn't earned until the pass, so the frame turns Lumen only when `open`.
  */
 export function GateCharge({ total, lit, open, size = 48, title, decorative, className }: GateChargeProps) {

@@ -7,7 +7,7 @@
 import type { AskEvent, NodeId, PackId, WidgetRef } from "@learncroc/core";
 import { create } from "zustand";
 
-/** Where Moss is talking (00 §3.3): the server decides the mode, the client picks the chips. */
+/** Where Moss is talking: the server decides the mode, the client picks the chips. */
 export type CrocContext = "map" | "hook" | "card" | "checkpoint" | "checkpoint-result" | "relight";
 
 export interface CrocScope {

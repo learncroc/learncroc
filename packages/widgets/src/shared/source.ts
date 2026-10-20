@@ -4,7 +4,7 @@
  */
 import { z } from "zod";
 
-/** `"illustrative"` or `"precomputed:<model>"` (CONTRACTS §7.2). */
+/** `"illustrative"` or `"precomputed:<model>"`. */
 export const DataSource = z.union([z.literal("illustrative"), z.templateLiteral(["precomputed:", z.string()])]);
 export type DataSource = z.infer<typeof DataSource>;
 

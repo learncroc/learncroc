@@ -1,6 +1,6 @@
 /**
- * Gallery specs: the five launch packs, the seven extra samplers and article maps, with the DAGs from
- * PLAN §12 and 05 §3 and the worlds from PLAN §9.3 and 02 §1.2. Themes here are the map gallery's
+ * Gallery specs: the five launch packs, the seven extra samplers and article maps, with their DAGs and
+ * worlds. Themes here are the map gallery's
  * previews; each pack's own pack.yaml is the source of truth. Specs list cards and the final gate only;
  * `buildGalleryPack` cuts the cards into sections of 2–3 with a checkpoint after each.
  */
@@ -1133,7 +1133,7 @@ export const POCKET_BUILDING: GallerySpec = {
   ],
 };
 
-/** Each world's backdrop (02 §1.2); the rest use their renderer's default. */
+/** Each world's backdrop; the rest use their renderer's default. */
 const BACKDROP: Record<string, NonNullable<GallerySpec["theme"]["backdrop"]>> = {
   "programming-basics": "factory-floor",
   "special-relativity": "light-cones",

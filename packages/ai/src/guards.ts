@@ -1,5 +1,5 @@
 /**
- * Host-side guards on every model reply (PLAN §15.2, R7). The model is told the rules; these make
+ * Host-side guards on every model reply. The model is told the rules; these make
  * them true: word caps, an action at the end, no answer leaks before the learner has answered, and
  * Nib replies that introduce no new terms or numbers.
  */

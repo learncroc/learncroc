@@ -1,6 +1,6 @@
 /**
  * probability-bars: drag bars to predict a next-token distribution, then see the real one
- * (precomputed, model named). Rank, temperature, pick and the score→pick→append loop (CONTRACTS §7.2 #1).
+ * (precomputed, model named). Rank, temperature, pick and the score→pick→append loop.
  */
 import type { GradeResult } from "@learncroc/core";
 import { stableShuffle, sum } from "../shared/math";

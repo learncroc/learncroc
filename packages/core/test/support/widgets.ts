@@ -1,6 +1,6 @@
 /**
  * Test doubles for the two widgets the fixture pack uses (sorter, plot). Core never imports
- * packages/widgets; these follow the same contract (CONTRACTS §7) with the grading the fixture needs.
+ * packages/widgets; these follow the same contract with the grading the fixture needs.
  */
 import { z } from "zod";
 import { evaluate } from "../../src/expr";

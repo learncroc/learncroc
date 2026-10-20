@@ -1,5 +1,5 @@
 /**
- * URL search params on /p/$pack (C8): card, checkpoint, from, guess, again, finished. No peek param
+ * URL search params on /p/$pack: card, checkpoint, from, guess, again, finished. No peek param
  * (peeks are transient). `?stop=<id>` is the legacy alias, read once as `card`; PackMapScreen rewrites a
  * checkpoint id found in `card` to `checkpoint` (and the reverse) with replace.
  */

@@ -1,5 +1,5 @@
 /**
- * Global keys (03 §3.2, 02 §12): `⌘K` command palette, `G` then a letter to go somewhere, `?` the
+ * Global keys: `⌘K` command palette, `G` then a letter to go somewhere, `?` the
  * shortcut sheet, `⌘,` settings. Single-key shortcuts never fire inside text fields; `G` navigation
  * is off in focus mode (Relight) so a stray key never pulls a learner out of a session.
  *

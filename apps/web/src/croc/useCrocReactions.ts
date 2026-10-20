@@ -1,6 +1,5 @@
 /**
- * Listen to the reaction bus and turn events into Moss's state and one bubble line, with the caps from
- * UX §7.3 (00 §3.4):
+ * Listen to the reaction bus and turn events into Moss's state and one bubble line, with these caps:
  *
  * - ≤ 1 line per moment: once a line shows, nothing else speaks for the next few seconds;
  * - ≤ 1 unsolicited bubble per 45 s (the close, a gate opening, a finished map and the first card done

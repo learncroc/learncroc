@@ -91,7 +91,7 @@ function hasCycle(map: MapFileT): boolean {
   return Object.keys(map.nodes).some(visit);
 }
 
-// ── colour helpers (theme lint, PLAN §6.1)
+// ── colour helpers (theme lint)
 
 const hexRgb = (h: string) =>
   [1, 3, 5].map((i) => Number.parseInt(h.slice(i, i + 2), 16) / 255) as [number, number, number];

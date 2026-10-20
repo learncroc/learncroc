@@ -38,7 +38,7 @@ import { qk } from "../../app/queries";
 type AnyPack = Pick<CompiledPack, "manifest" | "map">;
 type Journey = "fresh" | "journey" | "all-lit" | "real";
 
-const RENDERERS: RendererId[] = ["metro", "circuit", "atlas", "sketchbook"];
+const RENDERERS: RendererId[] = ["metro", "circuit", "atlas", "sketchbook", "trail"];
 const SCENARIOS: { value: Journey; label: string }[] = [
   { value: "fresh", label: "First visit" },
   { value: "journey", label: "Mid-journey" },

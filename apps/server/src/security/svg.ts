@@ -1,5 +1,5 @@
 /**
- * SVG safety check (PLAN §17): a pack SVG is accepted only if sanitising it would change nothing.
+ * SVG safety check: a pack SVG is accepted only if sanitising it would change nothing.
  *
  * Implemented as a strict allowlist validator over a small XML tokenizer, so the verdict is exact
  * and deterministic: any construct a sanitiser would strip (scripts, event handlers, foreignObject,

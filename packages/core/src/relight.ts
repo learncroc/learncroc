@@ -1,5 +1,5 @@
 /**
- * Relight (PRINCIPLES mechanic 3, PLAN §5.4): fading or due node cards across all packs, mixed.
+ * Relight: fading or due node cards across all packs, mixed.
  *
  * - About 8 items (settings.learning.dailyRelight), at most 3 per node, most faded nodes first.
  * - Round-robin: no two consecutive items from the same node (whenever more than one node is due).

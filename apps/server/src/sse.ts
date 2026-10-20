@@ -1,5 +1,5 @@
 /**
- * SSE responses (CONTRACTS §12): `event: <type>\ndata: <JSON>\n\n`, ending with a terminal event
+ * SSE responses: `event: <type>\ndata: <JSON>\n\n`, ending with a terminal event
  * (`done` or `error`), after which the stream closes.
  */
 import { encodeSse, isTerminalEvent, type SseEvent } from "@learncroc/core";

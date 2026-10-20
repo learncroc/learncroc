@@ -1,5 +1,5 @@
 /**
- * Server-sent events (CONTRACTS §12). Wire format: `event: <type>\ndata: <JSON>\n\n`.
+ * Server-sent events. Wire format: `event: <type>\ndata: <JSON>\n\n`.
  * The `type` inside the JSON equals the SSE event name. Streams end with a terminal event
  * (`done` or `error`), then the server closes the connection.
  *

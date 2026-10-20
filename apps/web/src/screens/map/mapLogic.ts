@@ -1,6 +1,6 @@
 /**
- * Pure helpers for the map screen: header counts (C20), what a click opens (C5), the peek's copy
- * (03 §4.3.3, §9), the Route panel's sections, the article-map build bar, the moment a run summary
+ * Pure helpers for the map screen: header counts, what a click opens, the peek's copy, the Route
+ * panel's sections, the article-map build bar, the moment a run summary
  * plays, and local-day keys for once-a-day things. States always come from `PackProgress.views`;
  * nothing here re-derives them.
  */
@@ -53,7 +53,7 @@ export function mapCounts(pack: MapPack, views: Record<NodeId, NodeView>): MapCo
   };
 }
 
-/** C20: "{lit} of {total} cards lit · {done} done" (fading cards still count as lit). */
+/** "{lit} of {total} cards lit · {done} done" (fading cards still count as lit). */
 export function countsLine(c: MapCounts): string {
   return `${c.lit + c.fading} of ${c.playable} cards lit · ${c.done} done`;
 }
@@ -71,7 +71,7 @@ export function relightMinutes(fading: number, due: number): number {
 export type OpenTarget = "card" | "checkpoint" | "peek";
 
 /**
- * What a click on an entry opens (C5): Ready / In progress / Done / Lit / Fading cards open the card
+ * What a click on an entry opens: Ready / In progress / Done / Lit / Fading cards open the card
  * modal (play or replay); Later / Planned / Writing… cards and Locked gates open a peek; Ready and In
  * progress gates open the checkpoint; an Open gate opens a peek with "Practise again".
  */
@@ -120,7 +120,7 @@ export interface PeekCopy {
   actions: ("route" | "practise")[];
 }
 
-/** The peek popover's copy (03 §4.3.3, §9; UX §1.8). Later cards never show their hook. */
+/** The peek popover's copy. Later cards never show their hook. */
 export function peekCopy(pack: MapPack, views: Record<NodeId, NodeView>, id: NodeId): PeekCopy {
   const node = pack.map.nodes[id];
   if (!node) return { lines: [], actions: [] };
@@ -199,7 +199,7 @@ export interface RouteSection {
   missing?: string;
 }
 
-/** The Route panel: sections in map order, each with its cards and gate (C21). */
+/** The Route panel: sections in map order, each with its cards and gate. */
 export function routeSections(pack: MapPack, views: Record<NodeId, NodeView>): RouteSection[] {
   const map = pack.map;
   const row = (id: NodeId): RouteRow => {
@@ -248,7 +248,7 @@ export function routeSections(pack: MapPack, views: Record<NodeId, NodeView>): R
 }
 
 /**
- * The article-map build bar (03 §4.3.5): "Writing card 4 of 8 · Checkpoint questions next".
+ * The article-map build bar: "Writing card 4 of 8 · Checkpoint questions next".
  * Undefined once nothing is building.
  */
 export function buildingLine(pack: MapPack & { provisional?: boolean }): string | undefined {

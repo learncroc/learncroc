@@ -1,5 +1,5 @@
 /**
- * Incremental parsing of the streamed skeleton (PLAN §15.5 step 2): each element of nodes[] and
+ * Incremental parsing of the streamed skeleton: each element of nodes[] and
  * edges[] is validated and emitted as soon as it closes, so stops appear on the map while the model
  * is still writing. Ids are normalised, requirements only point at stops already emitted, and any
  * edge that would make a cycle is dropped.

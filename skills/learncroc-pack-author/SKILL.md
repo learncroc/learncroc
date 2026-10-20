@@ -61,7 +61,7 @@ they are never the lesson. Read `references/principles-checklist.md` before writ
 
 ## References
 
-- `references/principles-checklist.md`: PRINCIPLES.md as a pre-flight checklist.
+- `references/principles-checklist.md`: the learning principles as a pre-flight checklist.
 - `references/node-anatomy.md`: an annotated stop, field by field.
 - `references/map-design.md`: DAG and theme rules lint enforces.
 - `references/widgets.md`: the 15 widgets and when to use each.

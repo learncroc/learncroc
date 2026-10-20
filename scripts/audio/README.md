@@ -44,7 +44,7 @@ Phrases whose author already set `src`/`audio` are skipped. Languages with no vo
 
 ## Budget
 
-PLAN §11.1: at most 2 MB per file and 10 MB of audio per pack. `--plan` estimates sizes before
+At most 2 MB per file and 10 MB of audio per pack. `--plan` estimates sizes before
 rendering; after rendering the real sizes are checked and the command exits 1 if either limit is
 exceeded. The Spanish pack is about 95 phrases, roughly 1 MB.
 

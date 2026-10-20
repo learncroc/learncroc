@@ -1,5 +1,5 @@
 /**
- * AI layer internals (CONTRACTS §14). Serialisable shapes (SystemBlock, ChatTurn, MinimapSkeleton…)
+ * AI layer internals. Serialisable shapes (SystemBlock, ChatTurn, MinimapSkeleton…)
  * are zod schemas in @learncroc/core; these interfaces carry functions, so they live here.
  */
 import type { AiFeature, ChatTurn, Effort, ModelTier, ProviderId, SystemBlock, Usage } from "@learncroc/core";

@@ -1,5 +1,5 @@
 /**
- * Storage seam (CONTRACTS §9.2). SqliteRepo (server), IdbRepo (static demo), MemoryRepo (tests, try-runs).
+ * Storage seam. SqliteRepo (server), IdbRepo (static demo), MemoryRepo (tests, try-runs).
  */
 import type {
   AttemptRow,

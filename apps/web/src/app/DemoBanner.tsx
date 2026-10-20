@@ -1,4 +1,4 @@
-/** The static demo's thin banner (03 §5): progress lives in this browser; article maps and chat need the full app. */
+/** The static demo's thin banner: progress lives in this browser; article maps and chat need the full app. */
 import { ArrowSquareOut } from "@phosphor-icons/react";
 import { INSTALL_COMMAND, INSTALL_URL } from "./demo";
 

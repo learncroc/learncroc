@@ -128,6 +128,7 @@ JSON Schema: [`schemas/compiled-pack.schema.json`](../../schemas/compiled-pack.s
 | Field | Type | Required | Notes |
 |---|---|---|---|
 | `renderer` | `RendererId` | yes |  |
+| `design` | `MapDesignId` |  | The design preset this theme was made from (AI-drafted maps). Absent: an authored world. |
 | `world` | string | yes | "The Machine" |
 | `mode` | `"dark"` \| `"light"` | yes | The world's ground is always this, regardless of the app theme. |
 | `direction` | `"lr"` \| `"bt"` | yes | Default "lr". |

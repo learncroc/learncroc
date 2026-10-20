@@ -2,7 +2,7 @@
  * Query hooks for the shell and the library-side screens, over the typed API client. Keys match the
  * starter hooks in api/hooks.ts so caches are shared ("packs", ["packs", id], ["progress", id], "settings").
  */
-import type { PackId, Settings, SettingsPatch } from "@learncroc/core";
+import { type PackId, type Settings, type SettingsPatch, withMapDesign } from "@learncroc/core";
 import { keepPreviousData, useMutation, useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "../api/client";
 
@@ -70,7 +70,12 @@ export function usePackPosters(ids: PackId[]) {
       ...QUIET,
     })),
   });
-  return ids.map((id, i) => ({ id, pack: packs[i]?.data, progress: progress[i]?.data }));
+  // Posters wear each map's design pick, like the map itself.
+  const designs = useSettings().data?.appearance.mapDesigns;
+  return ids.map((id, i) => {
+    const pack = packs[i]?.data;
+    return { id, pack: pack && withMapDesign(pack, designs?.[id]), progress: progress[i]?.data };
+  });
 }
 
 /** Deep-merge a settings patch (one level of sections) for optimistic updates. */

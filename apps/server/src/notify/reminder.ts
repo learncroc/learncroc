@@ -1,5 +1,5 @@
 /**
- * The opt-in daily reminder (PLAN D38): off by default; when enabled, one local OS notification at
+ * The opt-in daily reminder: off by default; when enabled, one local OS notification at
  * the learner's chosen time, with no counts. macOS: osascript; Linux: notify-send; Windows: a
  * PowerShell toast. Failures are silent (a missing notifier must never break the server).
  */

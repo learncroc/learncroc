@@ -27,7 +27,7 @@ import { extractPhrases, loadPackFiles, type Phrase } from "./phrases";
 import type { Encoder, Synth } from "./tools";
 import { type VoiceConfig, voiceFor } from "./voices";
 
-/** PLAN §11.1: ≤ 2 MB per asset, ≤ 10 MB of audio per pack. */
+/** ≤ 2 MB per asset, ≤ 10 MB of audio per pack. */
 export const MAX_FILE_BYTES = 2 * 1024 * 1024;
 export const MAX_PACK_AUDIO_BYTES = 10 * 1024 * 1024;
 export const MANIFEST_PATH = "data/audio-manifest.json";

@@ -56,7 +56,7 @@ export function mixToContrast(from: string, toward: string, against: string, rat
   return toward;
 }
 
-/** Ink defaults that match the app's own ink tokens (PLAN §6.1). */
+/** Ink defaults that match the app's own ink tokens. */
 const INK_ON_DARK = "#ECEBFA";
 const INK_ON_LIGHT = "#1C1A3D";
 

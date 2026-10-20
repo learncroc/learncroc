@@ -1,6 +1,6 @@
 /**
  * GET /relight/calendar.ics: one daily recurring "Relight (5 min)" event at the learner's chosen
- * local time. No counts, no streaks (PLAN D38). Floating local time, so it follows the calendar's zone.
+ * local time. No counts, no streaks. Floating local time, so it follows the calendar's zone.
  */
 const TIME_RE = /^([01]\d|2[0-3]):([0-5]\d)$/;
 

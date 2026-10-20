@@ -1,5 +1,5 @@
 /**
- * Sandbox bridge (CONTRACTS §5, PLAN §17): message types, host-side validation, the bridge script
+ * Sandbox bridge: message types, host-side validation, the bridge script
  * injected into every frame document, the document wrapper and CSP the sandbox origin serves, and the
  * static pre-scan that rejects network APIs. No React: the server imports this module.
  *
@@ -229,7 +229,7 @@ export const FRAME_META_CSP =
   "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; font-src data:; connect-src 'none'; media-src data: blob:; form-action 'none'; base-uri 'none'";
 
 /**
- * The response CSP for GET /frame/:token on the sandbox origin (PLAN §17): no network, inline code
+ * The response CSP for GET /frame/:token on the sandbox origin: no network, inline code
  * only, and only the app may frame it.
  */
 export function frameCsp(mainPort: number): string {

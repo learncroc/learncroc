@@ -6,13 +6,13 @@
  * layout under a title band, labels the cards that matter at poster scale, captions "N of M cards lit"
  * and (on share cards) signs it "Learncroc".
  *
- * `layout="finished"` is the finished-map share poster (02 §9.3), 1200×630 or 1080×1350: the whole map
+ * `layout="finished"` is the finished-map share poster, 1200×630 or 1080×1350: the whole map
  * lit on its backdrop beside a panel with the badge, the world name, "11 cards · 4 sections", "I can now
- * explain:" with two line outcomes, Moss cheering and the Learncroc wordmark. It carries no learner data:
+ * explain:" with two line outcomes, the croc cheering and the Learncroc wordmark. It carries no learner data:
  * no names, scores, times or dates.
  */
 import type { CompiledMap, NodeId, NodeView } from "@learncroc/core";
-import { Croc } from "@learncroc/ui";
+import { Croc, WORDMARK_ADVANCE, WORDMARK_PATH } from "@learncroc/ui";
 import { useId } from "react";
 import { mix, worldColors, worldStyle } from "./lib/color";
 import { everythingLit, isLitLike, sectionsOf, viewFor } from "./lib/graph";
@@ -184,21 +184,25 @@ function DefaultPoster({
   );
 }
 
-const textWidthApprox = (s: string, size: number) => s.length * size * 0.56;
-
-/** The Learncroc wordmark with its Lumen dot (the logo's lit stop), right-aligned at the origin. */
-function Wordmark({ size, ink }: { size: number; ink: string }) {
+/**
+ * The Learncroc logo: the croc's head (flat and still) then the outlined lowercase wordmark, right-aligned on
+ * the baseline at the origin. `mark={false}` drops the head where a bigger croc already stands just above
+ * (the finished poster).
+ */
+function Wordmark({ size, ink, mark = true }: { size: number; ink: string; mark?: boolean }) {
+  const s = size / 1000;
+  const tw = WORDMARK_ADVANCE * s;
+  const markH = size * 1.15;
+  const markW = (markH * 228) / 134;
   return (
     <g data-layer="poster-brand">
-      <circle
-        cx={-textWidthApprox("Learncroc", size) - size * 0.55}
-        cy={-size * 0.34}
-        r={size * 0.3}
-        fill="var(--lumen)"
-      />
-      <text textAnchor="end" fontSize={size} fontWeight={700} fill={ink}>
-        Learncroc
-      </text>
+      <title>Learncroc</title>
+      {mark ? (
+        <g transform={`translate(${-tw - size * 0.28 - markW} ${-size * 0.35 - markH / 2})`}>
+          <Croc pose="head" still decorative size={markW} />
+        </g>
+      ) : null}
+      <path transform={`translate(${-tw} 0) scale(${s})`} d={WORDMARK_PATH} fill={ink} />
     </g>
   );
 }
@@ -413,7 +417,7 @@ function FinishedPoster({ pack, width, height, showTitle = true }: MapPosterProp
             <Croc state="cheering" size={crocSize} lumen decorative />
           </g>
           <g transform={`translate(${panel.x + panel.w - pad} ${panel.y + panel.h - pad * 0.55})`}>
-            <Wordmark size={22 * u} ink={colors.ink} />
+            <Wordmark size={22 * u} ink={colors.ink} mark={false} />
           </g>
           {portrait ? null : (
             <text x={tx} y={panel.y + panel.h - pad * 0.55} fontSize={14 * u} fill={colors.ink2}>
@@ -442,10 +446,18 @@ const TOKEN_FALLBACK: Record<"light" | "dark", Record<string, string>> = {
     "--surface": "#ffffff",
     "--surface-2": "#f6f7fb",
     "--ember-soft": "#fbdcc8",
-    "--croc": "#5c9a4b",
-    "--croc-belly": "#dcedc5",
-    "--croc-ink": "#11250d",
+    "--croc": "#5bbf8e",
+    "--croc-shade": "#2f8a63",
+    "--croc-belly": "#d9f2bd",
+    "--croc-blush": "#ff8fa8",
+    "--croc-ink": "#1c1a3d",
     "--croc-eye": "#ffffff",
+    "--croc-gold": "#ffc23d",
+    "--croc-gold-shade": "#c98a00",
+    "--croc-gold-belly": "#fff1c4",
+    "--croc-gold-blush": "#f59a6a",
+    "--ink-3": "#66648b",
+    "--font-recursive": "Recursive, ui-sans-serif, system-ui, sans-serif",
     "--font-code": "ui-monospace, Menlo, monospace",
   },
   dark: {
@@ -460,10 +472,18 @@ const TOKEN_FALLBACK: Record<"light" | "dark", Record<string, string>> = {
     "--surface": "#1d1c3d",
     "--surface-2": "#232249",
     "--ember-soft": "#4a2a1c",
-    "--croc": "#79bf62",
-    "--croc-belly": "#b5dfa0",
-    "--croc-ink": "#0f220c",
-    "--croc-eye": "#f4f9ee",
+    "--croc": "#5bbf8e",
+    "--croc-shade": "#2f8a63",
+    "--croc-belly": "#d9f2bd",
+    "--croc-blush": "#ff8fa8",
+    "--croc-ink": "#1c1a3d",
+    "--croc-eye": "#ffffff",
+    "--croc-gold": "#ffc23d",
+    "--croc-gold-shade": "#c98a00",
+    "--croc-gold-belly": "#fff1c4",
+    "--croc-gold-blush": "#f59a6a",
+    "--ink-3": "#8f8dba",
+    "--font-recursive": "Recursive, ui-sans-serif, system-ui, sans-serif",
     "--font-code": "ui-monospace, Menlo, monospace",
   },
 };

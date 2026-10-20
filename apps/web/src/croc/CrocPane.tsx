@@ -1,10 +1,10 @@
 /**
- * Moss inside the card, checkpoint and Relight players (slot, C3): a 240 px column on wide screens,
+ * Moss inside the card, checkpoint and Relight players (slot): a 240 px column on wide screens,
  * or a 56 px footer bar that expands upward (`collapsed`). Never a second dialog: it lives inside the
  * modal's one focus trap.
  *
  * Top: Moss and the current reaction line. Middle: the conversation for this card. Bottom: chips for
- * the moment (00 §3.3) and the input. During a checkpoint (and a Relight question) Moss gives hints
+ * the moment and the input. During a checkpoint (and a Relight question) Moss gives hints
  * only, says so in a fixed line, and every hint is recorded on the run (the hint button and Moss share
  * the cap of 2): offline through the run's hint route, with AI by the server's ask route. The pane then
  * refreshes the run so the player's hint pips update.
@@ -34,7 +34,7 @@ const CARD_KEYS: Record<string, string> = {
   d: "Go deeper",
 };
 
-/** The chips for each moment (00 §3.3, 03 §4.6.3). */
+/** The chips for each moment. */
 export function chipsFor(
   context: CrocPaneProps["context"],
   opts: { cardTitle?: string; hintLevel?: number } = {},

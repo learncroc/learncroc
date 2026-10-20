@@ -1,5 +1,5 @@
 /**
- * sorter: drag cards into buckets, or rank them in one column (CONTRACTS §7.2 #6).
+ * sorter: drag cards into buckets, or rank them in one column.
  */
 import { AssetPath, Markdown, type WidgetSpec } from "@learncroc/core";
 import { z } from "zod";

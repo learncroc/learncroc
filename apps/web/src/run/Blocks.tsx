@@ -1,5 +1,5 @@
 /**
- * Setup blocks in the coach column (CONTRACTS §5): story, maths, code, audio, quote and callout.
+ * Setup blocks in the coach column: story, maths, code, audio, quote and callout.
  * Stories speak in the casual voice; everything else is the product talking. Audio blocks without a
  * rendered file read their words with the device voice (`speechSynthesis`) and say so.
  */

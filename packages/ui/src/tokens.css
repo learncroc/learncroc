@@ -1,5 +1,5 @@
 /*
- * learncroc design tokens: "Night school" (PLAN §6). Final values; do not change without a contract request.
+ * learncroc design tokens: "Night school".
  * Light is earned: Lumen (gold) means "you know this" and nothing else. No red anywhere.
  */
 
@@ -29,11 +29,18 @@
   --focus: #12877a;
   --scrim: rgb(28 26 61 / 0.38);
   --key-edge: rgb(28 26 61 / 0.85);
-  /* Moss, the croc: one constant across worlds, never a state colour. Outline ≥ 4.5:1 on the body. */
-  --croc: #5c9a4b;
-  --croc-belly: #dcedc5;
-  --croc-ink: #11250d;
+  /* The croc is jade: one constant across worlds and themes, never a state colour (see brand/README.md). */
+  --croc: #5bbf8e;
+  --croc-shade: #2f8a63;
+  --croc-belly: #d9f2bd;
+  --croc-blush: #ff8fa8;
+  --croc-ink: #1c1a3d;
   --croc-eye: #ffffff;
+  /* Gold croc: only for a moment when a stop lights up or a map is finished. */
+  --croc-gold: #ffc23d;
+  --croc-gold-shade: #c98a00;
+  --croc-gold-belly: #fff1c4;
+  --croc-gold-blush: #f59a6a;
   /* The card modal's lighter scrim: the map stays visible on both sides. */
   --scrim-card: rgb(28 26 61 / 0.18);
   color-scheme: light;
@@ -63,10 +70,17 @@
   --focus: #7fe3d5;
   --scrim: rgb(8 8 24 / 0.6);
   --key-edge: #0a0a1c;
-  --croc: #79bf62;
-  --croc-belly: #b5dfa0;
-  --croc-ink: #0f220c;
-  --croc-eye: #f4f9ee;
+  /* The croc stays jade in the dark; the night croc is for marketing only. */
+  --croc: #5bbf8e;
+  --croc-shade: #2f8a63;
+  --croc-belly: #d9f2bd;
+  --croc-blush: #ff8fa8;
+  --croc-ink: #1c1a3d;
+  --croc-eye: #ffffff;
+  --croc-gold: #ffc23d;
+  --croc-gold-shade: #c98a00;
+  --croc-gold-belly: #fff1c4;
+  --croc-gold-blush: #f59a6a;
   --scrim-card: rgb(8 8 24 / 0.42);
   color-scheme: dark;
 }

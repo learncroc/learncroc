@@ -1,5 +1,5 @@
 /**
- * A tiny safe expression evaluator (PLAN D28). No eval, no property access, no assignment.
+ * A tiny safe expression evaluator. No eval, no property access, no assignment.
  * Shared by widgets (plot), the grader and parametric items.
  *
  * Grammar: numbers (1, 0.5, 1e-3), variables, constants `pi` and `e`, + - * / % ^ (right-assoc),

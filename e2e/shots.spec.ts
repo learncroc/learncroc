@@ -1,5 +1,5 @@
 /**
- * Screenshot rounds (PLAN §18 stage 3). `bun run shots` saves PNGs to
+ * Screenshot rounds. `bun run shots` saves PNGs to
  * e2e/shots/round-<LM_ROUND>/<name>-<theme>.png at 1440×900.
  *
  * Skeleton: captures every route's current state in light and dark. The seeded home (fixture progress,

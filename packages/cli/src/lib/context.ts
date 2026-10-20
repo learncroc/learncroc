@@ -1,5 +1,5 @@
 /**
- * How CLI commands reach learner data (PLAN §17, one writer): if a server answers on the session
+ * How CLI commands reach learner data (one writer): if a server answers on the session
  * recorded in ~/.learncroc/.session, commands go through its API (authenticated with the session
  * cookie); otherwise the CLI takes ~/.learncroc/.lock and works on the files directly.
  */

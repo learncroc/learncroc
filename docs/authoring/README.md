@@ -4,7 +4,7 @@ Three ways to write a pack, from no AI at all to fully drafted:
 
 1. **By hand:** `learncroc new <id>`, edit the YAML, `learncroc lint`. See `docs/make-a-pack.md`.
 2. **With your coding agent** (no learncroc key): the skills in `skills/` turn Claude Code (or any agent
-   that reads `AGENTS.md`) into an author that follows the same prompts and gates as the CLI. Your agent
+   that reads plain instructions) into an author that follows the same prompts and gates as the CLI. Your agent
    is the model; `learncroc lint` is the gate.
 3. **With `learncroc build`** (needs a key or a local model): drafts the map and the stops for you.
 

@@ -9,7 +9,7 @@ const llm = galleryPack("how-llms-work");
 const spanish = galleryPack("spanish-tapas-bar");
 if (!llm || !spanish) throw new Error("gallery pack missing");
 
-// rev3 speed mode: asserts revision-2 behaviour (sparked, termini, hop fog, stops); rewrite for gates/sections in wave 2.
+// Asserts revision-2 behaviour (sparked, termini, hop fog, stops); to be rewritten for gates and sections.
 describe.skip("ListView", () => {
   test("is a treegrid grouped by line with a row per stop", () => {
     render(<ListView pack={llm} views={scenarioViews(llm, "journey")} onSelect={() => {}} onOpen={() => {}} />);
@@ -20,7 +20,7 @@ describe.skip("ListView", () => {
     expect(screen.getAllByRole("columnheader").map((h) => h.textContent)).toEqual(["Stop", "State", "Needs", "Time"]);
   });
 
-  test("rows carry the VoiceOver label from 03 §6", () => {
+  test("rows carry the VoiceOver label", () => {
     const views = simulateViews(llm, { lit: ["tokens", "embeddings", "next-token"] });
     render(<ListView pack={llm} views={views} onSelect={() => {}} onOpen={() => {}} />);
     const row = screen.getByRole("row", { name: /^Words looking at words\. Ready\. Meaning line\. Needs/ });
